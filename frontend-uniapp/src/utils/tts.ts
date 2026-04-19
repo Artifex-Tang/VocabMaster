@@ -42,7 +42,7 @@ function playFromDict(word: string, accent: 'uk' | 'us'): Promise<void> {
 // #ifdef APP-PLUS
 function appSpeak(opts: TtsOptions): Promise<void> {
   return new Promise((resolve, reject) => {
-    const p = plus as Record<string, unknown>
+    const p = (plus as unknown) as Record<string, unknown>
     if (p['speech']) {
       const speech = p['speech'] as {
         speak: (opts: { text: string; language: string; rate: number }, cb: () => void, err: (e: unknown) => void) => void

@@ -21,7 +21,7 @@
         {{ loading ? '注册中...' : '注册' }}
       </button>
 
-      <text class="login-link" @click="uni.navigateBack()">已有账号？返回登录</text>
+      <text class="login-link" @click="goBack">已有账号？返回登录</text>
     </view>
   </view>
 </template>
@@ -51,6 +51,8 @@ async function sendCode() {
     if (countdown.value <= 0) clearInterval(timer)
   }, 1000)
 }
+
+function goBack() { uni.navigateBack() }
 
 async function handleRegister() {
   if (!identifier.value || !password.value || !code.value) {

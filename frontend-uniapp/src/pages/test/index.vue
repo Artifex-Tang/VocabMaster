@@ -41,7 +41,7 @@
             :key="src.key"
             class="size-opt"
             :class="{ active: source === src.key }"
-            @click="source = src.key"
+            @click="source = src.key as 'due' | 'all' | 'wrong_words'"
           >{{ src.label }}</text>
         </view>
       </view>

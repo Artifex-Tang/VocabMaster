@@ -18,6 +18,17 @@
     "pinia": "^2.1.7",
     "vue": "^3.4.21"
   },
+  "pnpm": {
+    "overrides": {
+      "@dcloudio/uni-app-vue": "3.0.0-5000720260410001"
+    },
+    "onlyBuiltDependencies": [
+      "core-js",
+      "core-js-pure",
+      "esbuild",
+      "vue-demi"
+    ]
+  },
   "devDependencies": {
     "@dcloudio/types": "^3.4.8",
     "@dcloudio/uni-cli-shared": "3.0.0-alpha-5000720260416001",

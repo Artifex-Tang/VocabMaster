@@ -1,6 +1,8 @@
 package com.vocabmaster.study.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.vocabmaster.checkin.mapper.CheckinMapper;
+import com.vocabmaster.common.constant.AppConstants;
 import com.vocabmaster.common.exception.BizException;
 import com.vocabmaster.common.result.ErrorCode;
 import com.vocabmaster.study.dto.AnswerRequest;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
@@ -32,6 +35,7 @@ public class StudyService {
     private final UserWordProgressMapper progressMapper;
     private final StudyLogMapper studyLogMapper;
     private final WrongWordMapper wrongWordMapper;
+    private final CheckinMapper checkinMapper;
     private final EbbinghausScheduler scheduler;
     private final TodayPlanService todayPlanService;
 
@@ -60,8 +64,11 @@ public class StudyService {
 
         if ("wrong".equals(req.getResult())) {
             upsertWrongWord(userId, req.getWordId(), req.getLevelCode(), now);
+        } else if ("correct".equals(req.getResult())) {
+            tryAutoResolveWrongWord(userId, req.getWordId());
         }
 
+        updateCheckinStats(userId, stageBefore, req.getResult(), req.getDurationMs(), now);
         todayPlanService.evict(userId, req.getLevelCode());
 
         return AnswerResponse.builder()
@@ -223,6 +230,43 @@ public class StudyService {
                 .clientTs(clientTs)
                 .build();
         studyLogMapper.insert(log);
+    }
+
+    /**
+     * 连续答对 WRONG_WORD_RESOLVE_THRESHOLD 次后，自动将错题本记录置 resolved=1。
+     * 查最近 N 条 study_log，全为 correct 则解决。
+     */
+    private void tryAutoResolveWrongWord(Long userId, Long wordId) {
+        WrongWord ww = wrongWordMapper.selectOne(
+                Wrappers.<WrongWord>lambdaQuery()
+                        .eq(WrongWord::getUserId, userId)
+                        .eq(WrongWord::getWordId, wordId)
+                        .eq(WrongWord::getResolved, 0));
+        if (ww == null) return;
+
+        int threshold = AppConstants.WRONG_WORD_RESOLVE_THRESHOLD;
+        List<StudyLog> recent = studyLogMapper.findLastN(userId, wordId, threshold);
+        if (recent.size() >= threshold
+                && recent.stream().allMatch(l -> "correct".equals(l.getResult()))) {
+            ww.setResolved(1);
+            wrongWordMapper.updateById(ww);
+        }
+    }
+
+    /** 累加今日打卡统计（幂等 upsert，不触发打卡逻辑本身）。 */
+    private void updateCheckinStats(Long userId, int stageBefore, String result,
+                                     Integer durationMs, LocalDateTime now) {
+        int learned  = stageBefore == 0 ? 1 : 0;
+        int reviewed = stageBefore > 0  ? 1 : 0;
+        int correct  = "correct".equals(result) ? 1 : 0;
+        int durSec   = durationMs != null ? durationMs / 1000 : 0;
+
+        LocalDate today = now.toLocalDate();
+        try {
+            checkinMapper.upsertStats(userId, today, learned, reviewed, correct, durSec);
+        } catch (Exception e) {
+            log.warn("checkin stats upsert failed userId={}", userId, e);
+        }
     }
 
     private void upsertWrongWord(Long userId, Long wordId, String levelCode, LocalDateTime now) {

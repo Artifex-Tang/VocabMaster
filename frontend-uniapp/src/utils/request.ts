@@ -13,6 +13,13 @@ export interface RequestOptions {
   noAuth?: boolean
 }
 
+// uni.request 不支持 PATCH，用 POST + X-HTTP-Method-Override 透传给后端
+type UniMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'OPTIONS' | 'HEAD' | 'TRACE' | 'CONNECT'
+function toUniMethod(m: RequestOptions['method']): UniMethod {
+  if (m === 'PATCH') return 'POST'
+  return (m ?? 'GET') as UniMethod
+}
+
 interface ApiResponse<T> {
   code: number
   msg: string
@@ -47,6 +54,7 @@ export function request<T = unknown>(opts: RequestOptions): Promise<T> {
       'X-Device-Id': getDeviceId(),
       'X-Device-Type': getPlatform(),
       'X-Client-Version': CLIENT_VERSION,
+      ...(opts.method === 'PATCH' ? { 'X-HTTP-Method-Override': 'PATCH' } : {}),
       ...opts.header,
     }
 
@@ -62,7 +70,7 @@ export function request<T = unknown>(opts: RequestOptions): Promise<T> {
 
     uni.request({
       url,
-      method: opts.method ?? 'GET',
+      method: toUniMethod(opts.method),
       data: opts.data as Record<string, unknown>,
       header,
       timeout: 15000,

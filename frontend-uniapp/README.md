@@ -68,40 +68,63 @@
 
 ---
 
-### ⬜ 阶段 1：H5 端联调（下一步）
+### ✅ 阶段 1：H5 环境搭建（2026-04-19 完成）
 
-**目标**：`pnpm dev:h5` 跑通完整主流程
+**成果**：`pnpm dev:h5` 在 `http://localhost:3001/` 干净启动，TypeScript 零报错。
+
+#### 已完成
+
+| 项 | 说明 |
+|----|------|
+| `.env.development` / `.env.production` | API Base URL 环境变量 |
+| `.npmrc` | npmmirror 加速镜像 |
+| `package.json` 版本修正 | 所有 `@dcloudio/*` 统一到 `vue3` tag（`3.0.0-alpha-5000720260416001`）；`@dcloudio/uni-vite` → `@dcloudio/vite-plugin-uni` |
+| `pnpm.overrides` | `@dcloudio/uni-app-vue` 锁定 `3.0.0-5000720260410001` 解决依赖树版本冲突 |
+| `pnpm.onlyBuiltDependencies` | 允许 esbuild / core-js / vue-demi 构建脚本 |
+| `vite.config.ts` 插件名修正 | `@dcloudio/vite-plugin-uni` |
+| `tsconfig.json` | 补充 `vite/client` 类型，支持 `import.meta.env` |
+| Tab 图标 | 8 张 81×81 PNG 占位图（灰/蓝），由 Node.js 内置 zlib 生成 |
+| TypeScript 类型修复 | 5 处：register.vue 模板引用、test/index source 类型收窄、request.ts PATCH→POST 转换、tts.ts plus 类型断言 |
+| H5 dev server | 2972ms 启动，`http://localhost:3001/` |
+
+### ⬜ 阶段 2：H5 冒烟测试（下一步）
+
+**目标**：对接后端后，浏览器走通完整主流程
+
+**前提**：需要后端服务在 `localhost:8080` 运行（Java 或 Python 后端任选）
 
 **待完成**：
 
-- [ ] 补充 `.env.development`（`VITE_API_BASE=http://localhost:8080/api/v1`）
-- [ ] 准备 tab 图标 PNG（8 张放 `static/tab-icons/`，否则小程序报错）
-- [ ] 执行 `pnpm install` 安装依赖
-- [ ] H5 冒烟测试：注册 → 登录 → 今日学习 → 答题 → 完成页
-- [ ] 修复 H5 联调中发现的问题
+- [ ] 登录页：邮箱密码登录成功，token 写入 storage
+- [ ] 今日学习：`GET /study/today` 返回词卡列表，首页正常渲染
+- [ ] 学习会话：翻卡 → 答对/答错 → 完成页流程
+- [ ] 离线场景：断网时答题，联网后队列自动 flush
+- [ ] 错词本：答错单词出现在列表中
 
-### ⬜ 阶段 2：学习核心功能完善
+---
+
+### ⬜ 阶段 3：学习核心功能完善
 
 - [ ] `WordCard` 手势滑动（左滑=不认识、右滑=认识）
 - [ ] 学习会话支持离线模式（答题结果进本地队列）
 - [ ] 词库下载到本地（`/words/download` + `LocalTable` 分 chunk 缓存）
 - [ ] TTS 音频实际播放验证（需后端返回真实 audio URL）
 
-### ⬜ 阶段 3：统计图表接入
+### ⬜ 阶段 4：统计图表接入
 
 - [ ] 安装 `@qiun/ucharts` 插件
 - [ ] `EbbinghausChart` 接入真实数据
 - [ ] 统计页每日柱图改为 uCharts 柱状图
 - [ ] 遗忘曲线独立页（`stats/forgetting-curve.vue`）
 
-### ⬜ 阶段 4：小程序端适配
+### ⬜ 阶段 5：小程序端适配
 
 - [ ] 配置微信小程序 AppID
 - [ ] 配置 request 合法域名（后端 API + 有道 CDN）
 - [ ] 微信一键登录真机验证
 - [ ] 包体积检查（主包 ≤ 2MB，超出做分包）
 
-### ⬜ 阶段 5：Android App 打包
+### ⬜ 阶段 6：Android App 打包
 
 - [ ] HBuilderX 云打包测试证书版本
 - [ ] 正式 keystore 签名（务必备份）

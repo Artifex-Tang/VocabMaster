@@ -1,6 +1,7 @@
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
-import ElementPlus from 'element-plus'
+// Element Plus global CSS; components are auto-imported on-demand by unplugin-vue-components.
+// ElMessage/ElMessageBox/ElNotification are plain functions — no app.use() needed.
 import 'element-plus/dist/index.css'
 import App from './App.vue'
 import router from './router'
@@ -13,7 +14,6 @@ const pinia = createPinia()
 
 app.use(pinia)
 app.use(router)
-app.use(ElementPlus)
 
 // Trigger store setup early so registerAuthHooks() runs before the first API request
 useUserStore()

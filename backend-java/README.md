@@ -95,10 +95,52 @@ open http://localhost:8080/api/v1/swagger-ui.html
 
 ## 下一步
 
-### 步骤 7 — 统计模块
-- `StatsService`：今日统计、周/月报（按日聚合）、遗忘曲线数据、等级概览
+### 步骤 7 — 统计模块 ✅
+- `StatsService`：今日统计（dailySummary XML）、周/月报（按日聚合 + level_breakdown）、遗忘曲线数据、等级概览（各阶段分布 + 掌握率）
 - `StatsController`：`/stats/today`、`/stats/summary`、`/stats/forgetting-curve`、`/stats/level-overview`
+- `UserWordProgressMapper` 新增 `levelSummary()`（跨等级 mastered/learning 汇总）
 
-### 后续步骤
-- 步骤 8：打卡 / 错题本 / 多端同步
-- 步骤 9：管理后台轻量版
+### 步骤 8 — 打卡 / 错题本 / 用户模块 ✅
+- `CheckinService`：今日打卡（幂等）+ 连续天数更新 + streak 成就自动发放；打卡日历按月；成就列表（已解锁/未解锁）
+- `CheckinController`：`/checkin/today`、`/checkin/calendar`、`/checkin/achievements`
+- `WrongWordService`：分页列表、错题复习词卡、手动标记解决
+- `WrongWordController`：`/wrong-words`、`/wrong-words/review`、`/wrong-words/resolve`
+- `UserService`：获取/更新用户信息（手机号脱敏）、获取/更新用户设置（部分更新）
+- `UserController`：`/user/me`、`/user/settings`
+
+### 步骤 9 — 管理后台 ✅
+- `AdminService`：统计看板（DAU / 新注册 / 词库规模）、用户列表+状态变更、词库列表+审核
+- `AdminController`：`/admin/dashboard`、`/admin/users`、`/admin/words`、`/admin/words/import`、`/admin/words/{id}/audit`
+- `StudyLogMapper` 新增 `countDau()`
+
+---
+
+### 补全项 ✅
+- **错题自动 resolved**：`StudyService` 答对后查最近 3 条 `study_log`，全为 correct 则自动置 `resolved=1`（`StudyLogMapper.findLastN()`）
+- **打卡统计接通**：每次 `StudyService.answer()` 后调用 `CheckinMapper.upsertStats()`（INSERT ON DUPLICATE KEY UPDATE），`words_learned / words_reviewed / correct_count / duration_seconds` 字段实时累加
+- **Sync 模块**：`SyncService` + `SyncController`（`/sync/pull` 增量拉取、`/sync/push` 离线队列推送），依赖 `sync_token` 表记录设备同步时间戳
+- **用户导出/注销**：`GET /user/export`（内联生成 CSV 直接下载）、`POST /user/delete-account`（验证码二次确认 + 逻辑删除）
+
+---
+
+## 后端 Java 已全部完成 ✅
+
+所有模块均已实现，`/api/v1` 下 API 路径汇总：
+
+| 模块 | 路径前缀 | 主要端点 |
+|------|---------|---------|
+| 认证 | `/auth` | 注册/登录/刷新/登出 |
+| 用户 | `/user` | me / settings |
+| 词库 | `/words` | levels / topics / search / download |
+| 学习 | `/study` | today / answer / answer-batch / reset |
+| 测试 | `/test` | generate / submit |
+| 统计 | `/stats` | today / summary / forgetting-curve / level-overview |
+| 打卡 | `/checkin` | today / calendar / achievements |
+| 错题本 | `/wrong-words` | list / review / resolve |
+| 同步 | `/sync` | pull / push |
+| 管理 | `/admin` | dashboard / users / words（仅 ADMIN 角色） |
+
+## 下一步（其他端）
+
+- **Web 前端**：Vue 3 + Vite + Pinia + Element Plus（见 `docs/07-frontend-web.md`）
+- **Uni-app 端**：小程序 + Android APK（见 `docs/08-frontend-uniapp.md`）
