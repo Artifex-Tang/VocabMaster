@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vocabmaster.study.mapper.WrongWordMapper">
+
+    <!-- 分页查错题，走 idx_user_resolved -->
+    <select id="findByUserAndLevel" resultType="com.vocabmaster.study.entity.WrongWord">
+        SELECT * FROM wrong_word
+        WHERE user_id = #{userId}
+          <if test="levelCode != null and levelCode != ''">
+              AND level_code = #{levelCode}
+          </if>
+          <if test="resolved != null">
+              AND resolved = #{resolved}
+          </if>
+        ORDER BY last_wrong_at DESC
+    </select>
+
+</mapper>

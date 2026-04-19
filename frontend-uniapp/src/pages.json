@@ -1,0 +1,60 @@
+{
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^u-(.*)": "uview-plus/components/u-$1/u-$1.vue"
+    }
+  },
+  "pages": [
+    { "path": "pages/index/index",   "style": { "navigationBarTitleText": "今日学习" } },
+    { "path": "pages/test/index",    "style": { "navigationBarTitleText": "测试" } },
+    { "path": "pages/stats/index",   "style": { "navigationBarTitleText": "统计" } },
+    { "path": "pages/mine/index",    "style": { "navigationBarTitleText": "我的" } },
+    { "path": "pages/auth/login",    "style": { "navigationBarTitleText": "登录", "navigationStyle": "default" } },
+    { "path": "pages/auth/register", "style": { "navigationBarTitleText": "注册" } },
+    { "path": "pages/study/session", "style": { "navigationBarTitleText": "学习中", "disableScroll": true } },
+    { "path": "pages/study/done",    "style": { "navigationBarTitleText": "完成" } },
+    { "path": "pages/test/spelling", "style": { "navigationBarTitleText": "拼写测试", "disableScroll": true } },
+    { "path": "pages/test/choice",   "style": { "navigationBarTitleText": "选择题", "disableScroll": true } },
+    { "path": "pages/test/listening","style": { "navigationBarTitleText": "听写", "disableScroll": true } },
+    { "path": "pages/wrong-book/list","style": { "navigationBarTitleText": "错词本" } }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "VocabMaster",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F5F7FA"
+  },
+  "tabBar": {
+    "color": "#9CA3AF",
+    "selectedColor": "#1890FF",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "学习",
+        "iconPath": "static/tab-icons/study.png",
+        "selectedIconPath": "static/tab-icons/study-active.png"
+      },
+      {
+        "pagePath": "pages/test/index",
+        "text": "测试",
+        "iconPath": "static/tab-icons/test.png",
+        "selectedIconPath": "static/tab-icons/test-active.png"
+      },
+      {
+        "pagePath": "pages/stats/index",
+        "text": "统计",
+        "iconPath": "static/tab-icons/stats.png",
+        "selectedIconPath": "static/tab-icons/stats-active.png"
+      },
+      {
+        "pagePath": "pages/mine/index",
+        "text": "我的",
+        "iconPath": "static/tab-icons/mine.png",
+        "selectedIconPath": "static/tab-icons/mine-active.png"
+      }
+    ]
+  }
+}

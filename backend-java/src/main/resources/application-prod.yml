@@ -1,0 +1,21 @@
+spring:
+  flyway:
+    validate-on-migrate: true
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.nologging.NoLoggingImpl
+
+logging:
+  level:
+    com.vocabmaster: INFO
+    org.springframework.security: WARN
+    com.baomidou.mybatisplus: WARN
+  file:
+    name: /var/log/vocabmaster/app.log
+
+springdoc:
+  swagger-ui:
+    enabled: false
+  api-docs:
+    enabled: false

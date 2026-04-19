@@ -1,0 +1,73 @@
+@use './variables' as *;
+
+// ── Reset ─────────────────────────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: $font-zh;
+  color: #1f2937;
+  background: #f3f4f6;
+}
+
+// ── IPA font ──────────────────────────────────────────────────────────────────
+.ipa {
+  font-family: $font-ipa;
+  color: #6b7280;
+  font-size: 0.9em;
+}
+
+// ── English word display ──────────────────────────────────────────────────────
+.word-text {
+  font-family: $font-en;
+  font-weight: 700;
+}
+
+// ── Word card 3-D flip ────────────────────────────────────────────────────────
+.word-card {
+  perspective: 800px;
+  cursor: pointer;
+
+  .card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+  }
+
+  &.flipped .card-inner {
+    transform: rotateY(180deg);
+  }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: $radius-card;
+    box-shadow: $shadow-card;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: $space-6;
+  }
+
+  .card-back {
+    transform: rotateY(180deg);
+  }
+}
+
+// ── Progress ring ─────────────────────────────────────────────────────────────
+.el-progress--circle .el-progress__text {
+  font-family: $font-en;
+}
+
+// ── Util classes ──────────────────────────────────────────────────────────────
+.text-muted     { color: #6b7280; }
+.text-mastered  { color: $color-mastered; }
+.text-error     { color: $color-error; }
+.text-learning  { color: $color-learning; }
+
+.card-shadow { box-shadow: $shadow-card; border-radius: $radius-card; }

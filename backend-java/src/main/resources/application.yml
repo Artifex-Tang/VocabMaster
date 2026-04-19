@@ -1,0 +1,103 @@
+spring:
+  application:
+    name: vocabmaster
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:vocabmaster}?useUnicode=true&characterEncoding=utf8mb4&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
+    username: ${DB_USERNAME:vocab}
+    password: ${DB_PASSWORD:vocab123}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 3000ms
+      lettuce:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    validate-on-migrate: true
+  jackson:
+    property-naming-strategy: SNAKE_CASE
+    time-zone: UTC
+    date-format: "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/**/*.xml
+  type-aliases-package: com.vocabmaster.*.entity
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+  global-config:
+    db-config:
+      logic-delete-field: deletedAt
+      logic-delete-value: "NOW(3)"
+      logic-not-delete-value: "NULL"
+      id-type: auto
+
+app:
+  jwt:
+    secret: ${JWT_SECRET}
+    access-ttl-seconds: 7200
+    refresh-ttl-seconds: 604800
+  aes:
+    key: ${AES_KEY}
+  seed:
+    csv-path: ../seed/words_sample.csv
+  oauth:
+    wechat:
+      app-id: ${WECHAT_APP_ID:}
+      app-secret: ${WECHAT_APP_SECRET:}
+    apple:
+      team-id: ${APPLE_TEAM_ID:}
+      client-id: ${APPLE_CLIENT_ID:}
+      key-id: ${APPLE_KEY_ID:}
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api/v1
+  compression:
+    enabled: true
+    mime-types: application/json,application/xml,text/plain
+
+logging:
+  level:
+    com.vocabmaster: DEBUG
+    org.springframework.security: INFO
+    com.baomidou.mybatisplus: INFO
+  pattern:
+    console: "%d{HH:mm:ss} %-5level [%X{requestId}] %logger{36} - %msg%n"
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: alpha
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized

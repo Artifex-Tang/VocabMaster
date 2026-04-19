@@ -1,0 +1,9 @@
+spring:
+  config:
+    import: "optional:dotenv:./"
+
+logging:
+  level:
+    com.vocabmaster: DEBUG
+    org.springframework.security: DEBUG
+    com.baomidou.mybatisplus: DEBUG

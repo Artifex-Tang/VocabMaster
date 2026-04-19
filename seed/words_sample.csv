@@ -1,0 +1,201 @@
+level_code,word,ipa,phonetic_us,en_definition,zh_definition,example_en,example_zh,topic,audio_url_uk,audio_url_us,image_url,emoji,difficulty,frequency
+KET,apple,/ˈæp.əl/,/ˈæp.əl/,"a round fruit with firm, white flesh and a green, red, or yellow skin",苹果,I eat an apple every morning.,我每天早上吃一个苹果。,food,,,,🍎,1,5
+KET,book,/bʊk/,/bʊk/,a written or printed work consisting of pages bound together,书；书本,This book is very interesting.,这本书很有趣。,education,,,,📖,1,5
+KET,cat,/kæt/,/kæt/,a small animal with fur that people often keep as a pet,猫,My cat likes to sleep on the sofa.,我的猫喜欢在沙发上睡觉。,animal,,,,🐱,1,5
+KET,dog,/dɒɡ/,/dɔːɡ/,a common animal with four legs kept as a pet or trained for work,狗,The dog is barking at the mailman.,狗在对邮递员叫。,animal,,,,🐶,1,5
+KET,eat,/iːt/,/iːt/,to put food into the mouth and swallow it,吃,We eat dinner at seven.,我们七点吃晚饭。,food,,,,🍽️,1,5
+KET,family,/ˈfæm.əl.i/,/ˈfæm.əl.i/,"a group of people related by blood or marriage",家庭；家人,My family is going on holiday next week.,我家下周要去度假。,family,,,,👨‍👩‍👧,1,5
+KET,good,/ɡʊd/,/ɡʊd/,of a high standard or quality,好的；良好的,She is a good teacher.,她是位好老师。,general,,,,👍,1,5
+KET,happy,/ˈhæp.i/,/ˈhæp.i/,feeling pleasure or contentment,快乐的；幸福的,The children are happy at the park.,孩子们在公园里很开心。,emotion,,,,😊,1,5
+KET,house,/haʊs/,/haʊs/,a building for people to live in,房子；住宅,We live in a small house.,我们住在一栋小房子里。,home,,,,🏠,1,5
+KET,read,/riːd/,/riːd/,to look at words and understand what they mean,阅读；读,I read the newspaper every day.,我每天看报纸。,education,,,,📚,1,5
+KET,school,/skuːl/,/skuːl/,a place where children go to be educated,学校,She walks to school every morning.,她每天早上走路去学校。,education,,,,🏫,1,5
+KET,tree,/triː/,/triː/,a tall plant with a thick trunk and branches,树,There is a big tree in the garden.,花园里有一棵大树。,nature,,,,🌳,1,5
+KET,walk,/wɔːk/,/wɑːk/,to move along by putting one foot in front of the other,走路；散步,Let's walk in the park.,我们去公园散步吧。,action,,,,🚶,1,5
+KET,water,/ˈwɔː.tər/,/ˈwɑː.t̬ɚ/,"a clear liquid that falls from the sky as rain",水,Please give me a glass of water.,请给我一杯水。,food,,,,💧,1,5
+KET,friend,/frend/,/frend/,"a person you know well and like, but who is not part of your family",朋友,She is my best friend.,她是我最好的朋友。,relationship,,,,👫,1,5
+KET,play,/pleɪ/,/pleɪ/,to take part in a game or activity for enjoyment,玩耍；游戏,The kids are playing in the yard.,孩子们在院子里玩。,action,,,,🎮,1,5
+KET,open,/ˈəʊ.pən/,/ˈoʊ.pən/,"not closed; allowing people or things to pass through",打开的；开着的,The door is open.,门开着。,action,,,,🚪,1,5
+KET,sleep,/sliːp/,/sliːp/,to be in a state of rest with eyes closed,睡觉,Babies sleep a lot.,婴儿睡得很多。,action,,,,💤,1,5
+KET,red,/red/,/red/,the colour of blood or fire,红色的,She is wearing a red dress.,她穿着一条红色的连衣裙。,color,,,,🔴,1,5
+KET,big,/bɪɡ/,/bɪɡ/,large in size or amount,大的,This is a big room.,这是个大房间。,general,,,,📏,1,5
+PET,achieve,/əˈtʃiːv/,/əˈtʃiːv/,to succeed in doing something after a lot of effort,实现；取得,She achieved her goal of becoming a doctor.,她实现了当医生的目标。,general,,,,🎯,2,4
+PET,advice,/ədˈvaɪs/,/ədˈvaɪs/,an opinion that someone gives about what to do,建议；忠告,Can you give me some advice?,你能给我一些建议吗？,communication,,,,💡,2,4
+PET,balance,/ˈbæl.əns/,/ˈbæl.əns/,a state in which different things occur in equal amounts,平衡,It's important to keep a work-life balance.,保持工作与生活的平衡很重要。,general,,,,⚖️,2,4
+PET,career,/kəˈrɪər/,/kəˈrɪr/,"the job you do for a long period of your life",职业；生涯,She has had a long career in teaching.,她从事教育工作很长时间了。,work,,,,💼,2,4
+PET,decide,/dɪˈsaɪd/,/dɪˈsaɪd/,to choose between two or more possibilities,决定,I can't decide what to wear.,我决定不了穿什么。,action,,,,🤔,2,4
+PET,environment,/ɪnˈvaɪ.rən.mənt/,/ɪnˈvaɪ.rən.mənt/,the natural world in which people live,环境,We must protect the environment.,我们必须保护环境。,nature,,,,🌍,2,4
+PET,experience,/ɪkˈspɪə.ri.əns/,/ɪkˈspɪr.i.əns/,"knowledge you get by doing something",经验；经历,She has a lot of teaching experience.,她有很多教学经验。,general,,,,📓,2,4
+PET,festival,/ˈfes.tɪ.vəl/,/ˈfes.tə.vəl/,"a special day or period of celebration",节日,The music festival lasts three days.,音乐节持续三天。,culture,,,,🎉,2,4
+PET,generation,/ˌdʒen.əˈreɪ.ʃən/,/ˌdʒen.əˈreɪ.ʃən/,"all the people of about the same age",一代人,My grandfather's generation lived through the war.,我祖父那一代人经历了战争。,society,,,,👴,2,4
+PET,hobby,/ˈhɒb.i/,/ˈhɑː.bi/,"an activity you do regularly for pleasure",爱好,Her hobby is painting.,她的爱好是画画。,leisure,,,,🎨,2,4
+PET,imagine,/ɪˈmædʒ.ɪn/,/ɪˈmædʒ.ɪn/,"to form a picture or idea in your mind",想象,Imagine living on Mars.,想象一下住在火星上。,mental,,,,🧠,2,4
+PET,journey,/ˈdʒɜː.ni/,/ˈdʒɝː.ni/,"an act of traveling from one place to another",旅程；旅行,The journey took six hours.,这次旅行花了六个小时。,travel,,,,🚆,2,4
+PET,knowledge,/ˈnɒl.ɪdʒ/,/ˈnɑː.lɪdʒ/,"information and understanding you have about a subject",知识,His knowledge of history is impressive.,他的历史知识令人印象深刻。,education,,,,🎓,2,4
+PET,language,/ˈlæŋ.ɡwɪdʒ/,/ˈlæŋ.ɡwɪdʒ/,"a system of communication using words",语言,English is a global language.,英语是一种全球性语言。,communication,,,,🗣️,2,4
+PET,memory,/ˈmem.ər.i/,/ˈmem.ɚ.i/,"the ability to remember information",记忆；记忆力,She has a good memory for names.,她记人名的能力很强。,mental,,,,🧩,2,4
+PET,opportunity,/ˌɒp.əˈtʃuː.nə.ti/,/ˌɑː.pɚˈtuː.nə.t̬i/,"a chance to do something",机会,Don't miss this opportunity.,不要错过这个机会。,general,,,,🚪,2,4
+PET,prepare,/prɪˈpeər/,/prɪˈper/,"to make ready for something",准备,I need to prepare for the exam.,我需要为考试做准备。,action,,,,📝,2,4
+PET,recommend,/ˌrek.əˈmend/,/ˌrek.əˈmend/,"to suggest that someone or something is good",推荐,I recommend this book.,我推荐这本书。,action,,,,👍,2,4
+PET,technology,/tekˈnɒl.ə.dʒi/,/tekˈnɑː.lə.dʒi/,"the use of scientific knowledge for practical purposes",技术；科技,Technology is changing fast.,科技在快速变化。,science,,,,💻,2,4
+PET,vocabulary,/vəˈkæb.jə.lər.i/,/voʊˈkæb.jə.ler.i/,"all the words known to a person",词汇；词汇量,Reading helps build vocabulary.,阅读有助于扩大词汇量。,education,,,,📖,2,4
+FCE,acknowledge,/əkˈnɒl.ɪdʒ/,/əkˈnɑː.lɪdʒ/,"to accept or admit that something is true",承认；确认,He acknowledged his mistake.,他承认了自己的错误。,communication,,,,✅,3,3
+FCE,adequate,/ˈæd.ə.kwət/,/ˈæd.ə.kwət/,"enough or satisfactory for a purpose",足够的；适当的,The food supply is adequate for a week.,食物供应一周是够的。,general,,,,📊,3,3
+FCE,ambiguous,/æmˈbɪɡ.ju.əs/,/æmˈbɪɡ.ju.əs/,"having more than one possible meaning",模棱两可的,His answer was ambiguous.,他的回答模棱两可。,language,,,,❓,3,3
+FCE,anticipate,/ænˈtɪs.ɪ.peɪt/,/ænˈtɪs.ə.peɪt/,"to expect or predict something",预期；预料,We anticipate a good harvest.,我们预计会有好收成。,mental,,,,🔮,3,3
+FCE,controversy,/ˈkɒn.trə.vɜː.si/,/ˈkɑːn.trə.vɝː.si/,"serious disagreement about something",争议；争论,The new law caused controversy.,新法律引起了争议。,society,,,,⚔️,3,3
+FCE,deliberate,/dɪˈlɪb.ər.ət/,/dɪˈlɪb.ɚ.ət/,"done on purpose; intentional",故意的；蓄意的,That was a deliberate insult.,那是故意侮辱。,action,,,,🎯,3,3
+FCE,distinguish,/dɪˈstɪŋ.ɡwɪʃ/,/dɪˈstɪŋ.ɡwɪʃ/,"to recognize a difference between two things",区分；辨别,Can you distinguish right from wrong?,你能辨别对错吗？,mental,,,,🔍,3,3
+FCE,emphasize,/ˈem.fə.saɪz/,/ˈem.fə.saɪz/,"to show that something is particularly important",强调,She emphasized the need for honesty.,她强调了诚实的必要性。,communication,,,,❗,3,3
+FCE,exaggerate,/ɪɡˈzædʒ.ə.reɪt/,/ɪɡˈzædʒ.ə.reɪt/,"to make something seem larger than it really is",夸大；夸张,Don't exaggerate the problem.,别把问题夸大了。,communication,,,,📈,3,3
+FCE,genuine,/ˈdʒen.ju.ɪn/,/ˈdʒen.ju.ɪn/,"real and not fake",真正的；真诚的,Her smile was genuine.,她的微笑很真诚。,character,,,,💎,3,3
+FCE,hesitate,/ˈhez.ɪ.teɪt/,/ˈhez.ə.teɪt/,"to pause before doing something",犹豫；迟疑,Don't hesitate to ask.,不要犹豫，尽管问。,action,,,,🤷,3,3
+FCE,inevitable,/ɪˈnev.ɪ.tə.bəl/,/ɪˈnev.ə.t̬ə.bəl/,"certain to happen; unavoidable",不可避免的,Change is inevitable.,变化不可避免。,general,,,,⏳,3,3
+FCE,justify,/ˈdʒʌs.tɪ.faɪ/,/ˈdʒʌs.tə.faɪ/,"to give a good reason for something",证明...正当；为...辩护,How can you justify your actions?,你如何为你的行为辩护？,communication,,,,⚖️,3,3
+FCE,magnificent,/mæɡˈnɪf.ɪ.sənt/,/mæɡˈnɪf.ə.sənt/,"very good; extremely impressive",壮丽的；宏伟的,The view from the top is magnificent.,从顶上看风景很壮丽。,appearance,,,,🏔️,3,3
+FCE,obstacle,/ˈɒb.stə.kəl/,/ˈɑːb.stə.kəl/,"something that makes it difficult to do something",障碍；阻碍,Poverty is a major obstacle to education.,贫困是教育的主要障碍。,general,,,,🚧,3,3
+FCE,persist,/pəˈsɪst/,/pɚˈsɪst/,"to continue to do something despite difficulties",坚持；持续,Persist in your efforts.,坚持努力。,action,,,,🔁,3,3
+FCE,reluctant,/rɪˈlʌk.tənt/,/rɪˈlʌk.tənt/,"unwilling to do something",不情愿的；勉强的,She was reluctant to leave.,她不愿离开。,emotion,,,,😕,3,3
+FCE,sophisticated,/səˈfɪs.tɪ.keɪ.tɪd/,/səˈfɪs.tə.keɪ.t̬ɪd/,"complex and advanced",精密的；复杂的,This is a sophisticated system.,这是一个复杂的系统。,technology,,,,🧬,3,3
+FCE,tremendous,/trɪˈmen.dəs/,/trəˈmen.dəs/,"very great in amount or strong",巨大的；极大的,We had a tremendous time.,我们玩得非常开心。,general,,,,🎆,3,3
+FCE,vulnerable,/ˈvʌl.nər.ə.bəl/,/ˈvʌl.nɚ.ə.bəl/,"easily harmed or influenced",易受伤害的；脆弱的,Children are vulnerable to diseases.,儿童易患疾病。,health,,,,🛡️,3,3
+CAE,aesthetic,/esˈθet.ɪk/,/esˈθet̬.ɪk/,"concerned with beauty or art",美学的；审美的,The design has strong aesthetic appeal.,这个设计有很强的美学吸引力。,art,,,,🎨,4,2
+CAE,ambivalent,/æmˈbɪv.əl.ənt/,/æmˈbɪv.əl.ənt/,"having mixed feelings about something",矛盾的；摇摆不定的,I feel ambivalent about moving abroad.,我对移居国外感到矛盾。,emotion,,,,🔀,4,2
+CAE,benevolent,/bəˈnev.əl.ənt/,/bəˈnev.əl.ənt/,"kind and helpful",仁慈的；善意的,He is a benevolent leader.,他是一位仁慈的领导者。,character,,,,😇,4,2
+CAE,conscientious,/ˌkɒn.ʃiˈen.ʃəs/,/ˌkɑːn.ʃiˈen.ʃəs/,"careful and thorough in work",勤勉的；认真的,She is a conscientious worker.,她工作认真。,character,,,,📋,4,2
+CAE,detrimental,/ˌdet.rɪˈmen.təl/,/ˌdet.rəˈmen.t̬əl/,"causing harm or damage",有害的；不利的,Smoking is detrimental to health.,吸烟有害健康。,health,,,,⚠️,4,2
+CAE,eloquent,/ˈel.ə.kwənt/,/ˈel.ə.kwənt/,"able to express ideas clearly and beautifully",雄辩的；有口才的,She gave an eloquent speech.,她做了一场雄辩的演讲。,communication,,,,🎤,4,2
+CAE,formidable,/ˈfɔː.mɪ.də.bəl/,/ˈfɔːr.mə.də.bəl/,"causing fear or respect by being impressive",令人敬畏的；强大的,He is a formidable opponent.,他是个强大的对手。,character,,,,🦁,4,2
+CAE,gregarious,/ɡrɪˈɡeə.ri.əs/,/ɡrɪˈɡer.i.əs/,"enjoying the company of others",爱交际的；合群的,She is a gregarious person.,她是个爱交际的人。,character,,,,👥,4,2
+CAE,hypothetical,/ˌhaɪ.pəˈθet.ɪ.kəl/,/ˌhaɪ.pəˈθet̬.ɪ.kəl/,"based on assumption rather than fact",假设的；假定的,Let's consider a hypothetical case.,让我们考虑一个假设的情况。,science,,,,🔬,4,2
+CAE,inherent,/ɪnˈher.ənt/,/ɪnˈher.ənt/,"existing as a natural part of something",固有的；内在的,There are inherent risks in any investment.,任何投资都有固有风险。,general,,,,🧬,4,2
+CAE,meticulous,/məˈtɪk.jə.ləs/,/məˈtɪk.jə.ləs/,"very careful and precise",一丝不苟的；细致的,She is meticulous about details.,她对细节一丝不苟。,character,,,,🔍,4,2
+CAE,nuance,/ˈnjuː.ɑːns/,/ˈnuː.ɑːns/,"a very slight difference in meaning or feeling",细微差别；微妙之处,He understood the nuances of the language.,他理解这门语言的微妙之处。,language,,,,🎭,4,2
+CAE,paradigm,/ˈpær.ə.daɪm/,/ˈper.ə.daɪm/,"a typical example or pattern of something",范式；典范,The theory represents a new paradigm.,这个理论代表了一种新的范式。,science,,,,📐,4,2
+CAE,poignant,/ˈpɔɪ.njənt/,/ˈpɔɪ.njənt/,"causing a feeling of sadness",令人痛心的；辛酸的,It was a poignant moment.,那是个令人心酸的时刻。,emotion,,,,💔,4,2
+CAE,quintessential,/ˌkwɪn.tɪˈsen.ʃəl/,/ˌkwɪn.təˈsen.ʃəl/,"being the most typical example of something",典型的；精髓的,This is the quintessential British pub.,这是典型的英式酒吧。,culture,,,,🇬🇧,4,2
+CAE,resilient,/rɪˈzɪl.i.ənt/,/rɪˈzɪl.i.ənt/,"able to recover quickly from difficulties",有韧性的；有弹性的,Children are remarkably resilient.,孩子们的适应力很强。,character,,,,💪,4,2
+CAE,scrutinize,/ˈskruː.tɪ.naɪz/,/ˈskruː.t̬ən.aɪz/,"to examine something very carefully",仔细检查；详审,Investors scrutinize every report.,投资者仔细审查每一份报告。,action,,,,🔬,4,2
+CAE,ubiquitous,/juːˈbɪk.wɪ.təs/,/juːˈbɪk.wə.t̬əs/,"present or found everywhere",无处不在的,Smartphones are ubiquitous today.,如今智能手机无处不在。,technology,,,,📱,4,2
+CAE,vindicate,/ˈvɪn.dɪ.keɪt/,/ˈvɪn.də.keɪt/,"to prove that someone is right or innocent",证明...无罪；为...平反,The evidence vindicated him.,证据证明了他无罪。,law,,,,⚖️,4,2
+CAE,zealous,/ˈzel.əs/,/ˈzel.əs/,"showing great enthusiasm",热心的；热情的,He is a zealous supporter.,他是一位热情的支持者。,character,,,,🔥,4,2
+PRIMARY,bag,/bæɡ/,/bæɡ/,"a container made of paper, cloth, or plastic",包；袋子,I have a new school bag.,我有一个新书包。,object,,,,🎒,1,5
+PRIMARY,chair,/tʃeər/,/tʃer/,"a seat for one person with a back",椅子,Please sit on the chair.,请坐在椅子上。,furniture,,,,🪑,1,5
+PRIMARY,desk,/desk/,/desk/,"a table for writing or working at",书桌,My desk is in my bedroom.,我的书桌在我卧室里。,furniture,,,,🗄️,1,5
+PRIMARY,egg,/eɡ/,/eɡ/,"an oval object with a hard shell laid by birds",鸡蛋,I eat two eggs for breakfast.,我早餐吃两个鸡蛋。,food,,,,🥚,1,5
+PRIMARY,father,/ˈfɑː.ðər/,/ˈfɑː.ðɚ/,"a male parent",父亲,My father works in a bank.,我父亲在银行工作。,family,,,,👨,1,5
+PRIMARY,girl,/ɡɜːl/,/ɡɝːl/,"a female child",女孩,The girl is wearing a pink dress.,那个女孩穿着粉色连衣裙。,person,,,,👧,1,5
+PRIMARY,hand,/hænd/,/hænd/,"the part of the body at the end of the arm",手,Wash your hands before eating.,吃饭前洗手。,body,,,,✋,1,5
+PRIMARY,ice,/aɪs/,/aɪs/,"frozen water",冰,I like ice in my drink.,我喜欢在饮料里加冰。,nature,,,,🧊,1,5
+PRIMARY,juice,/dʒuːs/,/dʒuːs/,"liquid from fruit or vegetables",果汁,Orange juice is my favorite.,橙汁是我的最爱。,food,,,,🧃,1,5
+PRIMARY,kite,/kaɪt/,/kaɪt/,"a toy flown in the wind on a string",风筝,We fly kites in spring.,我们春天放风筝。,toy,,,,🪁,1,5
+PRIMARY,lion,/ˈlaɪ.ən/,/ˈlaɪ.ən/,"a large wild cat found in Africa",狮子,The lion is the king of animals.,狮子是百兽之王。,animal,,,,🦁,1,5
+PRIMARY,moon,/muːn/,/muːn/,"the round object in the sky at night",月亮,The moon is bright tonight.,今晚月亮很明亮。,nature,,,,🌙,1,5
+PRIMARY,nose,/nəʊz/,/noʊz/,"the part of the face above the mouth used to breathe and smell",鼻子,My nose is itchy.,我的鼻子痒。,body,,,,👃,1,5
+PRIMARY,orange,/ˈɒr.ɪndʒ/,/ˈɔːr.ɪndʒ/,"a round juicy fruit with thick orange skin",橙子；橙色,Oranges are rich in vitamin C.,橙子富含维生素C。,food,,,,🍊,1,5
+PRIMARY,pen,/pen/,/pen/,"a long thin object used for writing with ink",钢笔,I need a pen to sign my name.,我需要一支笔签名。,object,,,,🖊️,1,5
+PRIMARY,queen,/kwiːn/,/kwiːn/,"the female ruler of a country",女王，王后,The queen lives in a palace.,女王住在宫殿里。,person,,,,👸,1,5
+PRIMARY,sun,/sʌn/,/sʌn/,"the star that the Earth moves around",太阳,The sun is shining today.,今天阳光灿烂。,nature,,,,☀️,1,5
+PRIMARY,tiger,/ˈtaɪ.ɡər/,/ˈtaɪ.ɡɚ/,"a large wild cat with orange and black stripes",老虎,Tigers are endangered animals.,老虎是濒危动物。,animal,,,,🐯,1,5
+PRIMARY,umbrella,/ʌmˈbrel.ə/,/ʌmˈbrel.ə/,"an object used to protect from rain",雨伞,Take an umbrella; it's raining.,带把伞，下雨了。,object,,,,☂️,1,5
+PRIMARY,zoo,/zuː/,/zuː/,"a place where animals are kept for people to see",动物园,We visited the zoo last weekend.,我们上周末去了动物园。,place,,,,🦒,1,5
+JUNIOR,ability,/əˈbɪl.ə.ti/,/əˈbɪl.ə.t̬i/,"the skill or power to do something",能力；才能,He has the ability to learn quickly.,他有快速学习的能力。,character,,,,💡,2,4
+JUNIOR,attention,/əˈten.ʃən/,/əˈten.ʃən/,"the act of listening carefully",注意；专心,Please pay attention in class.,上课请专心。,mental,,,,👀,2,4
+JUNIOR,believe,/bɪˈliːv/,/bɪˈliːv/,"to think that something is true",相信,I believe you.,我相信你。,mental,,,,✨,2,4
+JUNIOR,choice,/tʃɔɪs/,/tʃɔɪs/,"the act of choosing between two or more things",选择,You have to make a choice.,你必须做出选择。,action,,,,🔀,2,4
+JUNIOR,develop,/dɪˈvel.əp/,/dɪˈvel.əp/,"to grow or cause to grow",发展；培养,Children develop quickly.,孩子们成长很快。,action,,,,🌱,2,4
+JUNIOR,energy,/ˈen.ə.dʒi/,/ˈen.ɚ.dʒi/,"the power to be active",能量；活力,Young people are full of energy.,年轻人充满活力。,science,,,,⚡,2,4
+JUNIOR,follow,/ˈfɒl.əʊ/,/ˈfɑː.loʊ/,"to go after someone or something",跟随；遵循,Follow me, please.,请跟我来。,action,,,,👣,2,4
+JUNIOR,government,/ˈɡʌv.ən.mənt/,/ˈɡʌv.ɚn.mənt/,"the group of people who govern a country",政府,The government announced new policies.,政府宣布了新政策。,society,,,,🏛️,2,4
+JUNIOR,history,/ˈhɪs.tər.i/,/ˈhɪs.tɚ.i/,"the study of past events",历史,I love studying history.,我喜欢学历史。,education,,,,📜,2,4
+JUNIOR,important,/ɪmˈpɔː.tənt/,/ɪmˈpɔːr.tənt/,"having great value or significance",重要的,Exercise is important for health.,锻炼对健康很重要。,general,,,,❗,2,4
+JUNIOR,join,/dʒɔɪn/,/dʒɔɪn/,"to become a member of something",加入；参加,Would you like to join us?,你想加入我们吗？,action,,,,🤝,2,4
+JUNIOR,kind,/kaɪnd/,/kaɪnd/,"generous and caring about others",善良的；和蔼的,She is a kind person.,她是个善良的人。,character,,,,❤️,2,4
+JUNIOR,local,/ˈləʊ.kəl/,/ˈloʊ.kəl/,"relating to a particular area",当地的；本地的,We ate at a local restaurant.,我们在一家当地餐厅吃饭。,general,,,,📍,2,4
+JUNIOR,manage,/ˈmæn.ɪdʒ/,/ˈmæn.ɪdʒ/,"to succeed in doing something difficult",管理；设法做到,She manages a team of ten.,她管理着十人团队。,work,,,,📊,2,4
+JUNIOR,nature,/ˈneɪ.tʃər/,/ˈneɪ.tʃɚ/,"all the plants, animals, and things not made by people",自然；大自然,We should protect nature.,我们应该保护大自然。,nature,,,,🌿,2,4
+JUNIOR,offer,/ˈɒf.ər/,/ˈɑː.fɚ/,"to say that you are willing to do something",提供；提议,Can I offer you some help?,我能帮你点什么吗？,action,,,,🎁,2,4
+JUNIOR,popular,/ˈpɒp.jə.lər/,/ˈpɑː.pjə.lɚ/,"liked by many people",受欢迎的；流行的,This song is very popular.,这首歌很流行。,general,,,,🌟,2,4
+JUNIOR,question,/ˈkwes.tʃən/,/ˈkwes.tʃən/,"something you ask to get information",问题；疑问,Can I ask a question?,我能问个问题吗？,communication,,,,❓,2,4
+JUNIOR,remember,/rɪˈmem.bər/,/rɪˈmem.bɚ/,"to keep information in your mind",记得；记住,I remember my first day at school.,我记得上学的第一天。,mental,,,,🧠,2,4
+JUNIOR,success,/səkˈses/,/səkˈses/,"the achievement of something you wanted",成功,Hard work leads to success.,努力工作带来成功。,general,,,,🏆,2,4
+SENIOR,abandon,/əˈbæn.dən/,/əˈbæn.dən/,"to leave something or someone completely",放弃；抛弃,They abandoned the old house.,他们弃了那栋老房子。,action,,,,🏚️,3,3
+SENIOR,accomplish,/əˈkʌm.plɪʃ/,/əˈkɑːm.plɪʃ/,"to finish something successfully",完成；实现,She accomplished her goals.,她实现了目标。,action,,,,✅,3,3
+SENIOR,attitude,/ˈæt.ɪ.tjuːd/,/ˈæt̬.ə.tuːd/,"a feeling or opinion about something",态度；看法,A positive attitude is important.,积极的态度很重要。,character,,,,😊,3,3
+SENIOR,beneficial,/ˌben.ɪˈfɪʃ.əl/,/ˌben.əˈfɪʃ.əl/,"helpful or good",有益的；有利的,Exercise is beneficial to health.,锻炼对健康有益。,general,,,,💚,3,3
+SENIOR,challenge,/ˈtʃæl.ɪndʒ/,/ˈtʃæl.əndʒ/,"a difficult task that tests ability",挑战,Learning a new language is a challenge.,学习新语言是一种挑战。,general,,,,⛰️,3,3
+SENIOR,consider,/kənˈsɪd.ər/,/kənˈsɪd.ɚ/,"to think carefully about something",考虑；认为,Please consider my proposal.,请考虑我的提议。,mental,,,,🤔,3,3
+SENIOR,demonstrate,/ˈdem.ən.streɪt/,/ˈdem.ən.streɪt/,"to show or prove something clearly",证明；展示,The experiment demonstrates the theory.,实验证明了这一理论。,action,,,,📊,3,3
+SENIOR,effective,/ɪˈfek.tɪv/,/ɪˈfek.tɪv/,"successful in producing a desired result",有效的；起作用的,This is an effective method.,这是一个有效的方法。,general,,,,🎯,3,3
+SENIOR,essential,/ɪˈsen.ʃəl/,/ɪˈsen.ʃəl/,"extremely important; necessary",必要的；本质的,Water is essential for life.,水是生命所必需的。,general,,,,💧,3,3
+SENIOR,expand,/ɪkˈspænd/,/ɪkˈspænd/,"to become or make larger",扩大；扩展,The company plans to expand.,公司计划扩张。,action,,,,📈,3,3
+SENIOR,focus,/ˈfəʊ.kəs/,/ˈfoʊ.kəs/,"to give attention to one thing",集中；聚焦,Let's focus on the main issue.,让我们集中讨论主要问题。,mental,,,,🎯,3,3
+SENIOR,guarantee,/ˌɡær.ənˈtiː/,/ˌɡer.ənˈtiː/,"a promise that something will happen",保证；担保,We guarantee quality.,我们保证质量。,communication,,,,🔒,3,3
+SENIOR,hazard,/ˈhæz.əd/,/ˈhæz.ɚd/,"something dangerous",危险；风险,Smoking is a health hazard.,吸烟有害健康。,general,,,,⚠️,3,3
+SENIOR,identify,/aɪˈden.tɪ.faɪ/,/aɪˈden.t̬ə.faɪ/,"to recognize who or what something is",识别；确认,Can you identify the suspect?,你能认出嫌疑人吗？,action,,,,🆔,3,3
+SENIOR,investigate,/ɪnˈves.tɪ.ɡeɪt/,/ɪnˈves.tə.ɡeɪt/,"to examine something carefully",调查；研究,Police are investigating the case.,警方正在调查此案。,action,,,,🔎,3,3
+SENIOR,maintain,/meɪnˈteɪn/,/meɪnˈteɪn/,"to keep something in good condition",保持；维护,We must maintain our equipment.,我们必须维护设备。,action,,,,🔧,3,3
+SENIOR,objective,/əbˈdʒek.tɪv/,/əbˈdʒek.tɪv/,"a goal or aim",目标；客观的,Our objective is clear.,我们的目标很明确。,general,,,,🎯,3,3
+SENIOR,perceive,/pəˈsiːv/,/pɚˈsiːv/,"to notice or understand",感知；察觉,He perceives a change in attitude.,他察觉到态度的变化。,mental,,,,👁️,3,3
+SENIOR,reveal,/rɪˈviːl/,/rɪˈviːl/,"to make something known",揭示；透露,The report reveals new facts.,报告揭示了新事实。,action,,,,🔓,3,3
+SENIOR,significant,/sɪɡˈnɪf.ɪ.kənt/,/sɪɡˈnɪf.ɪ.kənt/,"important or noticeable",重要的；显著的,There is a significant difference.,有显著的差异。,general,,,,⭐,3,3
+CET4,abolish,/əˈbɒl.ɪʃ/,/əˈbɑː.lɪʃ/,"to officially end a law or system",废除；废止,The law was abolished in 1865.,这项法律于1865年被废除。,law,,,,🚫,3,3
+CET4,accommodate,/əˈkɒm.ə.deɪt/,/əˈkɑː.mə.deɪt/,"to provide space for someone",容纳；适应,The hotel can accommodate 500 guests.,酒店可容纳500位客人。,action,,,,🏨,3,3
+CET4,accumulate,/əˈkjuː.mjə.leɪt/,/əˈkjuː.mjə.leɪt/,"to collect a large amount gradually",积累；积聚,He accumulated a large fortune.,他积累了巨额财富。,action,,,,💰,3,3
+CET4,approximate,/əˈprɒk.sɪ.mət/,/əˈprɑːk.sə.mət/,"close but not exact",大约的；近似的,The approximate cost is 100 dollars.,大约花费100美元。,general,,,,≈,3,3
+CET4,assess,/əˈses/,/əˈses/,"to make a judgment about something",评估；评价,We need to assess the damage.,我们需要评估损失。,action,,,,📋,3,3
+CET4,capacity,/kəˈpæs.ə.ti/,/kəˈpæs.ə.t̬i/,"the ability to hold or do something",容量；能力,The stadium has a capacity of 50000.,体育场可容纳5万人。,general,,,,📦,3,3
+CET4,circumstance,/ˈsɜː.kəm.stæns/,/ˈsɝː.kəm.stæns/,"a condition that affects a situation",情况；环境,Under normal circumstances this works.,在正常情况下这是可行的。,general,,,,🔄,3,3
+CET4,consequence,/ˈkɒn.sɪ.kwəns/,/ˈkɑːn.sə.kwens/,"a result of an action",结果；后果,Face the consequences of your actions.,为自己的行为承担后果。,general,,,,➡️,3,3
+CET4,contribute,/kənˈtrɪb.juːt/,/kənˈtrɪb.juːt/,"to give something to help achieve a goal",贡献；捐助,Everyone can contribute something.,每个人都可以做出贡献。,action,,,,🤲,3,3
+CET4,derive,/dɪˈraɪv/,/dɪˈraɪv/,"to get something from a source",得到；起源于,The word derives from Latin.,这个词源自拉丁语。,language,,,,📚,3,3
+CET4,elaborate,/ɪˈlæb.ər.ət/,/ɪˈlæb.ɚ.ət/,"complex and detailed",详尽的；精心制作的,He gave an elaborate explanation.,他给出了详尽的解释。,communication,,,,🔍,3,3
+CET4,exceed,/ɪkˈsiːd/,/ɪkˈsiːd/,"to be greater than a number or amount",超过；超出,Sales exceeded expectations.,销售超出了预期。,action,,,,📈,3,3
+CET4,feasible,/ˈfiː.zə.bəl/,/ˈfiː.zə.bəl/,"possible to do",可行的,Is this plan feasible?,这个计划可行吗？,general,,,,✅,3,3
+CET4,illustrate,/ˈɪl.ə.streɪt/,/ˈɪl.ə.streɪt/,"to explain something with examples",说明；举例说明,Let me illustrate my point.,让我来说明我的观点。,communication,,,,📖,3,3
+CET4,indicate,/ˈɪn.dɪ.keɪt/,/ˈɪn.də.keɪt/,"to show something",表明；指出,The data indicates a trend.,数据显示出一个趋势。,action,,,,👆,3,3
+CET4,negotiate,/nɪˈɡəʊ.ʃi.eɪt/,/nɪˈɡoʊ.ʃi.eɪt/,"to discuss to reach an agreement",谈判；协商,We need to negotiate the price.,我们需要协商价格。,communication,,,,🤝,3,3
+CET4,phenomenon,/fəˈnɒm.ɪ.nən/,/fəˈnɑː.mə.nɑːn/,"something observed to happen",现象,It's a common phenomenon.,这是一个常见的现象。,science,,,,🌟,3,3
+CET4,preliminary,/prɪˈlɪm.ɪ.nər.i/,/prɪˈlɪm.ə.ner.i/,"coming before the main part",初步的；预备的,This is a preliminary report.,这是一份初步报告。,general,,,,1️⃣,3,3
+CET4,substantial,/səbˈstæn.ʃəl/,/səbˈstæn.ʃəl/,"large in amount or importance",大量的；重要的,There has been substantial progress.,有了重大进展。,general,,,,📊,3,3
+CET4,tendency,/ˈten.dən.si/,/ˈten.dən.si/,"a likelihood to behave in a certain way",倾向；趋势,He has a tendency to forget.,他有健忘的倾向。,character,,,,↗️,3,3
+CET6,aggregate,/ˈæɡ.rɪ.ɡət/,/ˈæɡ.rə.ɡət/,"a total made by combining different things",总数；合计,The aggregate cost was high.,总成本很高。,general,,,,➕,4,2
+CET6,allocate,/ˈæl.ə.keɪt/,/ˈæl.ə.keɪt/,"to give something for a particular purpose",分配；分派,We allocated funds to each department.,我们给每个部门分配了资金。,action,,,,📊,4,2
+CET6,ambitious,/æmˈbɪʃ.əs/,/æmˈbɪʃ.əs/,"having a strong desire to succeed",有雄心的；野心勃勃的,She is an ambitious young lawyer.,她是个雄心勃勃的年轻律师。,character,,,,🚀,4,2
+CET6,articulate,/ɑːˈtɪk.jə.lət/,/ɑːrˈtɪk.jə.lət/,"able to express thoughts clearly",能言善辩的；善于表达的,He is an articulate speaker.,他是一位善于表达的演讲者。,communication,,,,🎤,4,2
+CET6,compensate,/ˈkɒm.pən.seɪt/,/ˈkɑːm.pən.seɪt/,"to give something good to balance something bad",补偿；弥补,The company compensated the workers.,公司补偿了工人。,action,,,,💸,4,2
+CET6,comprehensive,/ˌkɒm.prɪˈhen.sɪv/,/ˌkɑːm.prəˈhen.sɪv/,"complete and including everything",全面的；综合的,We need a comprehensive plan.,我们需要一个综合性的计划。,general,,,,📑,4,2
+CET6,contemplate,/ˈkɒn.təm.pleɪt/,/ˈkɑːn.t̬əm.pleɪt/,"to think carefully about something",沉思；深思,She contemplated the offer.,她深思了这个提议。,mental,,,,💭,4,2
+CET6,deteriorate,/dɪˈtɪə.ri.ə.reɪt/,/dɪˈtɪr.i.ə.reɪt/,"to become worse",恶化；变坏,His health is deteriorating.,他的健康在恶化。,action,,,,📉,4,2
+CET6,discrepancy,/dɪˈskrep.ən.si/,/dɪˈskrep.ən.si/,"a difference between two things that should be the same",差异；不一致,There is a discrepancy in the accounts.,账目上有差异。,general,,,,⚖️,4,2
+CET6,endorse,/ɪnˈdɔːs/,/ɪnˈdɔːrs/,"to publicly support something",支持；赞同,I endorse this candidate.,我支持这位候选人。,action,,,,👍,4,2
+CET6,facilitate,/fəˈsɪl.ɪ.teɪt/,/fəˈsɪl.ə.teɪt/,"to make something easier",促进；使便利,Computers facilitate learning.,计算机促进学习。,action,,,,🔧,4,2
+CET6,implement,/ˈɪm.plɪ.ment/,/ˈɪm.plə.ment/,"to put a plan into action",实施；执行,We need to implement the changes.,我们需要实施这些变化。,action,,,,⚙️,4,2
+CET6,incentive,/ɪnˈsen.tɪv/,/ɪnˈsen.t̬ɪv/,"something that encourages action",激励；动机,Money is a strong incentive.,金钱是强大的激励。,general,,,,🎁,4,2
+CET6,legitimate,/lɪˈdʒɪt.ɪ.mət/,/ləˈdʒɪt̬.ə.mət/,"allowed by law or reasonable",合法的；合理的,She has a legitimate claim.,她有合理的要求。,law,,,,⚖️,4,2
+CET6,perpetuate,/pəˈpetʃ.u.eɪt/,/pɚˈpetʃ.u.eɪt/,"to make something continue for a long time",使永存；使延续,We must not perpetuate the myth.,我们不能让这个迷思延续下去。,action,,,,♾️,4,2
+CET6,prevail,/prɪˈveɪl/,/prɪˈveɪl/,"to be most common or frequent",盛行；占优势,Justice will prevail.,正义终将获胜。,general,,,,🏆,4,2
+CET6,reconcile,/ˈrek.ən.saɪl/,/ˈrek.ən.saɪl/,"to make two different ideas work together",协调；使和解,They reconciled after the argument.,争吵后他们和解了。,action,,,,🤝,4,2
+CET6,reinforce,/ˌriː.ɪnˈfɔːs/,/ˌriː.ɪnˈfɔːrs/,"to make something stronger",加强；强化,Practice reinforces learning.,练习强化学习。,action,,,,💪,4,2
+CET6,simultaneously,/ˌsɪm.əlˈteɪ.ni.əs.li/,/ˌsaɪ.məlˈteɪ.ni.əs.li/,"at the same time",同时地,Two things happened simultaneously.,两件事同时发生。,general,,,,⏰,4,2
+CET6,sustainable,/səˈsteɪ.nə.bəl/,/səˈsteɪ.nə.bəl/,"able to continue over time",可持续的,We need sustainable energy.,我们需要可持续能源。,general,,,,♻️,4,2
+TEM8,abstruse,/æbˈstruːs/,/æbˈstruːs/,"difficult to understand",深奥的；难解的,The philosopher's writings are abstruse.,这位哲学家的著作深奥难懂。,academic,,,,🧩,5,1
+TEM8,admonish,/ədˈmɒn.ɪʃ/,/ədˈmɑː.nɪʃ/,"to warn or reprimand firmly",警告；告诫,The teacher admonished the students.,老师警告了学生。,communication,,,,⚠️,5,1
+TEM8,bewilder,/bɪˈwɪl.dər/,/bɪˈwɪl.dɚ/,"to confuse someone completely",使迷惑；使不知所措,The sudden change bewildered him.,突然的变化让他不知所措。,emotion,,,,😵,5,1
+TEM8,cogent,/ˈkəʊ.dʒənt/,/ˈkoʊ.dʒənt/,"convincing and clearly expressed",令人信服的；强有力的,He made a cogent argument.,他提出了令人信服的论点。,communication,,,,🎯,5,1
+TEM8,conundrum,/kəˈnʌn.drəm/,/kəˈnʌn.drəm/,"a confusing and difficult problem",难题；谜,The situation is a conundrum.,这种情况是个难题。,general,,,,❓,5,1
+TEM8,demur,/dɪˈmɜːr/,/dɪˈmɝː/,"to raise objections or show reluctance",反对；表示异议,He demurred at the suggestion.,他对这个建议表示反对。,action,,,,🚫,5,1
+TEM8,ephemeral,/ɪˈfem.ər.əl/,/ɪˈfem.ɚ.əl/,"lasting for a very short time",短暂的；朝生暮死的,Fame can be ephemeral.,名声可能是短暂的。,general,,,,⏳,5,1
+TEM8,erudite,/ˈer.ʊ.daɪt/,/ˈer.ə.daɪt/,"having much knowledge from study",博学的；饱学的,She is an erudite scholar.,她是一位博学的学者。,character,,,,📚,5,1
+TEM8,fastidious,/fæsˈtɪd.i.əs/,/fæˈstɪd.i.əs/,"very attentive to details",挑剔的；一丝不苟的,He is fastidious about his appearance.,他对自己的外表很挑剔。,character,,,,🎩,5,1
+TEM8,gainsay,/ˌɡeɪnˈseɪ/,/ˌɡeɪnˈseɪ/,"to deny or contradict",否认；反驳,No one can gainsay his contribution.,没人能否认他的贡献。,communication,,,,❌,5,1
+TEM8,harangue,/həˈræŋ/,/həˈræŋ/,"a long and angry speech",长篇大论的训斥,He delivered a harangue against the policy.,他对政策发表了长篇抨击。,communication,,,,📢,5,1
+TEM8,inexorable,/ɪˈnek.sər.ə.bəl/,/ɪˈnek.sɚ.ə.bəl/,"impossible to stop or prevent",不可阻挡的；无情的,The inexorable march of time.,时间的无情流逝。,general,,,,⏳,5,1
+TEM8,juxtapose,/ˌdʒʌk.stəˈpəʊz/,/ˌdʒʌk.stəˈpoʊz/,"to place things side by side",并列；并置,The exhibition juxtaposes old and new art.,展览将新旧艺术并列展出。,action,,,,📑,5,1
+TEM8,laconic,/ləˈkɒn.ɪk/,/ləˈkɑː.nɪk/,"using few words",简洁的；简练的,Her laconic reply surprised him.,她简洁的回答让他吃惊。,communication,,,,✂️,5,1
+TEM8,mellifluous,/məˈlɪf.lu.əs/,/məˈlɪf.lu.əs/,"having a smooth rich flow, pleasant to hear",悦耳的；流畅的,She has a mellifluous voice.,她嗓音悦耳动听。,sound,,,,🎵,5,1
+TEM8,obfuscate,/ˈɒb.fə.skeɪt/,/ˈɑːb.fə.skeɪt/,"to make something unclear or difficult to understand",使混乱；使模糊,Politicians often obfuscate the issues.,政客经常把问题搞得含糊不清。,action,,,,🌫️,5,1
+TEM8,perfunctory,/pəˈfʌŋk.tər.i/,/pɚˈfʌŋk.tɚ.i/,"done with little interest or care",敷衍的；草率的,He gave a perfunctory answer.,他敷衍地回答了。,character,,,,😐,5,1
+TEM8,quixotic,/kwɪkˈsɒt.ɪk/,/kwɪkˈsɑː.t̬ɪk/,"unrealistic and impractical",不切实际的；空想的,His quixotic plans never succeed.,他不切实际的计划从未成功。,character,,,,🗡️,5,1
+TEM8,sagacious,/səˈɡeɪ.ʃəs/,/səˈɡeɪ.ʃəs/,"having good judgment; wise",睿智的；有远见的,She made a sagacious decision.,她做出了明智的决定。,character,,,,🦉,5,1
+TEM8,truculent,/ˈtrʌk.jə.lənt/,/ˈtrʌk.jə.lənt/,"easily annoyed and quick to argue",好斗的；凶狠的,His truculent attitude made negotiation difficult.,他好斗的态度让谈判难以进行。,character,,,,😠,5,1

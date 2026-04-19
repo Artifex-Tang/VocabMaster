@@ -1,0 +1,139 @@
+version: '3.8'
+
+# VocabMaster 本地开发环境
+# 用法：
+#   docker compose up -d mysql redis          # 只起中间件
+#   docker compose up -d                      # 起所有服务
+#   docker compose down                       # 停止
+#   docker compose down -v                    # 停止并删除数据卷（慎用）
+
+services:
+  mysql:
+    image: mysql:8.0.39
+    container_name: vocab-mysql
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vocabmaster
+      MYSQL_USER: vocab
+      MYSQL_PASSWORD: vocab123
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_0900_ai_ci
+      - --default-time-zone=+00:00
+      - --max-connections=500
+      - --innodb-buffer-pool-size=256M
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: valkey/valkey:8
+    container_name: vocab-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    command: redis-server --appendonly yes --requirepass "redis123"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redis123", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ------- 后端（默认不启动，编译好后再开）-------
+  backend-java:
+    build:
+      context: ./backend-java
+      dockerfile: Dockerfile
+    container_name: vocab-backend-java
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      VM_DB_HOST: mysql
+      VM_DB_PORT: 3306
+      VM_DB_NAME: vocabmaster
+      VM_DB_USER: vocab
+      VM_DB_PASSWORD: vocab123
+      VM_REDIS_HOST: redis
+      VM_REDIS_PORT: 6379
+      VM_REDIS_PASSWORD: redis123
+      VM_JWT_SECRET: ${VM_JWT_SECRET:-change-me-in-production-32chars-min}
+      VM_PHONE_AES_KEY: ${VM_PHONE_AES_KEY:-change-me-32bytes-base64-encoded}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    profiles: ["backend", "full"]   # 默认不启动
+
+  backend-python:
+    build:
+      context: ./backend-python
+      dockerfile: Dockerfile
+    container_name: vocab-backend-python
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      VM_ENV: prod
+      VM_DB_DSN: mysql+aiomysql://vocab:vocab123@mysql:3306/vocabmaster
+      VM_REDIS_URL: redis://:redis123@redis:6379/0
+      VM_JWT_SECRET: ${VM_JWT_SECRET:-change-me-in-production-32chars-min}
+      VM_PHONE_AES_KEY: ${VM_PHONE_AES_KEY:-change-me-32bytes-base64-encoded}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    profiles: ["backend-python", "full"]   # 默认不启动
+
+  # ------- 前端（可选，生产通常独立 Nginx）-------
+  frontend-web:
+    build:
+      context: ./frontend-web
+      dockerfile: Dockerfile
+    container_name: vocab-frontend-web
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend-java
+    profiles: ["frontend", "full"]   # 默认不启动
+
+  # ------- 反向代理（生产）-------
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: vocab-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./deploy/certs:/etc/nginx/certs:ro
+    depends_on:
+      - backend-java
+      - frontend-web
+    profiles: ["production"]
+
+volumes:
+  mysql_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  default:
+    name: vocab-network

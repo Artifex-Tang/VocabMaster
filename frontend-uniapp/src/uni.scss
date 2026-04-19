@@ -1,0 +1,41 @@
+// 主色
+$color-primary: #1890FF;
+$color-success: #67C23A;
+$color-warning: #E6A23C;
+$color-danger: #F56C6C;
+
+// 中性色
+$color-text-primary: #303133;
+$color-text-regular: #606266;
+$color-text-secondary: #909399;
+$color-text-placeholder: #C0C4CC;
+
+$color-border: #DCDFE6;
+$color-bg-page: #F5F7FA;
+$color-bg-card: #FFFFFF;
+
+// 圆角
+$radius-sm: 8rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-xl: 32rpx;
+
+// 间距（基于 8rpx 网格）
+$space-xs: 8rpx;
+$space-sm: 16rpx;
+$space-md: 24rpx;
+$space-lg: 32rpx;
+$space-xl: 48rpx;
+$space-2xl: 64rpx;
+
+// 字号
+$font-xs: 22rpx;
+$font-sm: 26rpx;
+$font-md: 30rpx;
+$font-lg: 34rpx;
+$font-xl: 40rpx;
+$font-2xl: 56rpx;
+$font-3xl: 72rpx;
+
+// tabBar 高度（安全区占位用）
+$tabbar-height: 100rpx;

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vocabmaster.word.mapper.WordBankMapper">
+
+    <!-- 关键词搜索，走 idx_level_word_lower -->
+    <select id="search" resultType="com.vocabmaster.word.entity.WordBank">
+        SELECT * FROM word_bank
+        WHERE deleted_at IS NULL
+          AND audit_status = 1
+          <if test="levelCode != null and levelCode != ''">
+              AND level_code = #{levelCode}
+          </if>
+          <if test="keyword != null and keyword != ''">
+              AND word_lower LIKE CONCAT(#{keyword}, '%')
+          </if>
+        ORDER BY word_lower ASC
+    </select>
+
+    <!--
+      获取用户新词候选：该等级通过审核的词，排除已学的 word_id。
+      sortMode: alpha（字母序）| topic（主题+字母）| random（随机）
+      excludeIds 为空时不加 NOT IN 条件（第一次学习）。
+    -->
+    <select id="findNewWords" resultType="com.vocabmaster.word.entity.WordBank">
+        SELECT * FROM word_bank
+        WHERE deleted_at IS NULL
+          AND audit_status = 1
+          AND level_code = #{levelCode}
+          <if test="excludeIds != null and !excludeIds.isEmpty()">
+              AND id NOT IN
+              <foreach collection="excludeIds" item="id" open="(" separator="," close=")">
+                  #{id}
+              </foreach>
+          </if>
+        <choose>
+            <when test="sortMode == 'topic'">
+                ORDER BY topic_code ASC, word_lower ASC
+            </when>
+            <when test="sortMode == 'random'">
+                ORDER BY RAND()
+            </when>
+            <otherwise>
+                ORDER BY word_lower ASC
+            </otherwise>
+        </choose>
+        LIMIT #{limit}
+    </select>
+
+    <!-- 选择题干扰项：同等级同主题（主题为空时不限），排除当前题目词，随机取 N 条 -->
+    <select id="pickDistractors" resultType="com.vocabmaster.word.entity.WordBank">
+        SELECT * FROM word_bank
+        WHERE deleted_at IS NULL
+          AND audit_status = 1
+          AND level_code = #{levelCode}
+          AND id != #{excludeId}
+          <if test="topicCode != null and topicCode != ''">
+              AND topic_code = #{topicCode}
+          </if>
+        ORDER BY RAND()
+        LIMIT #{limit}
+    </select>
+
+    <!-- 批量下载某等级词库，支持增量（since 为 null 时全量） -->
+    <select id="downloadByLevel" resultType="com.vocabmaster.word.entity.WordBank">
+        SELECT * FROM word_bank
+        WHERE deleted_at IS NULL
+          AND audit_status = 1
+          AND level_code = #{levelCode}
+          <if test="since != null">
+              AND updated_at > #{since}
+          </if>
+        ORDER BY id ASC
+    </select>
+
+</mapper>
