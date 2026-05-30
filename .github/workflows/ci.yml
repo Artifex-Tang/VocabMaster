@@ -1,0 +1,135 @@
+name: CI Build & Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  JAVA_VERSION: '21'
+  NODE_VERSION: '20'
+  PNPM_VERSION: '10'
+
+jobs:
+  # ---- Backend Java ----
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: vocabmaster_test
+          MYSQL_USER: vocab
+          MYSQL_PASSWORD: vocab123
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -h localhost -uroot -proot"
+          --health-interval=10s --health-timeout=5s --health-retries=10
+      redis:
+        image: valkey/valkey:8
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd="redis-cli ping"
+          --health-interval=10s --health-timeout=5s --health-retries=5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: temurin
+          cache: maven
+
+      - name: Run unit tests
+        working-directory: backend-java
+        env:
+          SPRING_PROFILES_ACTIVE: test
+          VM_DB_HOST: 127.0.0.1
+          VM_DB_PORT: 3306
+          VM_DB_NAME: vocabmaster_test
+          VM_DB_USER: vocab
+          VM_DB_PASSWORD: vocab123
+          VM_REDIS_HOST: 127.0.0.1
+          VM_REDIS_PORT: 6379
+          VM_JWT_SECRET: test-jwt-secret-at-least-32-characters-long
+        run: mvn verify -B
+
+      - name: Build Docker image
+        working-directory: backend-java
+        run: docker build -t vocabmaster-backend:ci .
+
+  # ---- Frontend Web ----
+  frontend-web:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: frontend-web/pnpm-lock.yaml
+
+      - name: Install & Build
+        working-directory: frontend-web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
+      - name: Type check
+        working-directory: frontend-web
+        run: pnpm type-check
+
+      - name: Build Docker image
+        working-directory: frontend-web
+        run: docker build -t vocabmaster-frontend-web:ci .
+
+  # ---- Frontend Uni-app ----
+  frontend-uniapp:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: frontend-uniapp/pnpm-lock.yaml
+
+      - name: Install & Build H5
+        working-directory: frontend-uniapp
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build:h5
+
+  # ---- Integration test (docker compose) ----
+  integration:
+    runs-on: ubuntu-latest
+    needs: [backend, frontend-web]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start full stack
+        run: docker compose --profile full up -d --wait --timeout 120
+
+      - name: Health check
+        run: |
+          curl -sf http://localhost:8080/api/v1/actuator/health | jq .
+          curl -sf http://localhost:3000 | head -5
+
+      - name: Teardown
+        if: always()
+        run: docker compose --profile full down -v

@@ -19,4 +19,7 @@ public @interface RateLimit {
 
     /** 限流维度：user（按用户）或 ip（按 IP） */
     String by() default "user";
+
+    /** Redis key 前缀，用于区分不同接口的限流计数器 */
+    String key() default "";
 }

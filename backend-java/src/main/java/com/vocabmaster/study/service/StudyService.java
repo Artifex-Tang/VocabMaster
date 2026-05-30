@@ -94,7 +94,7 @@ public class StudyService {
             try {
                 responses.add(answer(userId, req));
             } catch (BizException e) {
-                if (e.getCode() == ErrorCode.CLIENT_TS_TOO_OLD.getCode()) {
+                if (e.getErrorCode() == ErrorCode.CLIENT_TS_TOO_OLD) {
                     log.debug("batch: skipping stale answer wordId={}", req.getWordId());
                 } else {
                     throw e;

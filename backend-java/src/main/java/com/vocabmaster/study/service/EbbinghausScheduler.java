@@ -23,7 +23,7 @@ import java.time.ZoneOffset;
 public class EbbinghausScheduler {
 
     /** 单位：小时（double 支持 5/60 = 0.0833h） */
-    static final double[] INTERVALS_HOURS = {
+    public static final double[] INTERVALS_HOURS = {
         5.0 / 60,   // 5 min
         0.5,        // 30 min
         12.0,

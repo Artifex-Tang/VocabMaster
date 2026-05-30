@@ -141,6 +141,10 @@ temp/
 seed/words_full.csv
 seed/words_cache/
 
+# ETL 原始数据（大文件，不提交）
+tools/word-etl/data/raw/
+tools/word-etl/data/output/*.sql
+
 # 用户上传
 uploads/
 
