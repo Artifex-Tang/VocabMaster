@@ -47,7 +47,11 @@ function buildOptions() {
   }))
 
   return {
-    grid: { top: 36, left: 56, right: 16, bottom: 44 },
+    grid: { top: 36, left: 56, right: 16, bottom: 68 },
+    dataZoom: [
+      { type: 'inside', xAxisIndex: 0, filterMode: 'none' },
+      { type: 'slider', xAxisIndex: 0, bottom: 8, height: 20, filterMode: 'none' },
+    ],
     xAxis: {
       type: 'value',
       name: '时间',
