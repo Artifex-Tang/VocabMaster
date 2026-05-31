@@ -1,7 +1,7 @@
 <template>
   <el-container class="app-layout">
-    <el-aside width="220px" class="sidebar">
-      <AppSidebar />
+    <el-aside :width="collapsed ? '64px' : '220px'" class="sidebar">
+      <AppSidebar :collapsed="collapsed" @toggle="collapsed = !collapsed" />
     </el-aside>
     <el-container direction="vertical">
       <el-header height="56px" class="header">
@@ -15,13 +15,21 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+
+const collapsed = ref(false)
 </script>
 
 <style scoped>
 .app-layout { height: 100vh; overflow: hidden; }
-.sidebar { border-right: 1px solid #e5e7eb; background: #fff; overflow-y: auto; }
-.header { border-bottom: 1px solid #e5e7eb; background: #fff; display: flex; align-items: center; }
-.main-content { overflow-y: auto; background: #f3f4f6; }
+.sidebar {
+  border-right: 1px solid var(--el-border-color);
+  background: var(--el-bg-color);
+  overflow-y: auto;
+  transition: width 0.3s;
+}
+.header { border-bottom: 1px solid var(--el-border-color); background: var(--el-bg-color); display: flex; align-items: center; }
+.main-content { overflow-y: auto; background: var(--el-bg-color-page); }
 </style>

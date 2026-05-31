@@ -1,8 +1,10 @@
 package com.vocabmaster.user.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Data
@@ -44,5 +46,6 @@ public class UserSettings {
     private String extra;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private java.time.LocalDateTime updatedAt;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime updatedAt;
 }

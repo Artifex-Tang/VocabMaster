@@ -31,4 +31,11 @@ public class TestController {
         Long userId = UserContext.currentUserId();
         return R.ok(testService.submit(userId, req));
     }
+
+    @GetMapping("/availability")
+    @Operation(summary = "查询各来源可用题目数量")
+    public R<java.util.Map<String, Integer>> availability(@RequestParam("level_code") String levelCode) {
+        Long userId = UserContext.currentUserId();
+        return R.ok(testService.getAvailability(userId, levelCode));
+    }
 }

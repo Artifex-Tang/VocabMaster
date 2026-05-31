@@ -16,7 +16,7 @@ export function toUserTz(isoStr: string, tz = 'Asia/Shanghai'): dayjs.Dayjs {
 }
 
 export function nowIso(): string {
-  return dayjs().toISOString()
+  return dayjs().utc().format('YYYY-MM-DDTHH:mm:ss')
 }
 
 export function formatDate(isoStr: string, fmt = 'YYYY-MM-DD'): string {

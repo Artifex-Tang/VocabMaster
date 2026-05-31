@@ -89,6 +89,11 @@ const router = createRouter({
           component: () => import('@/views/wrong-word/WrongWordList.vue'),
         },
         {
+          path: 'word-search',
+          name: 'WordSearch',
+          component: () => import('@/views/word/WordSearch.vue'),
+        },
+        {
           path: 'settings',
           name: 'UserSettings',
           component: () => import('@/views/settings/UserSettings.vue'),

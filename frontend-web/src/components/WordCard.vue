@@ -3,7 +3,7 @@
     <div class="card-inner">
       <!-- Front -->
       <div class="card-face card-front">
-        <div v-if="word.emoji" class="word-emoji">{{ word.emoji }}</div>
+        <div v-if="displayEmoji" class="word-emoji">{{ displayEmoji }}</div>
         <img
           v-else-if="word.image_url"
           :src="word.image_url"
@@ -11,14 +11,16 @@
           loading="lazy"
         />
         <div class="word-text word-main">{{ word.word }}</div>
+        <div v-if="posLabel" class="pos-tag">{{ posLabel }}</div>
         <div class="ipa">
           <span>{{ preferredAccent === 'uk' ? word.ipa_uk : word.ipa_us }}</span>
           <el-button link class="audio-btn" @click.stop="playAudio">
             <Icon icon="mdi:volume-high" width="20" />
           </el-button>
         </div>
+        <div v-if="formHint" class="form-hint">{{ formHint }}</div>
         <div v-if="word.topic_code" class="topic-tag">{{ word.topic_code }}</div>
-        <div v-if="!flipped" class="flip-hint">点击查看释义</div>
+        <div class="flip-hint">{{ flipped ? '点击翻回正面' : '点击查看释义' }}</div>
       </div>
 
       <!-- Back -->
@@ -34,12 +36,17 @@
         <div v-if="word.example_en" class="back-section example">
           <div class="back-label">Example</div>
           <div class="back-content en-example">"{{ word.example_en }}"</div>
-          <div class="example-zh">{{ word.example_zh }}</div>
+          <div v-if="word.example_zh" class="example-zh">{{ word.example_zh }}</div>
         </div>
         <div v-if="word.related_words?.synonyms?.length" class="back-section">
           <div class="back-label">近义词</div>
           <div class="back-content muted">{{ word.related_words.synonyms.join(' / ') }}</div>
         </div>
+        <div v-if="word.related_words?.derived?.length" class="back-section">
+          <div class="back-label">衍生词</div>
+          <div class="back-content muted">{{ word.related_words.derived.join(' / ') }}</div>
+        </div>
+        <div class="flip-hint-back">点击翻回正面</div>
       </div>
     </div>
   </div>
@@ -51,6 +58,11 @@ import { Icon } from '@iconify/vue'
 import { useSettingsStore } from '@/stores/settings'
 import { useTts } from '@/composables/useTts'
 import type { WordBank } from '@/api/types'
+
+const POS_MAP: Record<string, string> = {
+  n: 'n.', v: 'v.', j: 'adj.', r: 'adv.', i: 'interj.',
+  p: 'pron.', c: 'conj.', d: 'det.', m: 'num.', u: 'prep.', a: 'art.',
+}
 
 const props = defineProps<{
   word: WordBank
@@ -66,11 +78,29 @@ const { speakOrFallback } = useTts()
 
 const preferredAccent = computed(() => settingsStore.settings.preferred_accent)
 
+const displayEmoji = computed(() => {
+  if (props.word.emoji) return props.word.emoji
+  if (props.word.image_url) return ''
+  return ''
+})
+
+const posLabel = computed(() => {
+  const code = props.word.pos?.split(':')[0]
+  return code ? (POS_MAP[code] || code) : ''
+})
+
+const formHint = computed(() => {
+  const zh = props.word.zh_definition || ''
+  const m = zh.match(/[（(](.+?(?:复数|单数|过去式|过去分词|现在分词|比较级|最高级|第三人称).+?)[）)]/)
+  return m ? m[1] : ''
+})
+
 function handleFlip() {
-  if (flipped.value) return
-  flipped.value = true
-  emit('flip')
-  if (settingsStore.settings.auto_play_audio) playAudio()
+  flipped.value = !flipped.value
+  if (flipped.value) {
+    emit('flip')
+    if (settingsStore.settings.auto_play_audio) playAudio()
+  }
 }
 
 function playAudio() {
@@ -101,6 +131,15 @@ defineExpose({ reset, flip: handleFlip, playAudio })
 
 .word-main { font-size: 2.2rem; margin-bottom: $space-2; }
 
+.pos-tag {
+  font-size: 0.8rem;
+  color: #6366f1;
+  background: #eef2ff;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-bottom: $space-2;
+}
+
 .ipa {
   display: flex;
   align-items: center;
@@ -109,6 +148,15 @@ defineExpose({ reset, flip: handleFlip, playAudio })
 }
 
 .audio-btn { padding: 0; }
+
+.form-hint {
+  font-size: 0.8rem;
+  color: #f59e0b;
+  background: #fffbeb;
+  padding: 2px 8px;
+  border-radius: 8px;
+  margin-bottom: $space-3;
+}
 
 .topic-tag {
   font-size: 0.75rem;
@@ -123,6 +171,13 @@ defineExpose({ reset, flip: handleFlip, playAudio })
   font-size: 0.8rem;
   color: #9ca3af;
   margin-top: auto;
+}
+
+.flip-hint-back {
+  font-size: 0.75rem;
+  color: #9ca3af;
+  margin-top: auto;
+  text-align: center;
 }
 
 .back-section {

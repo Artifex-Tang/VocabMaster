@@ -17,10 +17,14 @@
       <el-select v-model="selectedLevel" placeholder="选择等级" style="width: 160px">
         <el-option v-for="lv in LEVELS" :key="lv.code" :label="lv.nameZh" :value="lv.code" />
       </el-select>
-      <el-select v-model="source" style="width: 130px">
-        <el-option label="待复习" value="due" />
-        <el-option label="全部" value="all" />
-        <el-option label="错词本" value="wrong_words" />
+      <el-select v-model="source" style="width: 160px">
+        <el-option
+          v-for="opt in sourceOptions"
+          :key="opt.value"
+          :label="sourceLabel(opt.value)"
+          :value="opt.value"
+          :disabled="isSourceDisabled(opt.value) && source !== opt.value"
+        />
       </el-select>
       <el-input-number v-model="size" :min="5" :max="50" label="题数" />
     </div>
@@ -28,22 +32,50 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { LEVELS } from '@/utils/constants'
+import { availability } from '@/api/test'
 import type { TestMode, TestSource } from '@/api/types'
 
 const router = useRouter()
 const selectedLevel = ref(LEVELS[7].code)
-const source = ref<TestSource>('due')
+const source = ref<TestSource>('all')
 const size = ref(20)
+
+const sourceCounts = ref<Record<string, number>>({ all: 0, due: 0, wrong_words: 0 })
 
 const modes = [
   { value: 'spelling' as TestMode, label: '拼写测试', icon: 'mdi:keyboard-outline', color: '#1890ff', desc: '看中文释义，拼出单词' },
   { value: 'choice' as TestMode, label: '选择题', icon: 'mdi:format-list-checks', color: '#4f46e5', desc: '四选一词义测试' },
   { value: 'listening' as TestMode, label: '听写', icon: 'mdi:headphones', color: '#10b981', desc: '听发音，拼写单词' },
 ]
+
+const sourceOptions: { label: string; value: TestSource }[] = [
+  { label: '全部', value: 'all' },
+  { label: '待复习', value: 'due' },
+  { label: '错词本', value: 'wrong_words' },
+]
+
+function isSourceDisabled(s: TestSource) {
+  return (sourceCounts.value[s] ?? 0) === 0
+}
+
+function sourceLabel(s: TestSource) {
+  const base = sourceOptions.find(o => o.value === s)?.label ?? s
+  const count = sourceCounts.value[s]
+  if (count === undefined) return base
+  return count > 0 ? `${base} (${count})` : `${base} (无数据)`
+}
+
+watch(selectedLevel, async (level) => {
+  try {
+    sourceCounts.value = await availability(level)
+    // 如果当前选的来源没数据，自动切回"全部"
+    if (isSourceDisabled(source.value)) source.value = 'all'
+  } catch { /* ignore */ }
+}, { immediate: true })
 
 function start(mode: TestMode) {
   router.push({ path: `/test/${mode}`, query: { level: selectedLevel.value, source: source.value, size: String(size.value) } })

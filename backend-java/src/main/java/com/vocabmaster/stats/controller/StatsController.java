@@ -33,7 +33,7 @@ public class StatsController {
 
     @GetMapping("/forgetting-curve")
     @Operation(summary = "单词遗忘曲线数据")
-    public R<ForgettingCurveResponse> forgettingCurve(@RequestParam Long wordId) {
+    public R<ForgettingCurveResponse> forgettingCurve(@RequestParam("word_id") Long wordId) {
         return R.ok(statsService.forgettingCurve(UserContext.currentUserId(), wordId));
     }
 

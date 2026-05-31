@@ -69,6 +69,7 @@ export interface WordBank {
   related_words?: {
     synonyms?: string[]
     antonyms?: string[]
+    derived?: string[]
   }
 }
 
@@ -174,11 +175,13 @@ export type TestSource = 'due' | 'all' | 'wrong_words' | 'custom'
 export interface TestQuestion {
   question_id: string
   word_id: number
+  choices?: string[]
   prompt: {
     zh_definition?: string
+    en_definition?: string
     audio_url_uk?: string
     audio_url_us?: string
-    options?: string[]
+    word?: string
   }
 }
 

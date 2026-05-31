@@ -25,7 +25,7 @@ public class StudyController {
 
     @GetMapping("/today")
     @Operation(summary = "获取今日学习计划（复习 + 新词）")
-    public R<TodayPlanResponse> today(@RequestParam String level) {
+    public R<TodayPlanResponse> today(@RequestParam("level") String level) {
         Long userId = UserContext.currentUserId();
         return R.ok(todayPlanService.getTodayPlan(userId, level));
     }
@@ -47,7 +47,7 @@ public class StudyController {
 
     @PostMapping("/reset")
     @Operation(summary = "重置单词学习进度")
-    public R<Void> reset(@RequestParam Long wordId) {
+    public R<Void> reset(@RequestParam("word_id") Long wordId) {
         Long userId = UserContext.currentUserId();
         studyService.reset(userId, wordId);
         return R.ok(null);
@@ -55,7 +55,7 @@ public class StudyController {
 
     @PostMapping("/mark-mastered")
     @Operation(summary = "标记单词为已掌握")
-    public R<AnswerResponse> markMastered(@RequestParam Long wordId) {
+    public R<AnswerResponse> markMastered(@RequestParam("word_id") Long wordId) {
         Long userId = UserContext.currentUserId();
         return R.ok(studyService.markMastered(userId, wordId));
     }

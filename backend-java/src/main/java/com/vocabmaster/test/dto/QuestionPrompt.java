@@ -11,7 +11,13 @@ public class QuestionPrompt {
     /** spelling / choice 模式展示 */
     private String zhDefinition;
 
+    /** spelling 模式英文释义 */
+    private String enDefinition;
+
     /** spelling / listening 模式展示 */
     private String audioUrlUk;
     private String audioUrlUs;
+
+    /** listening 模式 TTS 降级用 */
+    private String word;
 }

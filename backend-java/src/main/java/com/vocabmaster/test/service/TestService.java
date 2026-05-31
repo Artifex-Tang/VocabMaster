@@ -137,6 +137,26 @@ public class TestService {
                 .build();
     }
 
+    /** 查询各来源可用题目数量，供前端禁用无数据的选项 */
+    public Map<String, Integer> getAvailability(Long userId, String levelCode) {
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
+
+        int dueCount = (int) progressMapper.findDueForReview(userId, levelCode, now, 9999).stream()
+                .map(UserWordProgress::getWordId).distinct().count();
+
+        int wrongCount = Math.toIntExact(wrongWordMapper.selectCount(
+                Wrappers.<WrongWord>lambdaQuery()
+                        .eq(WrongWord::getUserId, userId)
+                        .eq(WrongWord::getLevelCode, levelCode)
+                        .eq(WrongWord::getResolved, 0)));
+
+        int allCount = Math.toIntExact(wordBankMapper.selectCount(
+                Wrappers.<WordBank>lambdaQuery()
+                        .eq(WordBank::getLevelCode, levelCode)));
+
+        return Map.of("due", dueCount, "wrong_words", wrongCount, "all", allCount);
+    }
+
     // ---- private ----
 
     private List<WordBank> selectWords(Long userId, GenerateTestRequest req) {
@@ -186,12 +206,14 @@ public class TestService {
         return switch (mode) {
             case "spelling" -> QuestionPrompt.builder()
                     .zhDefinition(wb.getZhDefinition())
+                    .enDefinition(wb.getEnDefinition())
                     .audioUrlUk(wb.getAudioUrlUk())
                     .audioUrlUs(wb.getAudioUrlUs())
                     .build();
             case "listening" -> QuestionPrompt.builder()
                     .audioUrlUk(wb.getAudioUrlUk())
                     .audioUrlUs(wb.getAudioUrlUs())
+                    .word(wb.getWord())
                     .build();
             default -> // choice
                 QuestionPrompt.builder()
@@ -220,8 +242,17 @@ public class TestService {
 
     private TestSession loadSession(String testId, Long userId) {
         Object raw = redisTemplate.opsForValue().get(RedisKey.testSession(testId));
-        if (!(raw instanceof TestSession session)) {
+        if (raw == null) {
             throw new BizException(ErrorCode.TEST_INVALID);
+        }
+        TestSession session;
+        if (raw instanceof TestSession ts) {
+            session = ts;
+        } else {
+            // JSON 反序列化为 LinkedHashMap，手动转换
+            com.fasterxml.jackson.databind.ObjectMapper mapper = new com.fasterxml.jackson.databind.ObjectMapper();
+            mapper.setPropertyNamingStrategy(com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE);
+            session = mapper.convertValue(raw, TestSession.class);
         }
         if (!userId.equals(session.getUserId())) {
             throw new BizException(ErrorCode.FORBIDDEN);

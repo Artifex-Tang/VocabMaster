@@ -41,7 +41,7 @@ public class WrongWordController {
 
     @PostMapping("/resolve")
     @Operation(summary = "手动标记错词为已解决")
-    public R<Void> resolve(@RequestParam Long wordId) {
+    public R<Void> resolve(@RequestParam("word_id") Long wordId) {
         wrongWordService.resolve(UserContext.currentUserId(), wordId);
         return R.ok(null);
     }

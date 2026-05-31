@@ -29,6 +29,12 @@ export const useStudyStore = defineStore('study', () => {
     currentIdx.value++
   }
 
+  function goTo(idx: number) {
+    if (idx >= 0 && idx < sessionQueue.value.length) {
+      currentIdx.value = idx
+    }
+  }
+
   function reset() {
     sessionQueue.value = []
     currentIdx.value = 0
@@ -44,6 +50,7 @@ export const useStudyStore = defineStore('study', () => {
     loadTodayPlan,
     startSession,
     advance,
+    goTo,
     reset,
   }
 })

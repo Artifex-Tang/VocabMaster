@@ -1,23 +1,24 @@
 <template>
   <div class="study-session">
-    <!-- Header -->
-    <div class="session-header">
+    <!-- Navigation bar -->
+    <div class="nav-bar">
       <el-button text @click="confirmExit">
         <Icon icon="mdi:arrow-left" width="20" />
         返回
       </el-button>
-      <div class="progress-info">
-        <span class="word-text">{{ currentIdx + 1 }}</span>
-        <span class="sep">/</span>
-        <span>{{ queue.length }}</span>
-      </div>
+      <el-button :disabled="currentIdx <= 0" text @click="goPrev">
+        <Icon icon="mdi:chevron-left" width="22" />
+      </el-button>
+      <el-progress :percentage="progressPct" :show-text="false" style="flex:1;margin:0 8px" />
+      <span class="progress-text">{{ currentIdx + 1 }} / {{ queue.length }}</span>
+      <el-button :disabled="currentIdx >= queue.length - 1" text @click="goNext">
+        <Icon icon="mdi:chevron-right" width="22" />
+      </el-button>
       <div class="correct-info">
         <Icon icon="mdi:check-circle-outline" width="16" color="#10b981" />
         {{ correctCount }}
       </div>
     </div>
-
-    <el-progress :percentage="progressPct" :show-text="false" stroke-width="4" />
 
     <!-- Card area -->
     <div v-if="currentWord" class="card-area">
@@ -66,13 +67,13 @@
 
     <!-- Pre-flip hint -->
     <div v-if="!isFlipped && currentWord" class="flip-instruction">
-      按 <kbd>Space</kbd> 或点击卡片翻面 · <kbd>P</kbd> 发音
+      按 <kbd>Space</kbd> 翻面 · <kbd>←</kbd><kbd>→</kbd> 切换单词 · <kbd>P</kbd> 发音
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessageBox } from 'element-plus'
 import { Icon } from '@iconify/vue'
@@ -96,8 +97,28 @@ const currentIdx = computed(() => studyStore.currentIdx)
 const correctCount = computed(() => studyStore.correctCount)
 const currentWord = computed(() => queue[currentIdx.value])
 const progressPct = computed(() =>
-  queue.length ? Math.round((currentIdx.value / queue.length) * 100) : 0,
+  queue.length ? Math.round(((currentIdx.value + 1) / queue.length) * 100) : 0,
 )
+
+function resetCardState() {
+  isFlipped.value = false
+  answerStartTime.value = Date.now()
+  cardRef.value?.reset()
+}
+
+function goPrev() {
+  if (currentIdx.value > 0) {
+    studyStore.goTo(currentIdx.value - 1)
+    resetCardState()
+  }
+}
+
+function goNext() {
+  if (currentIdx.value < queue.length - 1) {
+    studyStore.goTo(currentIdx.value + 1)
+    resetCardState()
+  }
+}
 
 async function handleAnswer(result: 'correct' | 'wrong' | 'skip') {
   if (!currentWord.value) return
@@ -126,9 +147,7 @@ async function handleAnswer(result: 'correct' | 'wrong' | 'skip') {
     return
   }
 
-  isFlipped.value = false
-  answerStartTime.value = Date.now()
-  cardRef.value?.reset()
+  resetCardState()
 }
 
 function handleKeydown(e: KeyboardEvent) {
@@ -137,6 +156,14 @@ function handleKeydown(e: KeyboardEvent) {
     case 'Space':
       e.preventDefault()
       cardRef.value?.flip()
+      break
+    case 'ArrowLeft':
+      e.preventDefault()
+      goPrev()
+      break
+    case 'ArrowRight':
+      e.preventDefault()
+      goNext()
       break
     case 'Digit1':
       if (isFlipped.value) handleAnswer('wrong')
@@ -188,18 +215,18 @@ onUnmounted(() => {
   flex-direction: column;
 }
 
-.session-header {
+.nav-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: $space-2;
   margin-bottom: $space-3;
 }
 
-.progress-info {
+.progress-text {
   font-family: $font-en;
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: #374151;
-  .sep { margin: 0 4px; color: #9ca3af; }
+  white-space: nowrap;
 }
 
 .correct-info {
