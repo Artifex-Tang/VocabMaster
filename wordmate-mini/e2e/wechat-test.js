@@ -1,19 +1,32 @@
 /**
  * WeChat Mini-Program Automated Testing
- * Uses WeChat DevTools HTTP API directly (port 20288)
+ * Auto-discovers DevTools HTTP port via CLI islogin command
  *
  * Prerequisites:
  * - WeChat DevTools running with project loaded
- * - CLI port enabled (Settings → Security → Service Port = 20288)
- * - dev:mp-weixin watch mode running
+ * - Service Port enabled (Settings → Security → Service Port)
+ * - dev:mp-weixin watch mode running OR dist/build/mp-weixin exists
  */
 
 const http = require('http')
 const fs = require('fs')
 const path = require('path')
+const { execSync } = require('child_process')
 
-const PORT = 20288
+const CLI = 'C:\\Program Files (x86)\\Tencent\\微信web开发者工具\\cli.bat'
 const HOST = 'localhost'
+
+// Auto-discover DevTools HTTP port
+function discoverDevToolsPort() {
+  try {
+    const out = execSync(`cmd /c "${CLI}" islogin 2>&1`, { encoding: 'utf8', timeout: 15000 })
+    const m = out.match(/listening on http:\/\/127\.0\.0\.1:(\d+)/)
+    if (m) return Number(m[1])
+  } catch { /* ignore */ }
+  return null
+}
+
+let PORT = discoverDevToolsPort()
 const SCREENSHOT_DIR = path.join(__dirname, 'wechat-screenshots')
 const RESULTS_FILE = path.join(__dirname, '..', 'test-results-wechat.json')
 
@@ -81,11 +94,15 @@ async function screenshot(name) {
 async function main() {
   console.log('\n🔍 WeChat Mini-Program Automated Testing')
   console.log('=' .repeat(50))
-  console.log(`DevTools API: http://${HOST}:${PORT}\n`)
+  if (PORT) {
+    console.log(`DevTools API: http://${HOST}:${PORT} (auto-detected)\n`)
+  } else {
+    console.log('DevTools API: not detected (structure tests only)\n')
+  }
 
   // 1. Check DevTools connectivity
   await test('DevTools CLI API reachable', async () => {
-    // Try multiple API paths
+    if (!PORT) throw new Error('DevTools not running or port not detectable')
     const paths = ['/v2/status', '/v2/open', '/status', '/open']
     let reached = false
     for (const p of paths) {
@@ -99,8 +116,8 @@ async function main() {
 
   // 2. Check project is loaded
   await test('Project loaded in DevTools', async () => {
+    if (!PORT) throw new Error('DevTools not running')
     const res = await request('GET', '/v2/status')
-    // If we got here, project is loaded
   })
 
   // 3. Verify build output files exist
@@ -290,7 +307,7 @@ async function main() {
   const report = {
     timestamp: new Date().toISOString(),
     platform: 'WeChat Mini-Program',
-    devToolsPort: PORT,
+    devToolsPort: PORT || 'not detected',
     projectPath: projectDir,
     summary: {
       total: results.passed.length + results.failed.length,

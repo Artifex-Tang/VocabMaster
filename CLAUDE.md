@@ -83,7 +83,7 @@ vocabmaster/
 
 总计约 3 周一人独立完成 MVP。
 
-## 历史会话沉淀（来自 2026-05-30 ~ 2026-06-01 的 7 个会话）
+## 历史会话沉淀（来自 2026-05-30 ~ 2026-06-02 的 9 个会话）
 
 > 以下内容从项目历史会话中归纳，作为跨会话的持久知识。避免重复踩坑。
 
@@ -93,7 +93,7 @@ vocabmaster/
 2. **等级分布**：PRIMARY 800 / KET 1,445 / JUNIOR 1,597 / PET 2,904 / SENIOR 3,674 / CET4 3,837 / FCE 5,000 / CET6 5,396 / CAE 7,500 / TEM8 10,378。
 3. **主题分类**：从 20 类调整为 **31 类**（参考 Cambridge Vocabulary in Use + Oxford Word Skills），用 DeepSeek-V3 API 完成 42K 词分类。旧方案（GLM-4-Flash）受速率限制不可用。
 4. **音频方案**：开发用有道 CDN（`dict.youdao.com/dictvoice?audio={word}&type=1/2`），生产用 Azure TTS 批量生成存自有 CDN。前端兜底用 Web Speech API。
-5. **配图方案**：MVP 全用 emoji 兜底，后期补充 Unsplash/Pixabay。
+5. **配图方案**：有 `image_url` 的优先显示图片，无则 emoji 兜底。9,765 词有 Wikimedia 图片，已下载到本地 `backend-java/static/images/words/`，Nginx 挂载 serve。抽象词（action/description/abstract 等主题）无合适图片，emoji 兜底合理。
 6. **Python 后端**：确认不纳入 MVP，标记为 Phase 8 可选项。
 7. **微信小程序**：已开发完成并通过全量测试（2026-06-02）。代码就绪，上线等域名 + ICP 备案 + HTTPS。
 8. **审核状态**：`audit_status` 状态机 0=待审核 / 1=审核通过 / -1=已下架，MVP 跳过审核直接设 1。
@@ -115,6 +115,8 @@ vocabmaster/
 11. **安全设计**：手机号 AES-256-GCM 加密存储 + SHA-256 hash 做唯一索引；JWT 只暴露 uuid 不暴露自增 id；无数据库外键，应用层保证完整性。
 12. **2C2G 部署方案**：Java 堆 -Xmx384m，MySQL innodb_buffer_pool=256M + maxmemory 128MB Redis，总计约 850MB。本地编译 JAR → SCP 上传 → Docker 运行，服务器不需要 Maven/Node。
 13. **代理方案**：用户用 Clash TUN 模式全局透明代理，Dockerfile/docker-compose 不硬编码 proxy 环境变量。
+14. **图片本地化**：`scripts/download_images.py` 下载 Wikimedia 图片到 `backend-java/static/images/words/{word}.jpg`，DB `image_url` 改为 `/images/words/{word}.jpg`。Nginx volume 挂载 + `location /images/` alias。前端展示优先级：`image_url` → `emoji` 兜底。
+15. **例句生成**：`scripts/generate_examples.py` 用 DeepSeek-V4-Flash 批量生成英文例句（36K 词），写入 `example_en` 字段。成本约 ¥5。
 
 ### 代码规范与踩坑记录
 
@@ -143,13 +145,27 @@ vocabmaster/
 22. **miniprogram-automator 中文路径**：Windows bash 环境下 `child_process.spawn` 调用含中文的 cliPath 会乱码。解决：用 `e2e/launch-devtools.js` 通过 HTTP API（`/v2/auto`）启用自动化，绕过 CLI spawn。
 23. **miniprogram-automator `element.input()`**：只对 `<input>` 和 `<textarea>` 标签有效，参数是字符串 value。按钮点击用 `element.tap()`，非 input 元素调 `input()` 会报 "not a function"。
 24. **miniprogram-automator `page.callMethod()`**：仅对原生 Page 的 `Page({methods: {}})` 有效。uni-app `<script setup>` 编译后方法不暴露。改用 `element.tap()` 触发按钮。
+25. **Vue `new Map()` 非响应式**：`const answerMap = new Map()` 不触发 computed 更新。必须 `const answerMap = reactive(new Map())`。同理 `questionStart = Date.now()` 需改成 `ref(Date.now())`。
+26. **Web 路由守卫测试 URL**：测试未登录跳转时，`/study` 不匹配 `study/:level` 路由，会走 catch-all（public=true）导致不跳转。应使用 `/dashboard` 等真实受保护路由。
+27. **Wikimedia 429 限流**：批量下载图片需 1.0s 延迟 + 429 重试指数退避。0.5s 不够。
+28. **Python 脚本 Windows GBK**：print 语句含 Unicode 特殊字符（✓✗⚠）在 GBK 终端报错。用 ASCII 替代（[OK]/[FAIL]/[WARN]）。
+29. **微信结构测试端口自动发现**：`wechat-test.js` 原硬编码端口 20288，实际 DevTools HTTP 端口不固定（如 12995）。改为调用 `CLI islogin` 自动发现端口，与 `wechat-user-journey.js` 一致。
 
-### 自动化测试（2026-06-02 完成，2026-06-02 增强用户旅程测试）
+### 自动化测试（2026-06-02 完成全量测试，全端 100% 通过）
 
 1. **单元测试**：Vitest 3.x，48 个测试覆盖 utils/stores/api/composables。命令 `pnpm test`。
 2. **H5 手机仿真**：Playwright + Chromium，iPhone 15（393×852）+ Pixel 7（412×915）双视口。`e2e/mobile.spec.ts`（22 个）+ `e2e/login-flow.spec.ts`（9 个）= **31 个**覆盖全部 16 页面 + 登录表单填充验证 + tab 切换 + 无 JS 错误。命令 `npx playwright test`。
-3. **微信小程序结构测试**：Node.js 脚本直连 DevTools HTTP API（端口 20288），19 个测试验证构建产物完整性、页面注册、TabBar、API/Store/Utils 编译、包大小（378KB）。命令 `node e2e/wechat-test.js`。
-4. **微信小程序用户旅程测试**（2026-06-02 新增）：`e2e/wechat-user-journey.js`，20 个场景覆盖完整用户操作流程（T1 登录→T2 表单交互→T3 注册→T4 Token 注入→T6 学习卡片翻转→T9-T11 三种测试→T13 遗忘曲线→T14 单词搜索→T17 设置修改→T19 Tab 切换→T20 Storage 验证）。**36 通过 + 3 info**。命令 `node e2e/wechat-user-journey.js`。
+3. **Web E2E 测试**（2026-06-02 新增）：`wordmate-web/e2e/full-flow.spec.ts`，Playwright Desktop Chrome（1280×800），10 个用例覆盖登录页渲染、登录表单、首页、学习页、测试页、单词搜索、遗忘曲线、设置页、路由守卫（未登录跳转）、后端 API 连通。命令 `npx playwright test`（在 wordmate-web 目录）。Docker 全栈环境跑（localhost:3001）。
+4. **微信小程序结构测试**：Node.js 脚本，19 个测试验证构建产物完整性。端口自动发现（通过 `CLI islogin` 命令解析，不再硬编码 20288）。命令 `node e2e/wechat-test.js`。
+5. **微信小程序用户旅程测试**：`e2e/wechat-user-journey.js`，20 个场景覆盖完整用户操作流程（T1 登录→T2 表单交互→T3 注册→T4 Token 注入→T6 学习卡片翻转→T9-T11 三种测试→T13 遗忘曲线→T14 单词搜索→T17 设置修改→T19 Tab 切换→T20 Storage 验证）。**36 通过 + 3 info**。命令 `node e2e/wechat-user-journey.js`。
+
+**全端测试成绩（2026-06-02）**：
+| 端 | 结果 | 命令 |
+|----|------|------|
+| Web Chrome | **10/10** | `cd wordmate-web && npx playwright test` |
+| H5 仿真 | **40/40** | `cd wordmate-mini && npx playwright test` |
+| 微信结构 | **19/19** | `cd wordmate-mini && node e2e/wechat-test.js` |
+| 微信旅程 | **36/36** | `cd wordmate-mini && node e2e/wechat-user-journey.js` |
 5. **测试报告**：`docs/test-report-2026-06-02.md`。
 6. **测试依赖**：vitest@3.2.6、@vue/test-utils、happy-dom、playwright@1.60、jest、ts-jest、miniprogram-automator@0.12.1、ws@8.21。
 7. **uni-app H5 input DOM 结构**：uni-app H5 将 `<input>` 包裹在 `<uni-input>` 中，placeholder 在兄弟 `<div class="uni-input-placeholder">` 而非 `<input>` 上。Playwright 测试需通过 `uni-input` wrapper 定位。`fillUniInput()` 工具函数按 wrapper 内的 placeholder div 找到对应 `.uni-input-input` 后用 `nativeInputValueSetter` + `input`/`change` 事件触发 Vue 响应式。
@@ -189,6 +205,11 @@ vocabmaster/
 | uni-app input Playwright fill 无效 | uni-app 包裹 input，placeholder 不在 input 上 | 通过 `uni-input` wrapper 定位 + nativeInputValueSetter |
 | `page.data('tab')` undefined | uni-app `<script setup>` 变量名压缩 | 取 `page.data()` 全量或跳过命名 key 断言 |
 | `page.callMethod('handleLogin')` not exists | `<script setup>` 方法不暴露为 page method | 用 `element.tap()` 点击按钮 |
+| 选择题第20题选不上、进度0/20 | `new Map()` 不触发 Vue computed 响应式 | 改 `reactive(new Map())` + `ref(Date.now())` |
+| Web 路由守卫测试失败 | `/study` 不匹配 `study/:level`，走 public catch-all | 测试改用 `/dashboard` |
+| 微信结构测试 2/19 失败 | 端口硬编码 20288，实际 DevTools 端口不固定 | `CLI islogin` 自动发现端口 |
+| Wikimedia 批量下载 429 | 0.5s 延迟不够 | 延迟改 1.0s + 429 指数退避 |
+| Python 脚本 GBK 编码错误 | Unicode 特殊字符（✓✗⚠）在 Windows GBK 终端报错 | 用 ASCII 替代 |
 
 ### 待办事项（当前未完成）
 
@@ -199,6 +220,8 @@ vocabmaster/
 - [ ] LLM 主题分类结果需写入 `word_bank` 表（31 类方案已完成分类但未全部回写）
 - [ ] 音频 URL 批量填充（42,531 词的 `audio_url_uk`/`audio_url_us` 全为 NULL）
 - [ ] 后端需新增 `POST /words/admin/fill-audio-urls` 管理端点
+- [ ] Wikimedia 图片下载后台任务进行中（~548/9,765）
+- [ ] DeepSeek 例句生成后台任务进行中（36K 词 `example_en`）
 
 **中优先级：**
 - [ ] "待复习"/"错词本" 选项在用户无数据时应禁用
@@ -207,12 +230,9 @@ vocabmaster/
 - [ ] k6 压测脚本未实际运行（`scripts/k6-load-test.js`）
 - [ ] CI/CD 流水线未实际触发
 - [ ] SSL 证书（`deploy/certs/` 仅有 `.gitkeep`，nginx HTTPS 被注释）
-- [ ] ETL 后续步骤：例句补充、图片补充（04~07 脚本）
 - [ ] API key 管理生产化（当前明文）
 
 **低优先级（后续阶段）：**
-- [ ] Uni-app 端完整实现（路线图 Phase 5）— ✅ 基础功能已完成并通过测试（2026-06-02），待后端联调
-- [ ] ✅ 微信小程序自动化用户旅程测试（2026-06-02 完成，36/36 通过）
 - [ ] Python 备选后端（Phase 8 可选）
 - [ ] 报表/可视化完善
 - [ ] 离线缓存 + 多端同步端到端验证

@@ -153,13 +153,15 @@ test.describe('Web E2E - VocabMaster', () => {
 
   // ── 8. 路由守卫 - 未登录跳转 ──
   test('unauthenticated redirect to login', async ({ page }) => {
+    // Full reload re-inits Pinia from empty localStorage → isLoggedIn=false → guard redirects
     await page.goto('/login')
     await page.evaluate(() => {
       localStorage.clear()
     })
-    await page.goto('/study')
+    // Use a real protected route (not /study which doesn't match study/:level)
+    await page.goto('/dashboard')
     await page.waitForTimeout(2000)
-    // 应该被重定向到登录页
+    // Should be redirected to login page
     const url = page.url()
     expect(url).toMatch(/login|auth/)
   })
