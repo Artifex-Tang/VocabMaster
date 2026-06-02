@@ -153,6 +153,7 @@ test.describe('Web E2E - VocabMaster', () => {
 
   // ── 8. 路由守卫 - 未登录跳转 ──
   test('unauthenticated redirect to login', async ({ page }) => {
+    await page.goto('/login')
     await page.evaluate(() => {
       localStorage.clear()
     })
