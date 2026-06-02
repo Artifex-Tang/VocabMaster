@@ -137,17 +137,27 @@ vocabmaster/
 17. **`related_words` JSON 字段**：已扩展包含 `synonyms`、`antonyms`、`derived` 三个数组。TypeScript 接口和后端 DTO 须同步。
 18. **音标字体**：引入 Gentium Plus / Charis SIL / DejaVu Sans web font 替代系统默认。
 19. **Web 端 dev server**：端口 3100（非 3000），通过 `VITE_USE_MOCK` 切换 mock/真实后端。
+20. **login.vue 错误处理**：`handleLogin` 的 `try/finally` 缺少 `catch` 块，API 失败时静默吞错无反馈。必须加 `catch` 显示 `uni.showToast({ title: msg, icon: 'none' })`。
+21. **manifest.json permission**：`scope.userInfo` 不是微信小程序 `app.json` 合法的 permission 键，会报 "无效的 app.json permission" 警告。改为 `scope.userLocation` 或移除。
+22. **miniprogram-automator 中文路径**：Windows bash 环境下 `child_process.spawn` 调用含中文的 cliPath 会乱码。解决：用 `e2e/launch-devtools.js` 通过 HTTP API（`/v2/auto`）启用自动化，绕过 CLI spawn。
+23. **miniprogram-automator `element.input()`**：只对 `<input>` 和 `<textarea>` 标签有效，参数是字符串 value。按钮点击用 `element.tap()`，非 input 元素调 `input()` 会报 "not a function"。
+24. **miniprogram-automator `page.callMethod()`**：仅对原生 Page 的 `Page({methods: {}})` 有效。uni-app `<script setup>` 编译后方法不暴露。改用 `element.tap()` 触发按钮。
 
-### 自动化测试（2026-06-02 完成）
+### 自动化测试（2026-06-02 完成，2026-06-02 增强用户旅程测试）
 
 1. **单元测试**：Vitest 3.x，48 个测试覆盖 utils/stores/api/composables。命令 `pnpm test`。
-2. **H5 手机仿真**：Playwright + Chromium，iPhone 15（393×852）+ Pixel 7（412×915）双视口，22 个测试覆盖全部 16 个页面渲染 + tab 切换 + 无 JS 错误。命令 `npx playwright test`。
+2. **H5 手机仿真**：Playwright + Chromium，iPhone 15（393×852）+ Pixel 7（412×915）双视口。`e2e/mobile.spec.ts`（22 个）+ `e2e/login-flow.spec.ts`（9 个）= **31 个**覆盖全部 16 页面 + 登录表单填充验证 + tab 切换 + 无 JS 错误。命令 `npx playwright test`。
 3. **微信小程序结构测试**：Node.js 脚本直连 DevTools HTTP API（端口 20288），19 个测试验证构建产物完整性、页面注册、TabBar、API/Store/Utils 编译、包大小（378KB）。命令 `node e2e/wechat-test.js`。
-4. **测试报告**：`docs/test-report-2026-06-02.md`，89 个测试全部通过。
-5. **测试依赖**：vitest@3.2.6、@vue/test-utils、happy-dom、playwright、jest、ts-jest、miniprogram-automator。
-6. **uni-app H5 路由**：Playwright `getByText` 无法匹配 uni-app 自定义元素（`<uni-text>`），需用 `page.evaluate(() => document.body.innerText)` 或 CSS 选择器替代。
-7. **miniprogram-automator**：`import { launcher } from 'miniprogram-automator'`（非默认导出 `automator.launch`）；`cliPath` 需用正斜杠。
-8. **微信开发者工具 CLI 端口**：默认非 9420，需在"设置→安全设置"查看实际端口。
+4. **微信小程序用户旅程测试**（2026-06-02 新增）：`e2e/wechat-user-journey.js`，20 个场景覆盖完整用户操作流程（T1 登录→T2 表单交互→T3 注册→T4 Token 注入→T6 学习卡片翻转→T9-T11 三种测试→T13 遗忘曲线→T14 单词搜索→T17 设置修改→T19 Tab 切换→T20 Storage 验证）。**36 通过 + 3 info**。命令 `node e2e/wechat-user-journey.js`。
+5. **测试报告**：`docs/test-report-2026-06-02.md`。
+6. **测试依赖**：vitest@3.2.6、@vue/test-utils、happy-dom、playwright@1.60、jest、ts-jest、miniprogram-automator@0.12.1、ws@8.21。
+7. **uni-app H5 input DOM 结构**：uni-app H5 将 `<input>` 包裹在 `<uni-input>` 中，placeholder 在兄弟 `<div class="uni-input-placeholder">` 而非 `<input>` 上。Playwright 测试需通过 `uni-input` wrapper 定位。`fillUniInput()` 工具函数按 wrapper 内的 placeholder div 找到对应 `.uni-input-input` 后用 `nativeInputValueSetter` + `input`/`change` 事件触发 Vue 响应式。
+8. **uni-app `<script setup>` 编译**：变量名被压缩（如 `tab`→`a`），`page.data('tab')` 不可用；方法不暴露为 `page.callMethod()`。微信小程序自动化中：用 `element.input()` 填写、`element.tap()` 点击按钮、`page.setData()` 修改状态、`page.data()` 取全部 data。
+9. **微信小程序自动化启动器**：`e2e/launch-devtools.js`（移植自 FocusLab）。通过 `CLI islogin` 发现 DevTools HTTP 端口 → `/v2/open` 打开项目 → `/v2/auto` 启用自动化 WebSocket → `automator.connect()` 连接。解决 CLI 中文路径 spawn 编码问题。端口可通过 `WX_AUTO_PORT` 环境变量配置，默认 60616。
+10. **uni-app H5 路由**：Playwright `getByText` 无法匹配 uni-app 自定义元素（`<uni-text>`），需用 `page.evaluate(() => document.body.innerText)` 或 CSS 选择器替代。
+11. **微信开发者工具 CLI 端口**：默认非 9420，需在"设置→安全设置"查看实际端口。
+12. **uni-app `uni.showToast` H5 DOM**：渲染在 `.uni-toast` 覆盖层中，不在 `document.body.innerText` 内。Playwright 检测 toast 需查询 `.uni-toast` 元素的 display/visibility/opacity。
+13. **微信小程序 reLaunch vs switchTab**：`reLaunch` 不重新触发 `App.onLaunch`，Pinia store 的 `initFromStorage()` 不会再次执行。测试中注入 wx storage 后 `reLaunch` 到首页，路由守卫可能仍重定向到 login。这是"无后端"场景的已知限制。
 
 ### 已解决的问题（避免重复踩坑）
 
@@ -172,6 +182,12 @@ vocabmaster/
 | 暗色主题不生效 | Element Plus 暗色模式初始化时序问题 | 修复初始化顺序 |
 | LLM 分类 GLM-4-Flash 429 | 免费模型速率限制 | 切换 DeepSeek-V3 |
 | Git push 缺 `workflow` scope | PAT 无 workflow 权限 | 重新生成 PAT |
+| 登录页 API 失败无反馈 | `handleLogin` try/finally 无 catch | 加 catch + `uni.showToast` |
+| `manifest.json` permission 警告 | `scope.userInfo` 非合法键 | 改为 `scope.userLocation` |
+| automator spawn 中文乱码 | bash 环境 child_process 编码问题 | HTTP API `/v2/auto` 绕过 CLI spawn |
+| uni-app input Playwright fill 无效 | uni-app 包裹 input，placeholder 不在 input 上 | 通过 `uni-input` wrapper 定位 + nativeInputValueSetter |
+| `page.data('tab')` undefined | uni-app `<script setup>` 变量名压缩 | 取 `page.data()` 全量或跳过命名 key 断言 |
+| `page.callMethod('handleLogin')` not exists | `<script setup>` 方法不暴露为 page method | 用 `element.tap()` 点击按钮 |
 
 ### 待办事项（当前未完成）
 
@@ -195,6 +211,7 @@ vocabmaster/
 
 **低优先级（后续阶段）：**
 - [ ] Uni-app 端完整实现（路线图 Phase 5）— ✅ 基础功能已完成并通过测试（2026-06-02），待后端联调
+- [ ] ✅ 微信小程序自动化用户旅程测试（2026-06-02 完成，36/36 通过）
 - [ ] Python 备选后端（Phase 8 可选）
 - [ ] 报表/可视化完善
 - [ ] 离线缓存 + 多端同步端到端验证
@@ -203,6 +220,8 @@ vocabmaster/
 - [ ] `docker-compose.yml` 的 `version: '3.8'` 已废弃需移除
 - [ ] 词汇爬取需求（剑桥官网 + 国内课标词汇）
 - [ ] 微信小程序真机交互测试（需手机扫码）
+- [ ] 后端联调后重跑微信小程序用户旅程测试（验证登录态生效、学习/测试真实数据）
+- [ ] `wordmate-mini/src/manifest.json` 未提交修改（appid + permission）
 
 ## FAQ
 

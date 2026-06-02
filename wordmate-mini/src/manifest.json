@@ -6,7 +6,7 @@
   "versionCode": 1,
   "transformPx": false,
   "mp-weixin": {
-    "appid": "",
+    "appid": "wx5fb24a398538562a",
     "setting": {
       "urlCheck": false,
       "es6": true,
@@ -14,7 +14,7 @@
     },
     "usingComponents": true,
     "permission": {
-      "scope.userInfo": { "desc": "用于个性化学习体验" }
+      "scope.userLocation": { "desc": "用于学习统计中定位时区" }
     },
     "requiredBackgroundModes": ["audio"]
   },

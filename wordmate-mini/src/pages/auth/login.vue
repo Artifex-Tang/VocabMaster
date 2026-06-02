@@ -84,6 +84,9 @@ async function handleLogin() {
     await settingsStore.fetch()
     settingsStore.sync()
     navigateAfterLogin()
+  } catch (err: unknown) {
+    const msg = (err as { message?: string })?.message ?? '登录失败，请检查网络'
+    uni.showToast({ title: msg, icon: 'none', duration: 3000 })
   } finally {
     loading.value = false
   }
