@@ -1,4 +1,4 @@
-version: '3.8'
+name: vocabmaster
 
 # VocabMaster — 生产部署配置（2C2G 优化）
 # 用法：
@@ -133,7 +133,7 @@ services:
       - ./deploy/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./deploy/nginx/conf.d:/etc/nginx/conf.d:ro
       - ./deploy/nginx/ssl:/etc/nginx/ssl:ro
-      - ./frontend-web/dist:/usr/share/nginx/html:ro          # 前端静态文件
+      - ./wordmate-web/dist:/usr/share/nginx/html:ro          # 前端静态文件
       - nginx_logs:/var/log/nginx
       - ./deploy/certbot/webroot:/var/www/certbot:ro          # Let's Encrypt 验证
     depends_on:
@@ -147,15 +147,15 @@ services:
       - vocab-net
 
   # ═══════════════════ 前端（本地开发） ═══════════════════
-  frontend-web:
+  wordmate-web:
     image: nginx:1.27-alpine
-    container_name: vocab-frontend-web
+    container_name: vocab-wordmate-web
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-3001}:80"
     volumes:
-      - ./frontend-web/dist:/usr/share/nginx/html:ro
-      - ./frontend-web/deploy/web-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./wordmate-web/dist:/usr/share/nginx/html:ro
+      - ./wordmate-web/deploy/web-nginx.conf:/etc/nginx/conf.d/default.conf:ro
     networks:
       - vocab-net
 

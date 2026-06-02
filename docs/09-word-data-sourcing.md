@@ -318,6 +318,54 @@ mysql -u vocab -p vocabmaster < seed/words_sample.sql
 
 生产环境批量导入走管理后台 `POST /admin/words/import` 接口，上传 CSV。
 
+## 数据填充（已实施）
+
+> 脚本：`scripts/fetch_examples.py`，一站式数据丰富工具
+
+### 用法
+
+```bash
+# 全量跑（API 例句 + WordNet 衍生词）
+python scripts/fetch_examples.py
+
+# 只跑 WordNet 衍生词（本地，无需网络）
+python scripts/fetch_examples.py --skip-api
+
+# 只跑 API（例句 + 近义词 + 反义词）
+python scripts/fetch_examples.py --skip-wordnet
+
+# Wikimedia Commons 图片（只对具象词）
+python scripts/fetch_examples.py --images
+
+# 按等级分批
+python scripts/fetch_examples.py --level CET4
+
+# 预览不写库
+python scripts/fetch_examples.py --dry-run --limit 20
+```
+
+### 数据源
+
+| 数据 | 来源 | 写入字段 | 覆盖率 |
+|------|------|----------|--------|
+| Emoji | 按 topic_code 映射 | `emoji` | 100% (42531) |
+| 衍生词 | WordNet NLTK | `related_words.derived` | 90% (38337) |
+| 近义词/反义词 | Free Dictionary API | `related_words.synonyms/antonyms` | 90% (38337) |
+| 例句 | Free Dictionary API | `example_en` | 15% (6464) |
+| 示意图 | Wikimedia Commons | `image_url` | 84% (9756/11560 具象词) |
+
+### API 限制
+
+- Free Dictionary API：免费无 key，~1 req/s，命中率约 15%
+- Wikimedia Commons：免费无 key，~2 req/s，具象词命中率 84%
+- WordNet：本地运行，无限制
+
+### 覆盖率说明
+
+- 例句 15% 是 Free Dictionary API 天花板（很多 CET4/6/TEM8 生僻词该 API 没有收录）
+- 图片只对 15 个具象 topic 处理（animals/food_drink/nature 等），抽象概念用 emoji 兜底
+- 衍生词通过 WordNet `derivationally_related_forms` 获取，覆盖率 90%
+
 ## 后续迭代：LLM 辅助出题
 
 有了基础词库后，可以把"生成拼写测试、选择题干扰项"也交给 LLM：

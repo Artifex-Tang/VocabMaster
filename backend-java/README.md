@@ -142,5 +142,5 @@ open http://localhost:8080/api/v1/swagger-ui.html
 
 ## 下一步（其他端）
 
-- **Web 前端**：Vue 3 + Vite + Pinia + Element Plus（见 `docs/07-frontend-web.md`）
-- **Uni-app 端**：小程序 + Android APK（见 `docs/08-frontend-uniapp.md`）
+- **Web 前端**：Vue 3 + Vite + Pinia + Element Plus（见 `docs/07-wordmate-web.md`）
+- **Uni-app 端**：小程序 + Android APK（见 `docs/08-wordmate-mini.md`）

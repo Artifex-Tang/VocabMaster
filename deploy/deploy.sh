@@ -66,9 +66,9 @@ fi
 # ── 4. 编译前端 ──
 echo ""
 echo "[4/6] 编译 Web 前端..."
-if [ ! -d frontend-web/dist ] || [ -z "$(ls -A frontend-web/dist 2>/dev/null)" ]; then
+if [ ! -d wordmate-web/dist ] || [ -z "$(ls -A wordmate-web/dist 2>/dev/null)" ]; then
     echo "  正在 Vite 构建..."
-    cd frontend-web
+    cd wordmate-web
     npm install --prefer-offline 2>/dev/null || pnpm install 2>/dev/null
     npm run build 2>/dev/null || pnpm build
     cd "$PROJECT_DIR"

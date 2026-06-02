@@ -40,8 +40,8 @@ vocabmaster/
 │   ├── 04-ebbinghaus-algorithm.md # 艾宾浩斯九阶段算法
 │   ├── 05-backend-java.md       # Java 后端实现
 │   ├── 06-backend-python.md     # Python 后端实现（备选）
-│   ├── 07-frontend-web.md       # Web 前端实现
-│   ├── 08-frontend-uniapp.md    # 小程序 + Android 实现
+│   ├── 07-wordmate-web.md       # Web 前端实现
+│   ├── 08-wordmate-mini.md    # 小程序 + Android 实现
 │   ├── 09-word-data-sourcing.md # 词库采集方案
 │   ├── 10-deployment.md         # 部署方案
 │   └── 11-roadmap.md            # 3 周 MVP 路线图
@@ -62,8 +62,8 @@ vocabmaster/
 代码目录在开发时按需创建：
 - `backend-java/`
 - `backend-python/`
-- `frontend-web/`
-- `frontend-uniapp/`
+- `wordmate-web/`
+- `wordmate-mini/`
 
 ## 技术栈一览
 
@@ -107,10 +107,10 @@ cd backend-java && ./mvnw spring-boot:run     # Java，端口 8080
 cd backend-python && uvicorn app.main:app --reload --port 8081
 
 # 5. 启动前端
-cd frontend-web && pnpm install && pnpm dev    # 端口 5173
+cd wordmate-web && pnpm install && pnpm dev    # 端口 5173
 
 # 6. 移动端
-cd frontend-uniapp && pnpm install && pnpm dev:h5         # H5 调试
+cd wordmate-mini && pnpm install && pnpm dev:h5         # H5 调试
 # 或用 HBuilderX 打开，编译到小程序 / Android
 ```
 

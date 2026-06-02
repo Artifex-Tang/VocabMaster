@@ -1,6 +1,6 @@
 # Prompt — Web 前端开发
 
-> 把这份 prompt 作为 Claude Code 在 `frontend-web/` 目录下的起始任务描述。
+> 把这份 prompt 作为 Claude Code 在 `wordmate-web/` 目录下的起始任务描述。
 
 ## 你的角色
 
@@ -12,7 +12,7 @@
 2. `../docs/00-README.md`
 3. `../docs/03-api-specification.md`（**所有接口都在这**）
 4. `../docs/04-ebbinghaus-algorithm.md`（算法是后端的事，但前端需要理解 stage 含义）
-5. `../docs/07-frontend-web.md`（**主文档**）
+5. `../docs/07-wordmate-web.md`（**主文档**）
 
 ## 硬性技术约束
 
@@ -33,7 +33,7 @@
 
 ## 设计规范
 
-从 `docs/07-frontend-web.md` 第 8 节复制：
+从 `docs/07-wordmate-web.md` 第 8 节复制：
 - 主色：`#1890FF`（蓝）+ `#4F46E5`（强调紫）
 - 状态色：未学 `#9CA3AF` / 学习中 `#3B82F6` / 已掌握 `#10B981` / 错误 `#EF4444`
 - 字体：中文 `PingFang SC / Noto Sans SC`，英文 `Inter`，IPA `Charis SIL`（需引入 @font-face）
@@ -45,15 +45,15 @@
 
 ### 第 0 步：工程骨架
 ```bash
-pnpm create vite frontend-web -- --template vue-ts
-cd frontend-web
+pnpm create vite wordmate-web -- --template vue-ts
+cd wordmate-web
 pnpm add vue-router pinia axios element-plus echarts dexie @vueuse/core
 pnpm add -D unocss sass @types/node
 ```
 
 目录：
 ```
-frontend-web/
+wordmate-web/
 ├── src/
 │   ├── main.ts
 │   ├── App.vue
@@ -80,7 +80,7 @@ frontend-web/
 ```
 
 ### 第 1 步：基础设施
-按 `docs/07-frontend-web.md` 第 4~6 节实现：
+按 `docs/07-wordmate-web.md` 第 4~6 节实现：
 
 1. `utils/request.ts`
    - 请求拦截：注入 `Authorization: Bearer <token>`、`X-Device-Id`、`X-Device-Type: web`
@@ -210,6 +210,6 @@ VITE_DEVICE_TYPE=web
 1. "我已阅读 CLAUDE.md 和 docs/00~07"
 2. 你的工程目录计划
 3. 你打算先做哪个页面跑通全链路（建议先做 Login → Today → Session）
-4. 对 `docs/07-frontend-web.md` 有无疑问
+4. 对 `docs/07-wordmate-web.md` 有无疑问
 
 在我确认后再动代码。

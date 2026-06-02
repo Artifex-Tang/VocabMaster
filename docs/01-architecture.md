@@ -60,7 +60,7 @@ com.vocabmaster
 
 ## 模块划分（前端）
 
-### Web 端（frontend-web）
+### Web 端（wordmate-web）
 
 ```
 src/
@@ -95,7 +95,7 @@ src/
 └── App.vue
 ```
 
-### Uni-app 端（frontend-uniapp）
+### Uni-app 端（wordmate-mini）
 
 ```
 src/
@@ -189,15 +189,15 @@ docker-compose:
   - mysql:8.0        # :3306
   - redis:7-alpine   # :6379
   - backend          # :8080（Java 或 Python 二选一）
-  - frontend-web     # :3000（Vite dev server）
+  - wordmate-web     # :3000（Vite dev server）
 ```
 
 **生产环境**：
 ```
 Nginx (443)
-  ├─ / → frontend-web 静态文件
+  ├─ / → wordmate-web 静态文件
   ├─ /api/ → backend (Spring Boot) :8080
-  └─ /admin/ → frontend-web (同源，路由区分)
+  └─ /admin/ → wordmate-web (同源，路由区分)
 
 backend × 2 实例（负载均衡） → MySQL 主 + 从（读写分离可选）
                              → Redis（主 + 哨兵）

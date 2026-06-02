@@ -155,7 +155,7 @@ CREATE TABLE `word_bank` (
   `difficulty` TINYINT DEFAULT NULL COMMENT '1-10',
   `frequency` DECIMAL(4,3) DEFAULT NULL COMMENT '0.000-1.000 词频',
   `pos` VARCHAR(50) DEFAULT NULL COMMENT '词性 n./v./adj./adv.',
-  `related_words` JSON DEFAULT NULL COMMENT '同根词/同义词/反义词',
+  `related_words` JSON DEFAULT NULL COMMENT '{"synonyms":[],"antonyms":[],"derived":[]}',
   `audit_status` TINYINT NOT NULL DEFAULT 1 COMMENT '1审核通过 0待审 -1下架',
   `created_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3),

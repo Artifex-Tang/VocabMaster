@@ -1,6 +1,6 @@
 # Prompt — Uni-app 移动端开发（小程序 + Android APK）
 
-> 把这份 prompt 作为 Claude Code 在 `frontend-uniapp/` 目录下的起始任务描述。
+> 把这份 prompt 作为 Claude Code 在 `wordmate-mini/` 目录下的起始任务描述。
 
 ## 你的角色
 
@@ -11,7 +11,7 @@
 1. `../CLAUDE.md`
 2. `../docs/00-README.md`
 3. `../docs/03-api-specification.md`
-4. `../docs/08-frontend-uniapp.md`（**主文档**）
+4. `../docs/08-wordmate-mini.md`（**主文档**）
 5. `../docs/07-frontend-web.md`（参考 Web 版的离线策略和 TTS 策略，移动端复用思路）
 
 ## 硬性技术约束
@@ -86,7 +86,7 @@ export async function speak(text: string, accent: 'uk' | 'us', audioUrl?: string
 ## 目录结构
 
 ```
-frontend-uniapp/
+wordmate-mini/
 ├── src/
 │   ├── main.ts
 │   ├── App.vue
@@ -187,11 +187,11 @@ frontend-uniapp/
 ### 第 0 步：工程骨架
 用 HBuilderX 新建项目，或用 Vite CLI：
 ```bash
-pnpm create vite frontend-uniapp -- --template uni-app-vue3-ts
+pnpm create vite wordmate-mini -- --template uni-app-vue3-ts
 ```
 或用 uni CLI：
 ```bash
-pnpm create uni-app --template uni-preset-vue-vite-ts frontend-uniapp
+pnpm create uni-app --template uni-preset-vue-vite-ts wordmate-mini
 ```
 
 ### 第 1 步：基础设施
@@ -307,6 +307,6 @@ pnpm dev:h5               # 快速验证业务逻辑
 2. 你的工程搭建方案（HBuilderX 还是 CLI）
 3. 你打算先跑通哪一端（建议 **H5 → 小程序 → App**，H5 最快迭代）
 4. 你计划怎样组织 `utils/platform/` 抽象层
-5. 对 `docs/08-frontend-uniapp.md` 有无疑问
+5. 对 `docs/08-wordmate-mini.md` 有无疑问
 
 在我确认后再动代码。

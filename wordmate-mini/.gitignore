@@ -1,0 +1,8 @@
+node_modules/
+test-results/
+test-results-wechat.json
+
+# Test artifacts
+test-results/
+test-results-wechat.json
+e2e/screenshots/

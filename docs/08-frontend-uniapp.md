@@ -25,7 +25,7 @@
 ## 项目结构
 
 ```
-frontend-uniapp/
+wordmate-mini/
 ├── package.json
 ├── vite.config.ts
 ├── tsconfig.json

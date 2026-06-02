@@ -20,7 +20,7 @@
 ## 项目结构
 
 ```
-frontend-web/
+wordmate-web/
 ├── package.json
 ├── vite.config.ts
 ├── tsconfig.json
@@ -275,96 +275,49 @@ export const useUserStore = defineStore('user', () => {
 
 ### 3. 单词卡片组件
 
-```vue
-<!-- src/components/WordCard.vue -->
-<template>
-  <div 
-    class="word-card"
-    :class="{ flipped }"
-    @click="handleFlip"
-  >
-    <div class="card-inner">
-      <!-- 正面 -->
-      <div class="card-face card-front">
-        <div class="emoji" v-if="word.emoji">{{ word.emoji }}</div>
-        <img v-else-if="word.imageUrl" :src="word.imageUrl" class="image" />
-        <div class="word">{{ word.word }}</div>
-        <div class="ipa">
-          <span v-if="preferredAccent === 'uk'">{{ word.ipaUk }}</span>
-          <span v-else>{{ word.ipaUs }}</span>
-          <el-button link @click.stop="playAudio">
-            <el-icon><VideoPlay /></el-icon>
-          </el-button>
-        </div>
-        <div class="topic" v-if="word.topicCode">{{ topicName }}</div>
-        <div class="hint" v-if="!flipped">点击查看释义</div>
-      </div>
-      
-      <!-- 反面 -->
-      <div class="card-face card-back" v-if="flipped">
-        <div class="section">
-          <div class="label">English</div>
-          <div class="content">{{ word.enDefinition }}</div>
-        </div>
-        <div class="section">
-          <div class="label">中文</div>
-          <div class="content">{{ word.zhDefinition }}</div>
-        </div>
-        <div class="section example">
-          <div class="label">Example</div>
-          <div class="content">"{{ word.exampleEn }}"</div>
-          <div class="zh">{{ word.exampleZh }}</div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
+> **已实现**，参见 `wordmate-web/src/components/WordCard.vue`
 
-<script setup lang="ts">
-import { ref, computed } from 'vue'
-import { VideoPlay } from '@element-plus/icons-vue'
-import { useSettingsStore } from '@/stores/settings'
-import { useTts } from '@/composables/useTts'
+**卡片正面**：
+- Emoji 示意图（`word.emoji`，按 topic_code 填充）或 `word.image_url`（Wikimedia Commons）
+- 单词文本
+- 词性标签（从 `pos` 字段解析，如 n./v./adj.）
+- 音标（UK/US 切换）+ 发音按钮
+- 词形变化提示（从 `zh_definition` 提取复数、过去式等）
+- topic_code 标签
 
-const props = defineProps<{
-  word: WordBank
-  autoFlip?: boolean
-}>()
+**卡片反面**：
+- 英文释义 / 中文释义
+- 例句（`example_en` / `example_zh`，Free Dictionary API 获取）
+- 近义词（`related_words.synonyms`）
+- 衍生词（`related_words.derived`，WordNet 获取）
 
-const emit = defineEmits<{
-  flip: []
-}>()
+**交互**：
+- **双向翻转**：点击或 Space 键切换正⇄反
+- **自动发音**：翻到反面时自动播放（可在设置中关闭）
 
-const flipped = ref(false)
-const settings = useSettingsStore()
-const { speak } = useTts()
-
-const preferredAccent = computed(() => settings.preferredAccent)
-const topicName = computed(() => settings.topicMap[props.word.topicCode] || '')
-
+**关键实现**：
+```ts
+// 双向翻转
 function handleFlip() {
-  if (flipped.value) return
-  flipped.value = true
-  emit('flip')
-  if (settings.autoPlayAudio) playAudio()
-}
-
-function playAudio() {
-  const url = preferredAccent.value === 'uk' ? props.word.audioUrlUk : props.word.audioUrlUs
-  if (url) {
-    const audio = new Audio(url)
-    audio.play()
-  } else {
-    speak(props.word.word, preferredAccent.value)
+  flipped.value = !flipped.value
+  if (flipped.value) {
+    emit('flip')
+    if (settingsStore.settings.auto_play_audio) playAudio()
   }
 }
 
-function reset() {
-  flipped.value = false
-}
+// 词性标签
+const posLabel = computed(() => {
+  const code = props.word.pos?.split(':')[0]  // "n:100" → "n"
+  const map = { n:'n.', v:'v.', j:'adj.', r:'adv.', ... }
+  return code ? (map[code] || code) : ''
+})
 
-defineExpose({ reset, flip: handleFlip })
-</script>
+// 词形提示（从 zh_definition 括号提取）
+const formHint = computed(() => {
+  const m = props.word.zh_definition?.match(/[（(](.+?(?:复数|过去式|比较级).+?)[）)]/)
+  return m ? m[1] : ''
+})
 ```
 
 ### 4. 学习会话（Study Session）
@@ -466,7 +419,47 @@ async function finishSession() {
 </script>
 ```
 
-### 5. 离线队列 + 同步
+### 5. 学习会话导航
+
+> **已实现**，参见 `wordmate-web/src/views/study/StudySession.vue`
+
+导航栏：返回 | ← | 进度条 | N/M | → | ✓数量
+
+- `←` `→` 按钮和键盘箭头键切换单词（不提交答案，仅浏览）
+- 切换时自动重置卡片为正面
+- 快捷键：`←/→` 切换，`Space` 翻面，`1/2/3` 答题，`P` 发音
+- Store 提供 `goTo(idx)` 方法支持跳转
+
+### 6. 词库检索页
+
+> **已实现**，参见 `wordmate-web/src/views/word/WordSearch.vue`
+
+路由：`/word-search`
+
+功能：
+- 搜索框（输入单词或释义）+ 等级下拉筛选
+- `el-table` 展示结果：单词(emoji)、释义、音标、等级标签
+- `el-pagination` 分页
+- 点击行 → `el-dialog` 弹出 WordCard 卡片（可翻转）
+
+API: `wordApi.searchWords(q, level, page, page_size)`
+
+### 7. 侧边栏折叠
+
+> **已实现**，参见 `wordmate-web/src/components/layout/AppLayout.vue`
+
+- 点击 logo 区域切换收窄/展开
+- 展开 220px（图标+文字），收窄 64px（仅图标，hover tooltip）
+- `el-menu :collapse` 原生支持
+
+### 8. 遗忘曲线增强
+
+> **已实现**，参见 `wordmate-web/src/views/stats/ForgettingCurve.vue`
+
+- 搜索改为 `el-autocomplete` 下拉提示，每条显示 `level_code` 标签区分同名单词
+- ECharts 加 `dataZoom`（滚轮 + 滑块缩放）
+
+### 9. 离线队列 + 同步
 
 ```typescript
 // src/utils/storage.ts

@@ -47,7 +47,7 @@ def main():
     dirs = [
         REMOTE_DIR,
         f"{REMOTE_DIR}/backend-java/target",
-        f"{REMOTE_DIR}/frontend-web/dist",
+        f"{REMOTE_DIR}/wordmate-web/dist",
         f"{REMOTE_DIR}/deploy/nginx/conf.d",
         f"{REMOTE_DIR}/deploy/nginx/ssl",
         f"{REMOTE_DIR}/deploy/certbot/webroot",
@@ -75,7 +75,7 @@ def main():
         uploads.append((sql_file, f"{REMOTE_DIR}/sql/init.sql"))
 
     # 检查前端 dist
-    dist_dir = f"{project_base}/frontend-web/dist"
+    dist_dir = f"{project_base}/wordmate-web/dist"
     if os.path.exists(dist_dir) and os.listdir(dist_dir):
         print("  上传前端 dist/...")
         with SCPClient(ssh.get_transport()) as scp:
@@ -88,7 +88,7 @@ def main():
                     scp.put(local_path, remote_path)
             # 上传前端 dist 目录
             if os.path.exists(dist_dir):
-                scp.put(dist_dir, f"{REMOTE_DIR}/frontend-web/", recursive=True)
+                scp.put(dist_dir, f"{REMOTE_DIR}/wordmate-web/", recursive=True)
     else:
         print("  前端 dist 不存在，跳过前端上传")
         with SCPClient(ssh.get_transport()) as scp:

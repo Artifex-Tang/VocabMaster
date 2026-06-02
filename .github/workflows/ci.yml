@@ -1,4 +1,4 @@
-name: CI Build & Test
+name: VocabMaster CI Build & Test
 
 on:
   push:
@@ -63,7 +63,7 @@ jobs:
         run: docker build -t vocabmaster-backend:ci .
 
   # ---- Frontend Web ----
-  frontend-web:
+  wordmate-web:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -76,24 +76,24 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-          cache-dependency-path: frontend-web/pnpm-lock.yaml
+          cache-dependency-path: wordmate-web/pnpm-lock.yaml
 
       - name: Install & Build
-        working-directory: frontend-web
+        working-directory: wordmate-web
         run: |
           pnpm install --frozen-lockfile
           pnpm build
 
       - name: Type check
-        working-directory: frontend-web
+        working-directory: wordmate-web
         run: pnpm type-check
 
       - name: Build Docker image
-        working-directory: frontend-web
-        run: docker build -t vocabmaster-frontend-web:ci .
+        working-directory: wordmate-web
+        run: docker build -t vocabmaster-wordmate-web:ci .
 
   # ---- Frontend Uni-app ----
-  frontend-uniapp:
+  wordmate-mini:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -106,10 +106,10 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: pnpm
-          cache-dependency-path: frontend-uniapp/pnpm-lock.yaml
+          cache-dependency-path: wordmate-mini/pnpm-lock.yaml
 
       - name: Install & Build H5
-        working-directory: frontend-uniapp
+        working-directory: wordmate-mini
         run: |
           pnpm install --frozen-lockfile
           pnpm build:h5
@@ -117,7 +117,7 @@ jobs:
   # ---- Integration test (docker compose) ----
   integration:
     runs-on: ubuntu-latest
-    needs: [backend, frontend-web]
+    needs: [backend, wordmate-web]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4

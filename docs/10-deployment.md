@@ -95,11 +95,11 @@ cd backend-java
 ./mvnw spring-boot:run
 
 # Web 前端
-cd frontend-web
+cd wordmate-web
 pnpm install && pnpm dev
 
 # Uni-app
-cd frontend-uniapp
+cd wordmate-mini
 pnpm install
 # 然后用 HBuilderX 打开项目，或 pnpm run dev:h5 / dev:mp-weixin
 ```
@@ -278,7 +278,7 @@ services:
     volumes:
       - ./nginx/vocabmaster.conf:/etc/nginx/conf.d/default.conf:ro
       - ./ssl:/etc/ssl:ro
-      - ./frontend-web-dist:/var/www/vocabmaster/dist:ro
+      - ./wordmate-web-dist:/var/www/vocabmaster/dist:ro
     depends_on:
       - backend1
       - backend2

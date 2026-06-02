@@ -2,6 +2,10 @@
 
 > 本文档为 Claude Code 的任务单，按顺序完成每个任务即可产出 MVP。每个任务含：目标、前置、输出、验收标准、预估时间。一人独立开发预计 3 周完成 MVP。
 
+## 当前进度（2026-06-01）
+
+###
+
 ---
 
 ## 阶段一：基础设施 + 数据层（约 2 天）
@@ -266,7 +270,7 @@ curl -X POST http://localhost:8080/api/v1/auth/register \
 
 ### 任务 4.1 — Web 项目脚手架
 
-**目标**：`frontend-web/` 完整目录，能 `pnpm dev` 启动，首页显示 "Hello VocabMaster"。
+**目标**：`wordmate-web/` 完整目录，能 `pnpm dev` 启动，首页显示 "Hello VocabMaster"。
 
 **输出**：
 - `package.json`、`vite.config.ts`、`tsconfig.json`
@@ -339,7 +343,7 @@ curl -X POST http://localhost:8080/api/v1/auth/register \
 
 ### 任务 5.1 — Uni-app 脚手架
 
-**目标**：`frontend-uniapp/` 能跑通 H5（`pnpm dev:h5`）和微信小程序（HBuilderX 运行）。
+**目标**：`wordmate-mini/` 能跑通 H5（`pnpm dev:h5`）和微信小程序（HBuilderX 运行）。
 
 **输出**：
 - 完整 `pages.json`、`manifest.json`
