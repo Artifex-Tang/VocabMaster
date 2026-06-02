@@ -44,7 +44,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import * as testApi from '@/api/test'
@@ -56,10 +56,10 @@ const router = useRouter()
 const loading = ref(true)
 const session = ref<TestSession | null>(null)
 const currentIdx = ref(0)
-const questionStart = Date.now()
+const questionStart = ref(Date.now())
 
-// Map: question_id -> answer
-const answerMap = new Map<string, { answer: string; duration_ms: number }>()
+// Map: question_id -> answer (reactive so computed updates)
+const answerMap = reactive(new Map<string, { answer: string; duration_ms: number }>())
 
 const currentQ = computed(() => session.value?.questions[currentIdx.value])
 const pct = computed(() => session.value ? Math.round((currentIdx.value + 1) / session.value.questions.length * 100) : 0)
@@ -91,7 +91,7 @@ function getAnswer(idx: number): string {
 function choose(opt: string) {
   const q = currentQ.value
   if (!q) return
-  answerMap.set(q.question_id, { answer: opt, duration_ms: Date.now() - questionStart })
+  answerMap.set(q.question_id, { answer: opt, duration_ms: Date.now() - questionStart.value })
   // 自动跳下一题
   if (session.value && currentIdx.value < session.value.questions.length - 1) {
     currentIdx.value++
@@ -101,7 +101,7 @@ function choose(opt: string) {
 function skipCurrent() {
   const q = currentQ.value
   if (!q) return
-  answerMap.set(q.question_id, { answer: '', duration_ms: Date.now() - questionStart })
+  answerMap.set(q.question_id, { answer: '', duration_ms: Date.now() - questionStart.value })
   if (session.value && currentIdx.value < session.value.questions.length - 1) {
     currentIdx.value++
   }
@@ -112,7 +112,7 @@ function next() {
   if (session.value && currentIdx.value < session.value.questions.length - 1) currentIdx.value++
 }
 
-watch(currentIdx, () => { questionStart = Date.now() })
+watch(currentIdx, () => { questionStart.value = Date.now() })
 
 async function submitAll() {
   if (!session.value) return

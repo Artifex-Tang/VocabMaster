@@ -64,7 +64,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, nextTick, watch } from 'vue'
+import { ref, reactive, computed, onMounted, nextTick, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { useTts } from '@/composables/useTts'
@@ -82,10 +82,10 @@ const session = ref<TestSession | null>(null)
 const currentIdx = ref(0)
 const promptLang = ref<'zh' | 'en'>('zh')
 const inputRef = ref()
-const questionStart = Date.now()
+const questionStart = ref(Date.now())
 
-// 用 Map 存答案，key = question_id
-const answerMap = new Map<string, { answer: string; duration_ms: number }>()
+// Map: question_id -> answer (reactive so computed updates)
+const answerMap = reactive(new Map<string, { answer: string; duration_ms: number }>())
 
 const currentQ = computed(() => session.value?.questions[currentIdx.value])
 const pct = computed(() => session.value ? Math.round((currentIdx.value + 1) / session.value.questions.length * 100) : 0)
@@ -128,7 +128,7 @@ function confirmCurrent() {
   const input = inputRef.value?.input?.value ?? ''
   const val = input.trim()
   if (!val) return
-  answerMap.set(q.question_id, { answer: val, duration_ms: Date.now() - questionStart })
+  answerMap.set(q.question_id, { answer: val, duration_ms: Date.now() - questionStart.value })
   // 自动跳到下一题
   if (currentIdx.value < (session.value?.questions.length ?? 0) - 1) {
     currentIdx.value++
@@ -139,7 +139,7 @@ function skipCurrent() {
   const q = currentQ.value
   if (!q) return
   // 标记为空答案（跳过）
-  answerMap.set(q.question_id, { answer: '', duration_ms: Date.now() - questionStart })
+  answerMap.set(q.question_id, { answer: '', duration_ms: Date.now() - questionStart.value })
   if (currentIdx.value < (session.value?.questions.length ?? 0) - 1) {
     currentIdx.value++
   }
@@ -155,7 +155,7 @@ function next() {
 
 // 切题时重置计时器
 watch(currentIdx, () => {
-  questionStart = Date.now()
+  questionStart.value = Date.now()
   nextTick(() => inputRef.value?.focus?.())
 })
 

@@ -1,14 +1,14 @@
 <template>
   <view class="word-card" @click="handleFlip">
     <view v-if="!flipped" class="face front">
-      <text v-if="word.emoji" class="emoji">{{ word.emoji }}</text>
       <image
-        v-else-if="word.image_url"
+        v-if="word.image_url"
         :src="word.image_url"
         class="image"
         mode="aspectFit"
         lazy-load
       />
+      <text v-else-if="word.emoji" class="emoji">{{ word.emoji }}</text>
       <text class="word">{{ word.word }}</text>
       <view class="ipa-row">
         <text class="ipa">{{ preferredAccent === 'uk' ? word.ipa_uk : word.ipa_us }}</text>

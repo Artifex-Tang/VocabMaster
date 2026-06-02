@@ -153,3 +153,4 @@ backups/
 *.sql.gz
 *.dump
 backup/*.sql
+backend-java/static/images/words/*.jpg

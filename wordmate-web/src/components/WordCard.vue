@@ -3,13 +3,13 @@
     <div class="card-inner">
       <!-- Front -->
       <div class="card-face card-front">
-        <div v-if="displayEmoji" class="word-emoji">{{ displayEmoji }}</div>
         <img
-          v-else-if="word.image_url"
+          v-if="word.image_url"
           :src="word.image_url"
           class="word-image"
           loading="lazy"
         />
+        <div v-else-if="word.emoji" class="word-emoji">{{ word.emoji }}</div>
         <div class="word-text word-main">{{ word.word }}</div>
         <div v-if="posLabel" class="pos-tag">{{ posLabel }}</div>
         <div class="ipa">
@@ -77,12 +77,6 @@ const settingsStore = useSettingsStore()
 const { speakOrFallback } = useTts()
 
 const preferredAccent = computed(() => settingsStore.settings.preferred_accent)
-
-const displayEmoji = computed(() => {
-  if (props.word.emoji) return props.word.emoji
-  if (props.word.image_url) return ''
-  return ''
-})
 
 const posLabel = computed(() => {
   const code = props.word.pos?.split(':')[0]

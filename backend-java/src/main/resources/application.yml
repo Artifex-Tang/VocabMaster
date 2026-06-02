@@ -3,6 +3,9 @@ spring:
     name: vocabmaster
   profiles:
     active: dev
+  web:
+    resources:
+      static-locations: classpath:/static/, file:./static/
   datasource:
     url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:vocabmaster}?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true
     username: ${DB_USERNAME:vocab}
