@@ -211,6 +211,45 @@ vocabmaster/
 | Wikimedia 批量下载 429 | 0.5s 延迟不够 | 延迟改 1.0s + 429 指数退避 |
 | Python 脚本 GBK 编码错误 | Unicode 特殊字符（✓✗⚠）在 Windows GBK 终端报错 | 用 ASCII 替代 |
 
+### 功能规划（待用户确认后再实施）
+
+#### 自定义词库（Custom Word List）
+
+用户可创建自定义词库，学习/测试时选为数据源。
+
+**导入方式**：
+1. **Excel/CSV 导入**：列 `word, zh_definition(可选), en_definition(可选)`，后端解析匹配 `word_bank` 已有词，匹配不到的入 `custom_words` 表
+2. **手动选词**：从已有等级词库勾选加入自定义列表
+3. **智能推荐**：根据当前等级 + 薄弱词自动组一批
+
+**数据模型**：
+```sql
+custom_word_list (id, user_id, name, description, word_count, created_at)
+custom_word_list_item (list_id, word_id)  -- 关联 word_bank.id
+```
+
+#### 单词小短文（Word Story）
+
+从当前学习批次选 8-15 个词，LLM 生成小短文，单词在文中加粗高亮。附带中文翻译 + 阅读理解题。
+
+**体裁**：文学故事 / 科普文章 / 新闻报道 / 日常对话 / 实用文体（邮件、日记、演讲）
+
+**数据模型**：
+```sql
+word_story (id, title, content_en, content_zh, genre, level_code, word_ids JSON, created_at)
+word_story_question (story_id, question, options JSON, answer)
+```
+
+**成本**：DeepSeek-V4-Flash ~¥0.0004/篇，1 万篇 ≈ ¥4。
+
+**生成策略**：按等级×体裁预生成 + 同批词缓存复用（所有用户共享）。
+
+**建议实施顺序**：
+1. Phase 1：小短文预生成 + 阅读（1 天）
+2. Phase 2：小短文阅读理解题（0.5 天）
+3. Phase 3：自定义词库 Excel 导入（1 天）
+4. Phase 4：自定义词库手动选词 + 智能推荐（1 天）
+
 ### 待办事项（当前未完成）
 
 **高优先级：**
