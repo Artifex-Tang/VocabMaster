@@ -118,12 +118,13 @@ vocabmaster/
 
 ### 代码规范与踩坑记录
 
-1. **API 参数命名**：前端发 `snake_case`（`level_code`, `word_id`），后端 `@RequestParam("snake_case") Type camelCaseName` 显式映射。所有 GET 查询参数必须加别名。
-2. **统一响应格式**：`R<T>` 封装（code / msg / data / request_id），分页用 `PageResult<T>`（items / total / page / page_size）。
-3. **Lombok `@Getter` 命名**：字段名 `errorCode` 对应 `getErrorCode()`，不是 `getCode()`。
-4. **MyBatis-Plus 约定**：`@TableLogic(value = "NULL", delval = "now(3)")` 软删除；`@TableField(fill = FieldFill.INSERT/INSERT_UPDATE)` 自动填时间；`@TableName` 显式表名。
-5. **Lombok + MapStruct 联合**：maven-compiler-plugin 需配置 `lombok-mapstruct-binding 0.2.0` 解决注解处理器冲突。
-6. **Redis 反序列化**：`RedisTemplate` JSON 序列化读回来是 `LinkedHashMap` 而非领域对象，需 `ObjectMapper.convertValue(raw, TargetClass.class)` 兼容。
+1. **"手机仿真测试"= 微信开发者工具模拟器**：用户说"手机仿真测试"/"端到端手机模拟仿真测试"时，指的是微信开发者工具里的模拟器（miniprogram-automator），**不是** Playwright headless 浏览器。两者必须区分清楚。H5 Playwright 测试≠微信模拟器测试。
+2. **API 参数命名**：前端发 `snake_case`（`level_code`, `word_id`），后端 `@RequestParam("snake_case") Type camelCaseName` 显式映射。所有 GET 查询参数必须加别名。
+3. **统一响应格式**：`R<T>` 封装（code / msg / data / request_id），分页用 `PageResult<T>`（items / total / page / page_size）。
+4. **Lombok `@Getter` 命名**：字段名 `errorCode` 对应 `getErrorCode()`，不是 `getCode()`。
+5. **MyBatis-Plus 约定**：`@TableLogic(value = "NULL", delval = "now(3)")` 软删除；`@TableField(fill = FieldFill.INSERT/INSERT_UPDATE)` 自动填时间；`@TableName` 显式表名。
+6. **Lombok + MapStruct 联合**：maven-compiler-plugin 需配置 `lombok-mapstruct-binding 0.2.0` 解决注解处理器冲突。
+7. **Redis 反序列化**：`RedisTemplate` JSON 序列化读回来是 `LinkedHashMap` 而非领域对象，需 `ObjectMapper.convertValue(raw, TargetClass.class)` 兼容。
 7. **`@RateLimit` 注解**：必须有 `key()` 属性支持自定义限流 key 前缀。
 8. **`EbbinghausScheduler.INTERVALS_HOURS`**：必须 `public static final`，跨包访问。
 9. **前端日期格式**：后端 `LocalDateTime` Jackson 格式 `yyyy-MM-dd'T'HH:mm:ss`，前端 `nowIso()` 必须去掉毫秒和 `Z` 后缀匹配。
