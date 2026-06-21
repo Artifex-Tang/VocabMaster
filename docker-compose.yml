@@ -27,7 +27,7 @@ services:
       - --collation-server=utf8mb4_0900_ai_ci
       - --default-time-zone=+00:00
       # ── 2C2G 优化 ──
-      - --innodb-buffer-pool-size=256M
+      - --innodb-buffer-pool-size=128M
       - --max-connections=50
       - --skip-log-bin                    # 关闭 binlog，省内存和磁盘 IO
       - --innodb-flush-log-at-trx-commit=2
@@ -45,7 +45,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 400M
+          memory: 512M     # 1.6G 机器：MySQL 是内存大户，buffer pool 128M + 连接/临时表
     networks:
       - vocab-net
 
@@ -60,7 +60,7 @@ services:
       redis-server
       --appendonly yes
       --requirepass "${REDIS_PASSWORD:-redis123}"
-      --maxmemory 128mb
+      --maxmemory 64mb
       --maxmemory-policy allkeys-lru
     volumes:
       - redis_data:/data
@@ -72,7 +72,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 180M
+          memory: 96M
     networks:
       - vocab-net
 
@@ -101,7 +101,9 @@ services:
       WECHAT_APP_ID: ${WECHAT_APP_ID:-}
       WECHAT_APP_SECRET: ${WECHAT_APP_SECRET:-}
       # ── JVM 优化 ──
-      JAVA_OPTS: -Xmx384m -Xms256m -XX:+UseSerialGC -XX:+UseCompressedOops -XX:MaxMetaspaceSize=128m
+      # -Xmx300m：堆 300 + 元空间 128 + 线程栈/直接内存 ≈ 容器 420M 上限留 ~120M 堆外余量
+      # （旧 -Xmx384m 在 420M 容器里几乎无余量，Jun19 backend 被 OOM 杀就是这个原因）
+      JAVA_OPTS: -Xmx300m -Xms192m -XX:+UseSerialGC -XX:+UseCompressedOops -XX:MaxMetaspaceSize=128m
     depends_on:
       mysql:
         condition: service_healthy
@@ -110,7 +112,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 500M
+          memory: 420M
     healthcheck:
       test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/api/v1/actuator/health"]
       interval: 15s
@@ -143,7 +145,7 @@ services:
     deploy:
       resources:
         limits:
-          memory: 64M
+          memory: 48M
     networks:
       - vocab-net
 
@@ -158,6 +160,31 @@ services:
       - ./wordmate-web/dist:/usr/share/nginx/html:ro
       - ./backend-java/static/images:/usr/share/nginx/images:ro  # 单词示意图
       - ./wordmate-web/deploy/web-nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    deploy:
+      resources:
+        limits:
+          memory: 32M     # 纯静态 nginx，之前无限制是 OOM 隐患
+    networks:
+      - vocab-net
+
+  # ═══════════════════ Autoheal（自动重启 unhealthy 容器） ═══════════════════
+  # Docker healthcheck 只标记 unhealthy，自身不会重启容器；restart 策略也只在
+  # 进程退出时触发。容器进程被内核 OOM-killer 杀死后会卡在 "Up (unhealthy)" 僵尸态，
+  # 不会自愈。autoheal 监听所有带 healthcheck 的容器，unhealthy 即重启。
+  autoheal:
+    image: willfarrell/autoheal:latest
+    container_name: vocab-autoheal
+    restart: unless-stopped
+    environment:
+      AUTOHEAL_CONTAINER_LABEL: all   # 监控所有带 healthcheck 的容器（无需逐个打标签）
+      AUTOHEAL_INTERVAL: 30           # 每 30s 巡检一次
+      AUTOHEAL_START_PERIOD: 60       # 启动后等 60s 再开始判定
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      resources:
+        limits:
+          memory: 32M
     networks:
       - vocab-net
 

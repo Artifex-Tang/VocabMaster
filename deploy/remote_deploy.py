@@ -130,7 +130,8 @@ WECHAT_APP_SECRET=
 
     # ── 6. Docker 构建 + 启动 ──
     print("\n[6/7] Docker 构建并启动...")
-    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose down -v 2>/dev/null; true")
+    # 注意：绝不加 -v！-v 会删除数据卷清空 MySQL 增量数据。只停容器，保留 mysql_data/redis_data。
+    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose down 2>/dev/null; true")
     ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose build backend-java 2>&1", check=False)
     print("  启动所有服务...")
     ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose up -d 2>&1")
