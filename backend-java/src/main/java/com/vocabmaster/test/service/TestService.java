@@ -37,6 +37,23 @@ public class TestService {
     private static final java.util.Set<String> VALID_MODES = Set.of("spelling", "choice", "listening");
     private static final java.util.Set<String> VALID_SOURCES = Set.of("due", "all", "wrong_words");
 
+    /** 短语判定：词含空格，或 PoS 为 phrase / phrasal verb。 */
+    public static boolean isPhrase(String word, String pos) {
+        if (word != null && word.trim().contains(" ")) return true;
+        if (pos != null) {
+            String p = pos.trim().toLowerCase();
+            return p.equals("phrase") || p.equals("phrasal verb");
+        }
+        return false;
+    }
+
+    /** 该词是否允许某种测试模式。短语排除 spelling；choice/listening 全允许。 */
+    public static boolean allowsMode(String word, String pos, String mode) {
+        if (!VALID_MODES.contains(mode)) return false;
+        if ("spelling".equals(mode) && isPhrase(word, pos)) return false;
+        return true;
+    }
+
     private final WordBankMapper wordBankMapper;
     private final UserWordProgressMapper progressMapper;
     private final WrongWordMapper wrongWordMapper;
@@ -55,12 +72,18 @@ public class TestService {
         }
 
         String testId = "tst_" + UUID.randomUUID().toString().replace("-", "");
-        List<TestSession.SessionQuestion> sessionQuestions = new ArrayList<>(words.size());
-        List<TestQuestion> clientQuestions = new ArrayList<>(words.size());
+        int target = req.getSize();
+        List<TestSession.SessionQuestion> sessionQuestions = new ArrayList<>(target);
+        List<TestQuestion> clientQuestions = new ArrayList<>(target);
 
-        for (int i = 0; i < words.size(); i++) {
-            WordBank wb = words.get(i);
-            String qId = "q" + (i + 1);
+        // 过滤掉不支持当前模式的词条（如 spelling 排除短语），达到目标数量即停止
+        int qIdx = 0;
+        for (WordBank wb : words) {
+            if (sessionQuestions.size() >= target) break;
+            if (!allowsMode(wb.getWord(), wb.getPos(), req.getMode())) continue;
+
+            qIdx++;
+            String qId = "q" + qIdx;
 
             sessionQuestions.add(TestSession.SessionQuestion.builder()
                     .questionId(qId)
@@ -69,6 +92,10 @@ public class TestService {
                     .build());
 
             clientQuestions.add(buildClientQuestion(qId, wb, req.getMode()));
+        }
+        // 候选词全部过滤后可能少于目标数量，保留现有题目不报错；但若一个都没剩下则报错
+        if (clientQuestions.isEmpty()) {
+            throw new BizException(ErrorCode.WORD_NOT_FOUND, "当前来源下没有可出题的单词");
         }
 
         TestSession session = TestSession.builder()
@@ -161,6 +188,10 @@ public class TestService {
 
     private List<WordBank> selectWords(Long userId, GenerateTestRequest req) {
         int limit = req.getSize();
+        // spelling 模式会过滤掉短语，预取更多候选以保证最终题数尽量接近 size
+        if ("spelling".equals(req.getMode())) {
+            limit = limit + limit / 2 + 4;
+        }
         String levelCode = req.getLevelCode();
         LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
 
