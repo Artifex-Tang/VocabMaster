@@ -1,6 +1,8 @@
 package com.vocabmaster.wordlist.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.vocabmaster.common.exception.BizException;
+import com.vocabmaster.common.result.ErrorCode;
 import com.vocabmaster.study.entity.UserWordProgress;
 import com.vocabmaster.study.mapper.UserWordProgressMapper;
 import com.vocabmaster.word.dto.WordDetailDto;
@@ -12,6 +14,7 @@ import com.vocabmaster.wordlist.dto.WordListDetailDto;
 import com.vocabmaster.wordlist.dto.WordListSummaryDto;
 import com.vocabmaster.wordlist.entity.UserListSubscription;
 import com.vocabmaster.wordlist.entity.WordList;
+import com.vocabmaster.wordlist.entity.WordListItem;
 import com.vocabmaster.wordlist.mapper.UserListSubscriptionMapper;
 import com.vocabmaster.wordlist.mapper.WordListItemMapper;
 import com.vocabmaster.wordlist.mapper.WordListMapper;
@@ -23,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -79,7 +84,7 @@ public class WordListService {
     public WordListDetailDto detail(Long userId, Long listId) {
         WordList list = wordListMapper.selectById(listId);
         if (list == null) {
-            throw new IllegalArgumentException("词库不存在: " + listId);
+            throw new BizException(ErrorCode.WORD_LIST_NOT_FOUND);
         }
 
         UserListSubscription sub = userListSubscriptionMapper.find(userId, listId);
@@ -87,15 +92,20 @@ public class WordListService {
         // 一次性拉该用户在该词库 originLevel 下的全部进度，建 wordId→stage 索引
         Map<Long, Integer> stageByWordId = buildStageIndex(userId, list.getOriginLevelCode());
 
-        // 各单元的词数（unit_no, cnt）
-        List<Map<String, Object>> unitCounts = wordListItemMapper.countByUnit(listId);
+        // 单次查询拉取该词库全部条目，按 unit_no 分组（避免 N+1）
+        List<WordListItem> items = wordListItemMapper.selectList(
+                Wrappers.<WordListItem>lambdaQuery()
+                        .eq(WordListItem::getListId, listId)
+                        .orderByAsc(WordListItem::getUnitNo)
+                        .orderByAsc(WordListItem::getSortOrder));
+        Map<Integer, List<Long>> unitToWordIds = items.stream()
+                .collect(Collectors.groupingBy(WordListItem::getUnitNo,
+                        Collectors.mapping(WordListItem::getWordId, Collectors.toList())));
 
-        List<UnitSummaryDto> units = new ArrayList<>(unitCounts.size());
-        for (Map<String, Object> row : unitCounts) {
-            Integer unitNo = ((Number) row.get("unit_no")).intValue();
-            int total = ((Number) row.get("cnt")).intValue();
-
-            List<Long> wordIds = wordListItemMapper.findWordIdsByUnit(listId, unitNo);
+        List<UnitSummaryDto> units = new ArrayList<>(unitToWordIds.size());
+        for (Integer unitNo : new TreeSet<>(unitToWordIds.keySet())) {
+            List<Long> wordIds = unitToWordIds.get(unitNo);
+            int total = wordIds.size();
             int learned = 0;
             int mastered = 0;
             for (Long wid : wordIds) {
@@ -122,7 +132,7 @@ public class WordListService {
                 .description(list.getDescription())
                 .originLevelCode(list.getOriginLevelCode())
                 .wordCount(list.getWordCount())
-                .unitCount(unitCounts.size())
+                .unitCount(unitToWordIds.size())
                 .subscribed(sub != null)
                 .currentUnitNo(sub != null ? sub.getCurrentUnitNo() : null)
                 .units(units)
@@ -135,7 +145,7 @@ public class WordListService {
     public SubscribeResponse subscribe(Long userId, Long listId) {
         WordList list = wordListMapper.selectById(listId);
         if (list == null) {
-            throw new IllegalArgumentException("词库不存在: " + listId);
+            throw new BizException(ErrorCode.WORD_LIST_NOT_FOUND);
         }
         userListSubscriptionMapper.upsertSubscribe(userId, listId);
         return SubscribeResponse.builder()
@@ -151,9 +161,10 @@ public class WordListService {
     public List<WordDetailDto> learnNewWords(Long userId, Long listId, Integer unitNo, int limit) {
         UserListSubscription sub = userListSubscriptionMapper.find(userId, listId);
         if (sub == null) {
-            throw new IllegalStateException("未订阅该词库");
+            throw new BizException(ErrorCode.NOT_SUBSCRIBED);
         }
-        int unit = unitNo != null ? unitNo : sub.getCurrentUnitNo();
+        Integer cur = sub.getCurrentUnitNo();
+        int unit = unitNo != null ? unitNo : (cur != null ? cur : 1);
         List<WordBank> words = wordBankMapper.findNewWordsByUnit(listId, unit, userId, limit);
         List<WordDetailDto> result = new ArrayList<>(words.size());
         for (WordBank w : words) {
@@ -168,7 +179,7 @@ public class WordListService {
     public Integer advanceUnit(Long userId, Long listId, Integer targetUnitNo) {
         UserListSubscription sub = userListSubscriptionMapper.find(userId, listId);
         if (sub == null) {
-            throw new IllegalStateException("未订阅该词库");
+            throw new BizException(ErrorCode.NOT_SUBSCRIBED);
         }
         userListSubscriptionMapper.advanceUnit(userId, listId, targetUnitNo);
         return targetUnitNo;

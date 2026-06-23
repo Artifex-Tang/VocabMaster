@@ -28,6 +28,8 @@ public enum ErrorCode {
     WORD_NOT_BELONG(40003, "不属于该用户"),
     ANSWER_INVALID(40004, "无效的答题结果"),
     TEST_INVALID(40005, "测试 ID 无效或已过期"),
+    WORD_LIST_NOT_FOUND(40006, "词库不存在"),
+    NOT_SUBSCRIBED(40007, "未订阅该词库"),
     // 50xxx — 同步
     SYNC_CONFLICT(50001, "同步冲突"),
     CLIENT_TS_TOO_OLD(50002, "client_ts 过旧"),
