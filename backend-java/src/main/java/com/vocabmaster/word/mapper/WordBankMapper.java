@@ -38,4 +38,13 @@ public interface WordBankMapper extends BaseMapper<WordBank> {
     /** 批量下载某等级全量词库（离线用），支持增量（since 可为 null） */
     List<WordBank> downloadByLevel(@Param("levelCode") String levelCode,
                                    @Param("since") java.time.LocalDateTime since);
+
+    /**
+     * 自定义词库"学新词"：按 list + unit 取用户尚未学过的词。
+     * 反连接 user_word_progress（stage>0 视为已学）。
+     */
+    List<WordBank> findNewWordsByUnit(@Param("listId") Long listId,
+                                      @Param("unitNo") Integer unitNo,
+                                      @Param("userId") Long userId,
+                                      @Param("limit") int limit);
 }
