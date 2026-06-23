@@ -154,3 +154,9 @@ backups/
 *.dump
 backup/*.sql
 backend-java/static/images/words/*.jpg
+
+# codegraph 本地索引
+.codegraph/
+
+# Think 教材导入翻译缓存（可重新生成，不入库）
+wordlist/_zh_cache.json
