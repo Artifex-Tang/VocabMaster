@@ -2,7 +2,7 @@
 -- 自定义词库：词库 / 词库项（课程分组）/ 用户订阅 + 单元游标
 -- Spec: docs/superpowers/specs/2026-06-23-custom-word-list-design.md
 
-CREATE TABLE word_list (
+CREATE TABLE IF NOT EXISTSword_list (
   id                BIGINT PRIMARY KEY AUTO_INCREMENT,
   owner_user_id     BIGINT NULL COMMENT 'NULL=系统内置共享；非空=用户个人上传',
   name              VARCHAR(128) NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE word_list (
   INDEX idx_wl_source (source_type)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE word_list_item (
+CREATE TABLE IF NOT EXISTSword_list_item (
   id         BIGINT PRIMARY KEY AUTO_INCREMENT,
   list_id    BIGINT NOT NULL,
   word_id    BIGINT NOT NULL COMMENT '-> word_bank.id',
@@ -30,7 +30,7 @@ CREATE TABLE word_list_item (
   INDEX idx_wli_word (word_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
-CREATE TABLE user_list_subscription (
+CREATE TABLE IF NOT EXISTSuser_list_subscription (
   id              BIGINT PRIMARY KEY AUTO_INCREMENT,
   user_id         BIGINT NOT NULL,
   list_id         BIGINT NOT NULL,
