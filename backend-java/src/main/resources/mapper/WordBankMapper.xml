@@ -80,7 +80,7 @@
     <select id="findNewWordsByUnit" resultType="com.vocabmaster.word.entity.WordBank">
         SELECT w.*
         FROM word_list_item i
-        JOIN word_bank w ON w.id = i.word_id AND w.deleted_at IS NULL
+        JOIN word_bank w ON w.id = i.word_id AND w.deleted_at IS NULL AND w.audit_status = 1
         WHERE i.list_id = #{listId}
           AND i.unit_no = #{unitNo}
           AND i.word_id NOT IN (

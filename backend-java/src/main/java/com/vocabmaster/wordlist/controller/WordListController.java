@@ -23,9 +23,11 @@ public class WordListController {
     private final WordListService wordListService;
 
     @GetMapping
-    @Operation(summary = "词库广场（内置 + 我的）")
-    public R<List<WordListSummaryDto>> square() {
-        return R.ok(wordListService.listSquare(UserContext.currentUserId()));
+    @Operation(summary = "词库广场（默认内置；source_type=imported 看我的上传）")
+    public R<List<WordListSummaryDto>> square(@RequestParam(value = "source_type",
+                                                            required = false,
+                                                            defaultValue = "builtin") String sourceType) {
+        return R.ok(wordListService.listSquare(UserContext.currentUserId(), sourceType));
     }
 
     @GetMapping("/{id}")

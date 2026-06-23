@@ -60,7 +60,7 @@ DB_CONFIG = {
 # DeepSeek
 DEEPSEEK_URL = "https://api.deepseek.com/chat/completions"
 DEEPSEEK_MODEL = "deepseek-chat"
-DEEPSEEK_KEY = os.environ.get("DS_KEY", "sk-70b035aca9d44e35a0b085c7859ce6d8")
+DEEPSEEK_KEY = os.environ.get("DS_KEY")  # 从环境变量读，密钥勿硬编码入库
 BATCH_SIZE = 30
 SLEEP_BETWEEN_BATCHES = 0.3
 
@@ -385,6 +385,9 @@ def main():
     parser.add_argument("--translate", action="store_true",
                         help="Allow DeepSeek API calls (costs ~RMB 0.1).")
     args = parser.parse_args()
+
+    if args.translate and not DEEPSEEK_KEY:
+        sys.exit("[FATAL] --translate 需要环境变量 DS_KEY（DeepSeek API key）")
 
     # Force UTF-8 output (Windows GBK terminal chokes on IPA/CJK, see CLAUDE.md #28).
     try:

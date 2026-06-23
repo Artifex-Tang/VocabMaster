@@ -51,8 +51,19 @@ public class WordListService {
     /**
      * 广场：列出所有词库，标记当前用户是否已订阅。
      */
-    public List<WordListSummaryDto> listSquare(Long userId) {
-        List<WordList> lists = wordListMapper.selectList(null);
+    public List<WordListSummaryDto> listSquare(Long userId, String sourceType) {
+        List<WordList> raw = wordListMapper.selectList(null);
+        List<WordList> lists = raw.stream().filter(l -> {
+            if ("imported".equals(sourceType)) {
+                // 只看自己的上传，绝不泄漏他人私有词库
+                return "imported".equals(l.getSourceType()) && userId.equals(l.getOwnerUserId());
+            }
+            if ("all".equals(sourceType)) {
+                return "builtin".equals(l.getSourceType()) || userId.equals(l.getOwnerUserId());
+            }
+            // 默认 builtin
+            return "builtin".equals(l.getSourceType());
+        }).toList();
         if (lists.isEmpty()) return List.of();
 
         // 一次性取该用户全部订阅，避免 N+1
@@ -148,9 +159,10 @@ public class WordListService {
             throw new BizException(ErrorCode.WORD_LIST_NOT_FOUND);
         }
         userListSubscriptionMapper.upsertSubscribe(userId, listId);
+        UserListSubscription sub = userListSubscriptionMapper.find(userId, listId);
         return SubscribeResponse.builder()
                 .listId(listId)
-                .currentUnitNo(1)
+                .currentUnitNo(sub.getCurrentUnitNo() != null ? sub.getCurrentUnitNo() : 1)
                 .build();
     }
 
@@ -180,6 +192,9 @@ public class WordListService {
         UserListSubscription sub = userListSubscriptionMapper.find(userId, listId);
         if (sub == null) {
             throw new BizException(ErrorCode.NOT_SUBSCRIBED);
+        }
+        if (targetUnitNo == null || targetUnitNo < 1) {
+            throw new BizException(ErrorCode.PARAM_INVALID);
         }
         userListSubscriptionMapper.advanceUnit(userId, listId, targetUnitNo);
         return targetUnitNo;
