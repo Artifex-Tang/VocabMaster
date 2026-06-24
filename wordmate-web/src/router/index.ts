@@ -44,6 +44,21 @@ const router = createRouter({
           component: () => import('@/views/levels/LevelSelection.vue'),
         },
         {
+          path: 'wordlists',
+          name: 'WordListSquare',
+          component: () => import('@/views/wordlists/WordListSquare.vue'),
+        },
+        {
+          path: 'wordlists/:id',
+          name: 'WordListDetail',
+          component: () => import('@/views/wordlists/WordListDetail.vue'),
+        },
+        {
+          path: 'wordlists/:id/learn',
+          name: 'UnitLearn',
+          component: () => import('@/views/wordlists/UnitLearn.vue'),
+        },
+        {
           path: 'study/:level',
           name: 'StudySession',
           component: () => import('@/views/study/StudySession.vue'),

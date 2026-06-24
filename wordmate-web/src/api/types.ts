@@ -81,6 +81,40 @@ export interface LevelInfo {
   sort_order: number
 }
 
+// ── Word List (custom 词库) ───────────────────────────────────────────────────
+
+export interface WordListSummary {
+  id: number
+  name: string
+  description: string
+  source_type: string
+  origin_level_code: string
+  word_count: number
+  cover_emoji: string
+  subscribed: boolean
+}
+
+export interface UnitSummary {
+  unit_no: number
+  total_count: number
+  learned_count: number
+  mastered_count: number
+  is_current: boolean
+  completed: boolean
+}
+
+export interface WordListDetail {
+  id: number
+  name: string
+  description: string
+  origin_level_code: string
+  word_count: number
+  unit_count: number
+  subscribed: boolean
+  current_unit_no: number | null
+  units: UnitSummary[]
+}
+
 // ── Study ─────────────────────────────────────────────────────────────────────
 
 export interface TodayPlan {

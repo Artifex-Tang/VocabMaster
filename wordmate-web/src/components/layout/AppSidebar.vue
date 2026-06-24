@@ -14,6 +14,10 @@
         <Icon icon="mdi:layers-outline" width="20" />
         <template #title><span>等级选择</span></template>
       </el-menu-item>
+      <el-menu-item index="/wordlists">
+        <Icon icon="mdi:bookshelf" width="20" />
+        <template #title><span>词库</span></template>
+      </el-menu-item>
       <el-menu-item index="/test">
         <Icon icon="mdi:pencil-box-outline" width="20" />
         <template #title><span>测试练习</span></template>
