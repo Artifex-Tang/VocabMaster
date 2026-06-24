@@ -70,6 +70,39 @@ export interface Word {
   }
 }
 
+// ---- 词库（自定义 / 教材）----
+export interface WordListSummary {
+  id: number
+  name: string
+  description: string
+  source_type: string
+  origin_level_code: string
+  word_count: number
+  cover_emoji: string
+  subscribed: boolean
+}
+
+export interface UnitSummary {
+  unit_no: number
+  total_count: number
+  learned_count: number
+  mastered_count: number
+  is_current: boolean
+  completed: boolean
+}
+
+export interface WordListDetail {
+  id: number
+  name: string
+  description: string
+  origin_level_code: string
+  word_count: number
+  unit_count: number
+  subscribed: boolean
+  current_unit_no: number | null
+  units: UnitSummary[]
+}
+
 // ---- 学习 ----
 export interface TodayPlan {
   date: string
@@ -191,3 +224,13 @@ export const LEVELS: LevelInfo[] = [
   { code: 'CAE', name_zh: 'CAE', name_en: 'CAE', target_word_count: 7500, sort_order: 8 },
   { code: 'TEM8', name_zh: '专八', name_en: 'TEM-8', target_word_count: 10378, sort_order: 9 },
 ]
+
+// 教材词库挂的虚拟等级（不进 LEVELS，守 org 模型 A；仅在词库复习入口注入 test/index 选项）
+export const THINK_NAMES: Record<string, string> = {
+  THINK_STARTER: 'Think Starter',
+  THINK_L2: 'Think L2',
+  THINK_L3: 'Think L3',
+  THINK_L4: 'Think L4',
+  THINK_L5: 'Think L5',
+}
+

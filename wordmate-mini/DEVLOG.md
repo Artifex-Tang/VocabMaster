@@ -240,3 +240,24 @@ spring:
 
 阶段 2（H5 冒烟测试）需要后端服务运行在 `localhost:8080`。  
 如后端尚未就绪，可先做**阶段 3（手势滑动 + 离线缓存）**的纯前端逻辑，或 Mock API 数据走通主流程。
+
+---
+
+## 2026-06-24 — 自定义词库（教材词库）移植到 mini 端
+
+**任务**：把 Web 端已上线的「教材词库」（剑桥《Think》5 级，后端 `/word-lists/*` 云 prod 已部署）移植到 uni-app mini。后端零改动。
+
+**改动**：
+- 新增 `src/api/wordList.ts`（5 函数）+ `types.ts` 加 3 接口 + `THINK_NAMES`
+- 新增 3 页：`wordlists/square.vue` / `detail.vue` / `learn.vue`（learn 复用 word-card + submitAnswer）
+- `pages.json` 注册 3 页；`index.vue` 加「教材词库」入口卡；`test/index.vue` 加 `onShow` 消费 `test_entry_override` + 注入 THINK_* 选项
+- 新增 `e2e/wordlist.spec.ts`（5 用例）
+
+**踩坑（均为本地环境/已有应用问题，非本功能 bug）**：
+1. **dev server 端口**：`pnpm dev:h5` 默认 3001，但 3001 被另一个 web app 占用 → vite 自动跳 3002。`playwright.config.ts` 原 baseURL 写死 3003（陈旧）→ 改 `process.env.E2E_BASE_URL ?? 3001`。
+2. **本地后端 CORS 预检 401**：认证端点（如 `/word-lists`）的 OPTIONS 预检返回 401（Spring Security CORS 未放行），浏览器拦截真实 GET → square() 空。E2E 用 `page.route` + `route.fetch`(服务端) 注入 token 后 `fulfill` 绕开浏览器 CORS。云 prod 无此问题（web E2E 14/14）。
+3. **`storage.get` 对 JWT 走 `JSON.parse` 失败**：`storage.ts` get 对 string 值 `JSON.parse`，JWT 非合法 JSON → 抛错返回 null → 页面重载后 store token 丢失（已有应用潜在 bug，session 内不重载无碍）。E2E 用 `uni.navigateTo`（SPA 内跳转不重载）保住内存 token。
+4. **tabBar 第 5 格**：缺图标资产 + 微信 5 格上限 → 不加 tab，改首页入口卡。
+5. **`uni.switchTab` 不带 query**：复习入口跳 test/index（tab 页）无法传 level/source → 用 `uni.setStorageSync('test_entry_override')` 中转，test/index `onShow` 消费后清。
+
+**验证**：H5 type-check（本功能 0 错，余为既有错）+ `pnpm build:h5` 通过；E2E 词库 5/5 + 回归 mobile/login-flow 20/20，0 console 错。截图存 `e2e/screenshots/wl-*.png`。

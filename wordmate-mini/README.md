@@ -133,6 +133,40 @@
 
 ---
 
+### ✅ 阶段 7：自定义词库（教材词库）移植（2026-06-24 完成）
+
+把 Web 端已上线的「教材词库」功能（剑桥《Think》5 级；后端 `/word-lists/*` 已上线云 prod）移植到 mini 端。**后端零改动，纯前端。**
+
+#### 已完成模块
+
+| 模块 | 文件 | 说明 |
+|------|------|------|
+| API 层 | `src/api/wordList.ts` | square/detail/subscribe/learn/advanceUnit 5 函数 |
+| 类型 | `src/api/types.ts` | `WordListSummary`/`UnitSummary`/`WordListDetail` + `THINK_NAMES` |
+| 广场页 | `src/pages/wordlists/square.vue` | builtin 词库卡片网格 + 订阅/进入 |
+| 详情页 | `src/pages/wordlists/detail.vue` | 头部 + 单元进度网格 + 复习入口 + 订阅 |
+| 学新词 | `src/pages/wordlists/learn.vue` | 卡片会话（复用 word-card + submitAnswer），完成态推进单元/复习 |
+| 首页入口 | `src/pages/index/index.vue` | 加「教材词库」入口卡 → square |
+| 测试入口 | `src/pages/test/index.vue` | `onShow` 消费 `test_entry_override`（switchTab 不带 query 中转）+ 注入 THINK_* 选项 |
+| 路由 | `src/pages.json` | 注册 3 新页（square/detail/learn） |
+| E2E | `e2e/wordlist.spec.ts` | 5 用例：square/detail/learn/翻卡答题/复习入口 storage override |
+
+#### 测试成绩（2026-06-24，本地后端 8080 + H5 dev @3002）
+
+| 套件 | 结果 |
+|------|------|
+| 词库 E2E `wordlist.spec.ts` | **5/5** |
+| 回归 `mobile.spec.ts` + `login-flow.spec.ts` | **20/20** |
+
+#### 关键技术点
+
+- **复习入口 query 传递**：`test/index` 是 tabBar 页，`uni.switchTab` 不带 query → 用 `uni.setStorageSync('test_entry_override', {level, source})` 中转，`test/index` 的 `onShow` 消费后清。
+- **THINK_\* 不进全局 LEVELS**：守 org 模型 A（不污染等级选择页），仅经 `THINK_NAMES` 在 test/index 注入 picker 选项。
+- **学新词复用**：learn 页照搬 `study/session.vue` 骨架，拉词改 `learn()`，完成态走 `advanceUnit` + 下一单元/复习。
+- **E2E 绕坑**（本地后端问题，非本功能）：① 认证端点 CORS 预检 OPTIONS 返回 401 → 用 `page.route` 服务端 `route.fetch`+`fulfill` 注入 token 绕开；② `storage.get` 对 JWT 走 `JSON.parse` 失败（已有应用 bug，重载丢 token）→ 测试用 `uni.navigateTo` SPA 内跳转保住内存 token。
+
+---
+
 ## 快速启动
 
 ```bash

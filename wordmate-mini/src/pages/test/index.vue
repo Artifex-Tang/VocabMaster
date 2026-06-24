@@ -62,11 +62,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { useSettingsStore } from '@/stores/settings'
 import { generate, availability } from '@/api/test'
-import { LEVELS } from '@/api/types'
+import { LEVELS, THINK_NAMES } from '@/api/types'
 import type { TestAvailability } from '@/api/types'
 
 const settingsStore = useSettingsStore()
@@ -75,16 +75,23 @@ const source = ref<'due' | 'all' | 'wrong_words'>('all')
 const avail = ref<TestAvailability | null>(null)
 
 const activeLevels = computed(() => settingsStore.settings.active_levels)
-const levelIdx = ref(0)
-const selectedLevel = computed(() => activeLevels.value[levelIdx.value] ?? LEVELS[0].code)
-const selectedLevelName = computed(() => {
-  const l = LEVELS.find(lv => lv.code === selectedLevel.value)
-  return l ? `${l.name_en}` : selectedLevel.value
+// 词库「复习到期词」入口经 storage 中转注入 THINK_*（不进全局 LEVELS，守 org 模型 A）
+const queryLevel = ref('')
+const levelOptions = computed(() => {
+  const opts = activeLevels.value.map(code => {
+    const l = LEVELS.find(lv => lv.code === code)
+    return { code, name: l ? `${l.name_en} (${l.name_zh})` : code, short: l ? l.name_en : code }
+  })
+  if (queryLevel.value && !opts.find(o => o.code === queryLevel.value)) {
+    const label = THINK_NAMES[queryLevel.value] ?? queryLevel.value
+    opts.push({ code: queryLevel.value, name: label, short: label })
+  }
+  return opts
 })
-const levelNames = computed(() => activeLevels.value.map(code => {
-  const l = LEVELS.find(lv => lv.code === code)
-  return l ? `${l.name_en} (${l.name_zh})` : code
-}))
+const levelIdx = ref(0)
+const selectedLevel = computed(() => levelOptions.value[levelIdx.value]?.code ?? LEVELS[0].code)
+const selectedLevelName = computed(() => levelOptions.value[levelIdx.value]?.short ?? selectedLevel.value)
+const levelNames = computed(() => levelOptions.value.map(o => o.name))
 
 const modes = [
   { key: 'spelling', emoji: '✏️', name: '拼写测试', desc: '看中文释义，拼出英文单词', page: '/pages/test/spelling' },
@@ -98,7 +105,27 @@ const sources = computed(() => [
   { key: 'wrong_words' as const, label: '错词', count: avail.value?.wrong_words, available: (avail.value?.wrong_words ?? 0) > 0 },
 ])
 
-onMounted(loadAvailability)
+onShow(() => {
+  consumeOverride()
+  loadAvailability()
+})
+
+// 消费词库复习入口写入的 { level, source }（switchTab 不带 query，走 storage 中转）
+function consumeOverride() {
+  try {
+    const ov = uni.getStorageSync('test_entry_override')
+    if (ov && ov.level) {
+      queryLevel.value = ov.level
+      const src = ov.source
+      if (src === 'due' || src === 'all' || src === 'wrong_words') source.value = src
+      const idx = levelOptions.value.findIndex(o => o.code === ov.level)
+      if (idx >= 0) levelIdx.value = idx
+      uni.removeStorageSync('test_entry_override')
+    }
+  } catch {
+    // 静默
+  }
+}
 
 async function loadAvailability() {
   try {

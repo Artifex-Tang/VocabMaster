@@ -21,7 +21,10 @@
     { "path": "pages/mine/settings",   "style": { "navigationBarTitleText": "学习设置" } },
     { "path": "pages/mine/achievements","style": { "navigationBarTitleText": "我的成就" } },
     { "path": "pages/stats/forgetting-curve","style": { "navigationBarTitleText": "遗忘曲线" } },
-    { "path": "pages/word/search",     "style": { "navigationBarTitleText": "词库搜索" } }
+    { "path": "pages/word/search",     "style": { "navigationBarTitleText": "词库搜索" } },
+    { "path": "pages/wordlists/square", "style": { "navigationBarTitleText": "教材词库" } },
+    { "path": "pages/wordlists/detail", "style": { "navigationBarTitleText": "词库详情" } },
+    { "path": "pages/wordlists/learn",  "style": { "navigationBarTitleText": "学新词", "disableScroll": true } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

@@ -57,6 +57,16 @@
       {{ loading ? '加载中...' : '开始学习' }}
     </button>
 
+    <!-- 教材词库入口 -->
+    <view class="wordlist-entry" @click="goWordlists">
+      <text class="wl-emoji">📚</text>
+      <view class="wl-info">
+        <text class="wl-title">教材词库</text>
+        <text class="wl-desc">《Think》系列，按单元循序渐进</text>
+      </view>
+      <text class="wl-arrow">›</text>
+    </view>
+
     <!-- 打卡日历 -->
     <view v-if="calendar" class="calendar-card">
       <text class="card-title">本月打卡</text>
@@ -172,6 +182,10 @@ function startStudy() {
   uni.navigateTo({ url: `/pages/study/session?level=${currentLevel.value}` })
   loading.value = false
 }
+
+function goWordlists() {
+  uni.navigateTo({ url: '/pages/wordlists/square' })
+}
 </script>
 
 <style lang="scss" scoped>
@@ -258,6 +272,22 @@ function startStudy() {
   border: none;
   margin-bottom: 32rpx;
   &[disabled] { opacity: 0.6; }
+}
+
+.wordlist-entry {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.05);
+  .wl-emoji { font-size: 56rpx; flex-shrink: 0; }
+  .wl-info { flex: 1; }
+  .wl-title { font-size: 30rpx; font-weight: 600; color: #1f2937; display: block; }
+  .wl-desc { font-size: 24rpx; color: #9ca3af; margin-top: 4rpx; display: block; }
+  .wl-arrow { font-size: 36rpx; color: #d1d5db; }
 }
 
 .calendar-card {

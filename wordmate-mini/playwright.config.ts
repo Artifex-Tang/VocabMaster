@@ -5,7 +5,7 @@ export default defineConfig({
   timeout: 30000,
   retries: 1,
   use: {
-    baseURL: 'http://localhost:3003',
+    baseURL: process.env.E2E_BASE_URL ?? 'http://localhost:3001',
     screenshot: 'on',
     trace: 'on-first-retry',
     // 统一用 Chromium，通过 viewport 模拟手机
