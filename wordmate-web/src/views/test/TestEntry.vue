@@ -15,7 +15,7 @@
     <el-divider />
     <div class="config-row">
       <el-select v-model="selectedLevel" placeholder="选择等级" style="width: 160px">
-        <el-option v-for="lv in LEVELS" :key="lv.code" :label="lv.nameZh" :value="lv.code" />
+        <el-option v-for="lv in levelOptions" :key="lv.code" :label="lv.nameZh" :value="lv.code" />
       </el-select>
       <el-select v-model="source" style="width: 160px">
         <el-option
@@ -32,17 +32,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, watch, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { Icon } from '@iconify/vue'
 import { LEVELS } from '@/utils/constants'
 import { availability } from '@/api/test'
 import type { TestMode, TestSource } from '@/api/types'
 
+const route = useRoute()
 const router = useRouter()
-const selectedLevel = ref(LEVELS[7].code)
-const source = ref<TestSource>('all')
+
+const THINK_NAMES: Record<string, string> = {
+  THINK_STARTER: 'Think 入门', THINK_L2: 'Think 2', THINK_L3: 'Think 3', THINK_L4: 'Think 4', THINK_L5: 'Think 5',
+}
+const queryLevel = (route.query.level as string) || ''
+const selectedLevel = ref(queryLevel || LEVELS[7].code)
+const source = ref((route.query.source as TestSource) || 'all')
 const size = ref(20)
+// 从词库「复习到期词」带 THINK_* 跳来时，下拉补显该等级（不污染全局 LEVELS / 等级选择页，守 org-model A）
+const levelOptions = computed(() => {
+  const opts = [...LEVELS]
+  if (THINK_NAMES[queryLevel] && !opts.find(l => l.code === queryLevel)) {
+    opts.push({ code: queryLevel, nameZh: THINK_NAMES[queryLevel], nameEn: queryLevel, targetCount: 0 })
+  }
+  return opts
+})
 
 const sourceCounts = ref<Record<string, number>>({ all: 0, due: 0, wrong_words: 0 })
 
