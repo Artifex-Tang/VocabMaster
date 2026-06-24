@@ -255,12 +255,11 @@ word_story_question (story_id, question, options JSON, answer)
 **高优先级：**
 - [ ] 全栈 Docker Compose 集成测试未执行（`docker compose --profile full up`）
 - [ ] `docs/11-roadmap.md` 进度未更新
-- [ ] `docs/02-database-design.md`、`docs/07-wordmate-web.md`、`docs/09-word-data-sourcing.md` 有未提交修改
-- [ ] LLM 主题分类结果需写入 `word_bank` 表（31 类方案已完成分类但未全部回写）
-- [ ] 音频 URL 批量填充（42,531 词的 `audio_url_uk`/`audio_url_us` 全为 NULL）
-- [ ] 后端需新增 `POST /words/admin/fill-audio-urls` 管理端点
-- [ ] Wikimedia 图片下载后台任务进行中（~548/9,765）
-- [ ] DeepSeek 例句生成后台任务进行中（36K 词 `example_en`）
+- [ ] commit `2d0eb21`（OOM 修复）未 push
+- [ ] WIP 未提交：`WordTopic.java`、`wordmate-web/src/api/word.ts`、`.env.development`、`V2__add_word_topic_image_type.sql`、`scripts/` 4 个 py 脚本、`backup/`
+- [ ] V2 迁移 `V2__add_word_topic_image_type.sql` 未上云（云只 V1 baseline，云上无 `image_type` 列）——下次后端 redeploy 走 Flyway 自动应用，勿手动 ALTER
+- [ ] 图片质量验收 + 同步 `image_url` 列到云 + sftp 13068 张图到云 `/images` 卷（本地 38213 已填，云 0，质量暂缓）
+- [ ] `example_zh` 中文例句未生成（本地+云都 0）
 
 **中优先级：**
 - [ ] "待复习"/"错词本" 选项在用户无数据时应禁用
@@ -270,6 +269,9 @@ word_story_question (story_id, question, options JSON, answer)
 - [ ] CI/CD 流水线未实际触发
 - [ ] SSL 证书（`deploy/certs/` 仅有 `.gitkeep`，nginx HTTPS 被注释）
 - [ ] API key 管理生产化（当前明文）
+- [ ] 服务器升 4G（OOM 根治：1.6G 超售，autoheal+调内存只是抠门）
+
+> 数据现状（2026-06-23 本地 `vocabmaster` 实测，42531 词）：`audio_url_uk`/`audio_url_us`/`emoji` 全满，`example_en` 42489，`image_url` 38213，`example_zh` 0。云上待同步项见 [[project_session_20260621]]。
 
 **低优先级（后续阶段）：**
 - [ ] Python 备选后端（Phase 8 可选）
