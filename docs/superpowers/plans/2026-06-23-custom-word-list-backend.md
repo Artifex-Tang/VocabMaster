@@ -1026,7 +1026,7 @@ import pymysql
 
 # ---- 配置 ----
 DS_API = "https://api.deepseek.com/chat/completions"
-DS_KEY = os.environ.get("DS_KEY") or "sk-70b035aca9d44e35a0b085c7859ce6d8"  # 项目 DeepSeek key
+DS_KEY = os.environ.get("DS_KEY")  # 从环境变量读，密钥勿硬编码（需先 export DS_KEY=...）
 DB = dict(host="127.0.0.1", port=13306, user="root", password="root",
           database="vocabmaster", charset="utf8mb4",
           cursorclass=pymysql.cursors.DictCursor)  # 端口按本机 docker 映射调整
