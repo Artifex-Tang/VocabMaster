@@ -66,6 +66,7 @@ def main():
         (f"{project_base}/docker-compose.yml", f"{REMOTE_DIR}/docker-compose.yml"),
         (f"{project_base}/deploy/nginx/nginx.conf", f"{REMOTE_DIR}/deploy/nginx/nginx.conf"),
         (f"{project_base}/deploy/nginx/conf.d/vocabmaster.conf", f"{REMOTE_DIR}/deploy/nginx/conf.d/vocabmaster.conf"),
+        (f"{project_base}/wordmate-web/deploy/web-nginx.conf", f"{REMOTE_DIR}/wordmate-web/deploy/web-nginx.conf"),
         (f"{project_base}/deploy/.env.example", f"{REMOTE_DIR}/.env"),
     ]
 
@@ -131,10 +132,10 @@ WECHAT_APP_SECRET=
     # ── 6. Docker 构建 + 启动 ──
     print("\n[6/7] Docker 构建并启动...")
     # 注意：绝不加 -v！-v 会删除数据卷清空 MySQL 增量数据。只停容器，保留 mysql_data/redis_data。
-    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose down 2>/dev/null; true")
+    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose --profile prod down 2>/dev/null; true")
     ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose build backend-java 2>&1", check=False)
     print("  启动所有服务...")
-    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose up -d 2>&1")
+    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose --profile prod up -d 2>&1")
 
     # ── 7. 等待健康检查 ──
     print("\n[7/7] 等待服务就绪...")
@@ -152,7 +153,7 @@ WECHAT_APP_SECRET=
     print("\n" + "=" * 50)
     print("  部署结果")
     print("=" * 50)
-    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose ps")
+    ssh_exec(ssh, f"cd {REMOTE_DIR} && docker compose --profile prod ps")
     print()
     print(f"  Web 前端:  http://{HOST}")
     print(f"  API:       http://{HOST}/api/v1")
