@@ -160,3 +160,10 @@ backend-java/static/images/words/*.jpg
 
 # Think 教材导入翻译缓存（可重新生成，不入库）
 wordlist/_zh_cache.json
+# E2E artifacts (tokens/secrets in .auth.json, binary screenshots, scratch)
+**/e2e/.auth.json
+**/e2e/.report/
+**/e2e/recon*.js
+**/e2e/screenshots/r*/
+**/e2e/wechat-screenshots/
+wordmate-web/test-results/
