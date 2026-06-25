@@ -74,7 +74,7 @@ const size = ref(20)
 const source = ref<'due' | 'all' | 'wrong_words'>('all')
 const avail = ref<TestAvailability | null>(null)
 
-const activeLevels = computed(() => settingsStore.settings.active_levels)
+const activeLevels = computed(() => settingsStore.settings.active_levels ?? [])
 // 词库「复习到期词」入口经 storage 中转注入 THINK_*（不进全局 LEVELS，守 org 模型 A）
 const queryLevel = ref('')
 const levelOptions = computed(() => {

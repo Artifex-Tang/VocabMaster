@@ -64,9 +64,19 @@ async function ss(name) {
 }
 
 async function nav(url, method = 'reLaunch') {
-  const page = await withTimeout(mp[method](url), 30000, `${method}(${url})`)
-  await page.waitFor(2500)
-  return page
+  let page, lastErr
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      page = await withTimeout(mp[method](url), 45000, `${method}(${url})#${attempt}`)
+      await page.waitFor(2500)
+      return page
+    } catch (e) {
+      lastErr = e
+      console.log(`  [nav retry ${attempt}] ${url} ${e.message}`)
+      await sleep(3000)
+    }
+  }
+  throw lastErr
 }
 
 async function currentPage() {
@@ -86,7 +96,7 @@ async function runTests() {
     mp = await withTimeout(launchMiniProgram(), 30000, 'launch')
     console.log('[SETUP] 已连接微信开发者工具')
     console.log('[SETUP] 等待项目编译完成...')
-    await sleep(8000)  // 等待项目编译
+    await sleep(25000)  // DevTools 首次编译较慢，等足
   } catch (e) {
     console.error('FATAL: 连接失败 —', e.message)
     process.exit(1)
