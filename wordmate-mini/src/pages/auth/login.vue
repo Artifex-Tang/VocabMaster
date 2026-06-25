@@ -25,11 +25,11 @@
       </view>
 
       <button class="btn-primary" :disabled="loading" @click="handleLogin">
-        {{ loading ? '登录中...' : '登录' }}
+        {{ loading ? '登录中...' : '登 录' }}
       </button>
 
-      <!-- 微信登录（仅小程序端） -->
       <!-- #ifdef MP-WEIXIN -->
+      <view class="divider"><text class="divider-text">或</text></view>
       <button class="btn-wechat" open-type="getUserInfo" @getuserinfo="handleWechatLogin">
         微信一键登录
       </button>
@@ -187,23 +187,35 @@ function goForgot() {
 
 .btn-primary {
   height: 96rpx;
-  background: #1890ff;
+  background: linear-gradient(135deg, #1890ff 0%, #096dd9 100%);
   color: #fff;
-  font-size: 32rpx;
+  font-size: 34rpx;
   font-weight: 600;
-  border-radius: 48rpx;
+  letter-spacing: 8rpx;
+  border-radius: 24rpx;
   border: none;
-  &[disabled] { opacity: 0.6; }
+  box-shadow: 0 8rpx 24rpx rgba(24, 144, 255, 0.32);
+  &::after { border: none; }
+  &[disabled] { opacity: 0.6; box-shadow: none; }
 }
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 4rpx 0;
+  &::before, &::after { content: ''; flex: 1; height: 2rpx; background: #e5e7eb; }
+}
+.divider-text { padding: 0 24rpx; font-size: 24rpx; color: #9ca3af; }
 
 .btn-wechat {
   height: 96rpx;
   background: #07c160;
   color: #fff;
   font-size: 32rpx;
-  font-weight: 600;
-  border-radius: 48rpx;
+  font-weight: 500;
+  border-radius: 24rpx;
   border: none;
+  &::after { border: none; }
 }
 
 .footer-row {
