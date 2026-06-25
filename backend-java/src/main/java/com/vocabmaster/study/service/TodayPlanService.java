@@ -1,5 +1,6 @@
 package com.vocabmaster.study.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vocabmaster.common.constant.AppConstants;
 import com.vocabmaster.common.constant.RedisKey;
 import com.vocabmaster.study.dto.TodayPlanResponse;
@@ -36,6 +37,8 @@ public class TodayPlanService {
     private final WordBankMapper wordBankMapper;
     private final UserSettingsMapper settingsMapper;
     private final RedisTemplate<String, Object> redisTemplate;
+    /** @Primary 全局 ObjectMapper（SNAKE_CASE），与 Redis 序列化器同一 bean，键名策略一致 */
+    private final ObjectMapper objectMapper;
 
     /**
      * 获取今日学习计划（复习 + 新词），Redis 缓存 10 分钟。
@@ -49,6 +52,10 @@ public class TodayPlanService {
         Object cached = redisTemplate.opsForValue().get(cacheKey);
         if (cached instanceof TodayPlanResponse plan) {
             return plan;
+        }
+        if (cached != null) {
+            // Redis 无类型信息，读回是 LinkedHashMap（含嵌套），用与序列化同策略的 mapper 还原
+            return objectMapper.convertValue(cached, TodayPlanResponse.class);
         }
 
         TodayPlanResponse plan = buildPlan(userId, levelCode, today);

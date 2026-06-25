@@ -1,6 +1,8 @@
 package com.vocabmaster.word.service;
 
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vocabmaster.common.constant.RedisKey;
 import com.vocabmaster.word.entity.Level;
 import com.vocabmaster.word.entity.WordTopic;
@@ -21,12 +23,14 @@ public class LevelService {
     private final LevelMapper levelMapper;
     private final WordTopicMapper wordTopicMapper;
     private final RedisTemplate<String, Object> redisTemplate;
+    /** @Primary 全局 ObjectMapper（SNAKE_CASE），与 Redis 序列化器同一 bean，键名策略一致 */
+    private final ObjectMapper objectMapper;
 
-    @SuppressWarnings("unchecked")
     public List<Level> getLevels() {
         Object cached = redisTemplate.opsForValue().get(RedisKey.LEVEL_LIST);
-        if (cached instanceof List) {
-            return (List<Level>) cached;
+        if (cached != null) {
+            // Redis 无类型信息，读回是 List<LinkedHashMap>，用与序列化同策略的 mapper 还原
+            return objectMapper.convertValue(cached, new TypeReference<List<Level>>() {});
         }
         List<Level> levels = levelMapper.selectList(
                 Wrappers.<Level>lambdaQuery().orderByAsc(Level::getSortOrder));
@@ -34,11 +38,10 @@ public class LevelService {
         return levels;
     }
 
-    @SuppressWarnings("unchecked")
     public List<WordTopic> getTopics() {
         Object cached = redisTemplate.opsForValue().get(RedisKey.TOPIC_LIST);
-        if (cached instanceof List) {
-            return (List<WordTopic>) cached;
+        if (cached != null) {
+            return objectMapper.convertValue(cached, new TypeReference<List<WordTopic>>() {});
         }
         List<WordTopic> topics = wordTopicMapper.selectList(
                 Wrappers.<WordTopic>lambdaQuery().orderByAsc(WordTopic::getSortOrder));
