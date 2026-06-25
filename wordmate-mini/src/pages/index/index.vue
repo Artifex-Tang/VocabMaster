@@ -111,7 +111,7 @@ const checkedIn = ref(false)
 const todayStr = formatDate(new Date())
 
 const activeLevels = computed(() => settings.value.active_levels)
-const currentLevel = computed(() => activeLevels.value[0] ?? 'CET4')
+const currentLevel = computed(() => activeLevels.value?.[0] || 'CET4')
 const currentLevelName = computed(() => LEVELS.find(l => l.code === currentLevel.value)?.name_zh ?? currentLevel.value)
 const levelNames = computed(() => LEVELS.map(l => `${l.name_en} (${l.name_zh})`))
 

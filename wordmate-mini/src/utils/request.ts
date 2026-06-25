@@ -1,5 +1,6 @@
 import { getDeviceId } from '@/utils/device-id'
 import { getPlatform } from '@/utils/platform'
+import { useUserStore } from '@/stores/user'
 
 const BASE_URL = (import.meta.env.VITE_API_BASE as string | undefined) ?? 'http://localhost:8080/api/v1'
 const CLIENT_VERSION = '1.0.0'
@@ -34,24 +35,22 @@ function buildQueryString(params: Record<string, unknown>): string {
     .join('&')
 }
 
-// 延迟导入 userStore，避免 Pinia 未初始化时的循环引用
-let _useUserStore: (() => {
-  accessToken: string | null
-  refreshAccessToken: () => Promise<void>
-  logout: () => void
-}) | null = null
-
-async function getUserStore() {
-  if (!_useUserStore) {
-    const mod = await import('@/stores/user')
-    _useUserStore = mod.useUserStore
-  }
-  return _useUserStore()
+// 静态 import + 运行时调用：ES 模块活绑定在所有模块初始化后才解析，
+// 既打破 request↔user↔auth 循环引用，又能在 mp-weixin 正确编译
+// （动态 import() 在 mp-weixin 会被错编成 await "字符串"，导致请求永远发不出）。
+function getUserStore() {
+  return useUserStore()
 }
 
 export function request<T = unknown>(opts: RequestOptions): Promise<T> {
   return new Promise((resolve, reject) => {
-    getUserStore().then((userStore) => {
+    let userStore: ReturnType<typeof getUserStore>
+    try {
+      userStore = getUserStore()
+    } catch (e) {
+      reject(e as Error)
+      return
+    }
 
     const header: Record<string, string> = {
       'Content-Type': 'application/json',
@@ -109,7 +108,6 @@ export function request<T = unknown>(opts: RequestOptions): Promise<T> {
         reject(err)
       },
     })
-    }).catch(reject)
   })
 }
 

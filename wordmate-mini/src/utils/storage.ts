@@ -1,11 +1,14 @@
 export const storage = {
   get<T>(key: string): T | null {
+    let v: unknown
     try {
-      const v = uni.getStorageSync(key)
+      v = uni.getStorageSync(key)
       if (v === '' || v === null || v === undefined) return null
       return typeof v === 'string' ? JSON.parse(v) : (v as T)
     } catch {
-      return null
+      // 非 JSON 字符串（如 JWT access_token）解析失败时原样返回，
+      // 否则登录态重启后丢失（isLoggedIn 永远 false）
+      return v as unknown as T
     }
   },
 
