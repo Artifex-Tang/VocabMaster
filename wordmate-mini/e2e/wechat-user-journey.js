@@ -31,6 +31,7 @@
  * Pre:  WeChat DevTools open, auto mode on port 60616
  */
 const { launchMiniProgram } = require('./launch-devtools')
+const { execFileSync } = require('child_process')
 
 const SS_DIR = 'e2e/wechat-screenshots/journey'
 const path = require('path')
@@ -39,6 +40,30 @@ const fs = require('fs')
 if (!fs.existsSync(SS_DIR)) fs.mkdirSync(SS_DIR, { recursive: true })
 
 const sleep = ms => new Promise(r => setTimeout(r, ms))
+
+// ── Real-auth provisioning (against local docker backend by default) ──────────
+// register-or-login a fixed e2e user, capture real tokens. UI login in T2 then
+// drives the real flow; Pinia holds the token in-memory across reLaunch (initFromStorage
+// only runs once in App.onLaunch, so the storage JSON.parse-on-JWT bug can't wipe it).
+const E2E_API = process.env.E2E_API || 'http://localhost:8080/api/v1'
+const E2E_EMAIL = process.env.JOURNEY_EMAIL || 'e2e-mp@vocab.local'
+const E2E_PWD = process.env.JOURNEY_PWD || 'E2eTest#2026'
+const AUTH_FILE = path.resolve(__dirname, '.auth.mp.json')
+let ACCESS_TOKEN = ''   // set by provision(), asserted in T4
+
+function provision() {
+  console.log('[SETUP] Provisioning real user on', E2E_API, '->', E2E_EMAIL)
+  execFileSync('python', ['e2e/provision.py', E2E_EMAIL, E2E_PWD, 'e2e/.auth.mp.json'], {
+    cwd: path.resolve(__dirname, '..'),
+    env: { ...process.env, E2E_API, REDIS_PASSWORD: process.env.REDIS_PASSWORD || 'redis123' },
+    stdio: ['ignore', 'inherit', 'inherit'],
+    timeout: 60000,
+  })
+  const auth = JSON.parse(fs.readFileSync(AUTH_FILE, 'utf8'))
+  ACCESS_TOKEN = auth.access_token
+  console.log('[SETUP] Provisioned', auth.email, '| token len', auth.access_token.length)
+  return auth
+}
 
 function withTimeout(promise, ms, label) {
   return Promise.race([
@@ -59,8 +84,8 @@ function log(icon, group, desc, detail = '') {
 }
 
 async function ss(name) {
-  try { await withTimeout(mp.screenshot({ path: path.join(SS_DIR, `${name}.png`) }), 6000, 'screenshot') }
-  catch (_) {}
+  try { await withTimeout(mp.screenshot({ path: path.join(SS_DIR, `${name}.png`) }), 15000, 'screenshot') }
+  catch (e) { console.log(`  [ss-fail] ${name}: ${e.message?.substring(0, 60)}`) }
 }
 
 async function nav(url, method = 'reLaunch') {
@@ -88,15 +113,23 @@ async function currentPage() {
 // ==============================================================
 async function runTests() {
   console.log('='.repeat(60))
-  console.log('  VocabMaster 微信小程序 — 用户旅程自动化测试')
+  console.log('  VocabMaster 微信小程序 — 用户旅程自动化测试（真鉴权）')
   console.log('='.repeat(60))
+
+  // ── Provision real user (local docker backend) ──────────────
+  try {
+    provision()
+  } catch (e) {
+    console.error('FATAL: provision 失败 —', e.message)
+    process.exit(1)
+  }
 
   // ── Connect ──────────────────────────────────────────────────
   try {
     mp = await withTimeout(launchMiniProgram(), 30000, 'launch')
     console.log('[SETUP] 已连接微信开发者工具')
     console.log('[SETUP] 等待项目编译完成...')
-    await sleep(25000)  // DevTools 首次编译较慢，等足
+    await sleep(40000)  // DevTools 首次编译较慢，等足
   } catch (e) {
     console.error('FATAL: 连接失败 —', e.message)
     process.exit(1)
@@ -121,48 +154,59 @@ async function runTests() {
   log(pageText.length > 0 ? '✓' : '✗', 'T1', 'App 名称元素存在')
 
   // ==============================================================
-  //  T2 表单交互
+  //  T2 真鉴权登录（provision 的 e2e 账号）
   // ==============================================================
-  console.log('\n[T2] 表单交互')
+  console.log('\n[T2] 真鉴权登录', E2E_EMAIL)
 
-  // 填写邮箱（通过 input 组件的 input 方法）
+  // 填写邮箱 + 密码
   try {
-    await inputs[0].input('tangliqunkitty@gmail.com')
+    await inputs[0].input(E2E_EMAIL)
     await sleep(300)
-    await inputs[1].input('Tang@20023445')
+    await inputs[1].input(E2E_PWD)
     await sleep(300)
     await ss('02-login-filled')
-    log('✓', 'T2', '表单填写成功')
+    log('✓', 'T2', '表单填写', E2E_EMAIL)
   } catch (e) {
     log('✗', 'T2', '表单填写失败', e.message?.substring(0, 80))
   }
 
-  // 注意: uni-app <script setup> 编译后变量名被压缩，page.data('identifier') 不可用
-  // element.input() 已成功填入（截图可验证），跳过 data 断言
-
-  // 切换到手机号 tab — 用 setData 直接触发 Vue 响应式
+  // 切 phone 再切回 email（覆盖 tab 交互，登录仍用 email）
   try { await page.setData({ tab: 'phone' }) } catch (_) {}
   await sleep(500)
   await ss('03-login-phone-tab')
   log('✓', 'T2', '切换到 phone tab')
-
-  // 切回 email
   try { await page.setData({ tab: 'email' }) } catch (_) {}
   await sleep(300)
 
-  // 点击登录按钮 — <script setup> 方法不暴露为 page.callMethod, 用 element.tap()
+  // 点击登录按钮 → 轮询离开 /login（成功=switchTab 到 index；失败=toast 留 login）
   try {
     const loginBtn = await page.$('.btn-primary')
-    if (loginBtn) {
-      await loginBtn.tap()
-      await sleep(4000)
-      await ss('04-login-after-submit')
-      log('✓', 'T2', '登录按钮点击成功（后端未启动=预期失败）')
-    } else {
+    if (!loginBtn) {
       log('✗', 'T2', '未找到登录按钮')
+    } else {
+      await loginBtn.tap()
+      let left = false, curPath = ''
+      const deadline = Date.now() + 20000
+      while (Date.now() < deadline) {
+        await sleep(800)
+        const cur = await currentPage()
+        curPath = cur.path
+        if (curPath && curPath !== 'pages/auth/login') { left = true; break }
+      }
+      await ss('04-after-login')
+      log(left ? '✓' : '✗', 'T2', '真登录→离开 login', curPath)
     }
   } catch (e) {
-    log('✗', 'T2', '登录按钮点击', e.message?.substring(0, 80))
+    log('✗', 'T2', '登录点击', e.message?.substring(0, 80))
+  }
+
+  // 验证 storage 写入真 JWT（后端发的，非假 test_token）
+  try {
+    const tok = await mp.callWxMethod('getStorageSync', 'access_token')
+    const real = typeof tok === 'string' && tok.length > 50 && !tok.startsWith('test_token')
+    log(real ? '✓' : '✗', 'T2', 'storage 真 JWT', real ? `len=${tok.length}` : `bad=${String(tok).slice(0, 20)}`)
+  } catch (e) {
+    log('✗', 'T2', 'token 读 storage', e.message?.substring(0, 80))
   }
 
   // ==============================================================
@@ -190,37 +234,23 @@ async function runTests() {
   }
 
   // ==============================================================
-  //  T4 模拟登录态
+  //  T4 真会话验证（靠 T2 真 UI 登录的 Pinia 内存 token，不注入假 token）
+  //  注：不 reLaunch/restart —— initFromStorage 只在 App.onLaunch 跑一次，
+  //      reLaunch 会重读 storage（JWT 经 JSON.parse 失败→null→登出），故保持内存态。
   // ==============================================================
-  console.log('\n[T4] 模拟登录态')
+  console.log('\n[T4] 真会话验证')
   try {
-    // 参考 MeetingGo: mp.callWxMethod 注入 storage
-    await mp.callWxMethod('setStorageSync', 'access_token', 'test_token_auto_abc123')
-    await mp.callWxMethod('setStorageSync', 'refresh_token', 'test_refresh_auto_xyz789')
-    await mp.callWxMethod('setStorageSync', 'token_expires_at', String(Date.now() + 86400000))
-    await mp.callWxMethod('setStorageSync', 'user_info', JSON.stringify({
-      id: 1, uuid: 'test-uuid', nickname: '自动测试用户',
-      avatar_url: '', email: 'tangliqunkitty@gmail.com',
-      created_at: new Date().toISOString()
-    }))
-    await sleep(500)
+    // T3 去了 register，回首页验证真会话（Pinia 内存 token 保留，reLaunch 不重触 onLaunch）
+    await nav('/pages/index/index')
+    const tok = await mp.callWxMethod('getStorageSync', 'access_token')
+    const real = typeof tok === 'string' && tok.length > 50 && !tok.startsWith('test_token')
+    log(real ? '✓' : '✗', 'T4', 'storage 真 JWT', real ? `len=${tok.length}` : `bad=${String(tok).slice(0,  20)}`)
 
-    // 验证注入成功
-    const token = await mp.callWxMethod('getStorageSync', 'access_token')
-    log(token === 'test_token_auto_abc123' ? '✓' : '✗', 'T4', 'Token 注入成功', `token=${String(token).substring(0, 15)}...`)
-
-    // 重新启动应用以触发 Vue store 的 initFromStorage()
-    await mp.reLaunch('/pages/index/index')
-    await sleep(5000)
-    await ss('06-home-after-login')
-    const homePage = await currentPage()
-    // 注意: reLaunch 不重新触发 App.onLaunch, Pinia store 未初始化
-    // 路由守卫可能仍重定向到 login — 这是无后端环境的已知限制
-    log(homePage.path === 'pages/index/index' ? '✓' : '🔍', 'T4',
-      '首页跳转', homePage.path +
-      (homePage.path !== 'pages/index/index' ? ' (store 未初始化, 预期)' : ''))
+    const p = await currentPage()
+    log(p.path === 'pages/index/index' ? '✓' : '✗', 'T4', '回到首页', p.path)
+    await ss('06-real-home')
   } catch (e) {
-    log('✗', 'T4', 'Token 注入失败', e.message?.substring(0, 80))
+    log('✗', 'T4', '会话验证', e.message?.substring(0, 80))
   }
 
   // ==============================================================
@@ -228,8 +258,8 @@ async function runTests() {
   // ==============================================================
   console.log('\n[T5] 首页（学习）')
   page = await currentPage()
-  // 可能仍在 login（store 未初始化）或 index（初始化成功）— 都可接受
-  log(['pages/index/index', 'pages/auth/login'].includes(page.path) ? '✓' : '✗', 'T5', '当前页面', page.path)
+  // 真登录后必在 index（T2 已 switchTab 到首页）
+  log(page.path === 'pages/index/index' ? '✓' : '✗', 'T5', '当前在首页', page.path)
 
   // 验证首页 data 结构
   try {

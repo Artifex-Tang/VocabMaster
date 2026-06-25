@@ -12,7 +12,10 @@ const automator = require('miniprogram-automator')
 const path = require('path')
 
 const CLI = 'C:\\Program Files (x86)\\Tencent\\微信web开发者工具\\cli.bat'
-const PROJECT_PATH = path.resolve(__dirname, '..', 'dist', 'dev', 'mp-weixin')
+// Use one-shot build artifact by default (NOT dev watch — avoids vite/uni orphan leak).
+// Override with WX_PROJECT_PATH (absolute or relative to wordmate-mini).
+const PROJECT_PATH = path.resolve(__dirname, '..',
+  process.env.WX_PROJECT_PATH || path.join('dist', 'build', 'mp-weixin'))
 const AUTO_PORT = Number(process.env.WX_AUTO_PORT) || 60616
 
 function runCli(args) {
