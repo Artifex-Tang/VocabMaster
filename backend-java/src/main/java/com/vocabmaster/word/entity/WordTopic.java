@@ -17,4 +17,5 @@ public class WordTopic {
     private String nameEn;
     private String icon;
     private Integer sortOrder;
+    private String imageType;  // photo | icon | none
 }
