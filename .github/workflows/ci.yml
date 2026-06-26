@@ -119,8 +119,29 @@ jobs:
     runs-on: ubuntu-latest
     needs: [backend, wordmate-web]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    env:
+      # docker-compose.yml 的 JWT_SECRET 用 ${JWT_SECRET:?...} 强制要求，CI 必须提供
+      JWT_SECRET: ci-integration-jwt-secret-at-least-32-characters-long-xxxx
+      # compose 默认 FRONTEND_PORT=3001，下方 health check 查 3000，统一到 3000
+      FRONTEND_PORT: "3000"
     steps:
       - uses: actions/checkout@v4
+
+      # wordmate-web 容器 bind-mount ./wordmate-web/dist；dist 是构建产物不入仓，
+      # integration 是独立 runner 拿不到 wordmate-web job 的产物，必须本机构建
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+          cache-dependency-path: wordmate-web/pnpm-lock.yaml
+      - name: Build frontend dist
+        working-directory: wordmate-web
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
 
       - name: Start full stack
         run: docker compose --profile full up -d --wait --timeout 120
