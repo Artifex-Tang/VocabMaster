@@ -1,23 +1,26 @@
 <template>
   <!--
     备案信息（法规要求网站底部展示）。
-    拿到真实备案号后替换下面的占位：
-      ICP 备案号  → 工信部发，ICP 备案通过后有
-      公安备案号  → beian.mps.gov.cn 公安联网备案通过后有（含 32 位数字）
-    公安号按规定还需旁边放一枚国徽图标，号下来补 <img>。
+    公安备案号下来后填下面的 GONGAN_BEIAN（自动显示）。
+    公安号按规定旁边还要补一枚国徽图标 <img>。
   -->
   <footer class="app-footer">
     <div class="links">
-      <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">沪ICP备XXXXXXXX号-X</a>
-      <span class="sep">·</span>
-      <a href="https://beian.mps.gov.cn" target="_blank" rel="noopener noreferrer">沪公网安备 XXXXXXXXXXXX号</a>
+      <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">{{ ICP_BEIAN }}</a>
+      <template v-if="GONGAN_BEIAN">
+        <span class="sep">·</span>
+        <a href="https://beian.mps.gov.cn" target="_blank" rel="noopener noreferrer">{{ GONGAN_BEIAN }}</a>
+      </template>
     </div>
     <div class="copy">© 2026 VocabMaster</div>
   </footer>
 </template>
 
 <script setup lang="ts">
-// 纯展示组件，无逻辑
+// 备案号常量，方便维护
+const ICP_BEIAN = '京ICP备2026044898号-1'
+// 公安联网备案号（beian.mps.gov.cn 通过后填，如 '京公网安备 11010102000001号'）；空则不显示
+const GONGAN_BEIAN = ''
 </script>
 
 <style scoped>
