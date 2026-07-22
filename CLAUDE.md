@@ -95,7 +95,7 @@ vocabmaster/
 4. **音频方案**：开发用有道 CDN（`dict.youdao.com/dictvoice?audio={word}&type=1/2`），生产用 Azure TTS 批量生成存自有 CDN。前端兜底用 Web Speech API。
 5. **配图方案**：有 `image_url` 的优先显示图片，无则 emoji 兜底。9,765 词有 Wikimedia 图片，已下载到本地 `backend-java/static/images/words/`，Nginx 挂载 serve。抽象词（action/description/abstract 等主题）无合适图片，emoji 兜底合理。
 6. **Python 后端**：确认不纳入 MVP，标记为 Phase 8 可选项。
-7. **微信小程序**：已开发完成并通过全量测试（2026-06-02）。代码就绪，上线等域名 + ICP 备案 + HTTPS。
+7. **微信小程序**：已开发完成并通过全量测试（2026-06-02）。上线进度（2026-07-23）：域名 `vocab-master.cn` + HTTPS + ICP 备案✓（`京ICP备2026044898号-1`），公安联网备案已提交待审，小程序备案 + 提审待办。**个人主体须选"工具"类目**（教育类要资质）。
 8. **审核状态**：`audit_status` 状态机 0=待审核 / 1=审核通过 / -1=已下架，MVP 跳过审核直接设 1。
 9. **测试 UX 增强**：默认数据源从"待复习"改为"全部"；选择题可改答案再提交；拼写测试支持中/英文释义切换；所有测试支持前后导航 + 跳过 + 随时交卷。
 10. **产品免费**：MVP 无付费功能。
@@ -150,6 +150,8 @@ vocabmaster/
 27. **Wikimedia 429 限流**：批量下载图片需 1.0s 延迟 + 429 重试指数退避。0.5s 不够。
 28. **Python 脚本 Windows GBK**：print 语句含 Unicode 特殊字符（✓✗⚠）在 GBK 终端报错。用 ASCII 替代（[OK]/[FAIL]/[WARN]）。
 29. **微信结构测试端口自动发现**：`wechat-test.js` 原硬编码端口 20288，实际 DevTools HTTP 端口不固定（如 12995）。改为调用 `CLI islogin` 自动发现端口，与 `wechat-user-journey.js` 一致。
+30. **mp-weixin 不支持 ES 动态 `import()`**：`request.ts` 曾用 `await import('@/stores/user')` 解循环引用，mp-weixin build 把它编成 `await "字符串"` → `useUserStore` 为 undefined → **所有 API 请求静默失败**（登录/学习/测试全挂，H5 不受影响故难发现）。改静态 `import` + 运行时调用 useUserStore（ES 活绑定照样解循环引用 request↔user↔auth）。**任何 mp-weixin 代码禁用动态 import()。**
+31. **storage.get 对非 JSON 字符串别 `catch{return null}`**：JWT `access_token` 按原始字符串存，`get` 对字符串走 `JSON.parse` 必失败，原 catch 返 null → token 读回 null → `isLoggedIn` 永远 false → **重启丢登录态**。catch 应返回原始值 `v`（把 `let v` 提到 try 外才够得着）。device_id 等字符串字段同理。
 
 ### 自动化测试（2026-06-02 完成全量测试，全端 100% 通过）
 
@@ -157,7 +159,7 @@ vocabmaster/
 2. **H5 手机仿真**：Playwright + Chromium，iPhone 15（393×852）+ Pixel 7（412×915）双视口。`e2e/mobile.spec.ts`（22 个）+ `e2e/login-flow.spec.ts`（9 个）= **31 个**覆盖全部 16 页面 + 登录表单填充验证 + tab 切换 + 无 JS 错误。命令 `npx playwright test`。
 3. **Web E2E 测试**（2026-06-02 新增）：`wordmate-web/e2e/full-flow.spec.ts`，Playwright Desktop Chrome（1280×800），10 个用例覆盖登录页渲染、登录表单、首页、学习页、测试页、单词搜索、遗忘曲线、设置页、路由守卫（未登录跳转）、后端 API 连通。命令 `npx playwright test`（在 wordmate-web 目录）。Docker 全栈环境跑（localhost:3001）。
 4. **微信小程序结构测试**：Node.js 脚本，19 个测试验证构建产物完整性。端口自动发现（通过 `CLI islogin` 命令解析，不再硬编码 20288）。命令 `node e2e/wechat-test.js`。
-5. **微信小程序用户旅程测试**：`e2e/wechat-user-journey.js`，20 个场景覆盖完整用户操作流程（T1 登录→T2 表单交互→T3 注册→T4 Token 注入→T6 学习卡片翻转→T9-T11 三种测试→T13 遗忘曲线→T14 单词搜索→T17 设置修改→T19 Tab 切换→T20 Storage 验证）。**36 通过 + 3 info**。命令 `node e2e/wechat-user-journey.js`。
+5. **微信小程序用户旅程测试**：`e2e/wechat-user-journey.js`，T1-T20 覆盖完整用户操作流程。**2026-06-25 升级为真鉴权**（provision 真账号→UI 登录→真 JWT，打本地 docker 后端），**39 通过 / 0 失败 / 1 info**。之前是假 token 结构覆盖（36/0/3）。靠 Pinia 内存 token（不 reLaunch 读 storage，规避坑 #31）。命令 `WX_AUTO_PORT=60640 node e2e/wechat-user-journey.js`（端口每跑+1 避死监听）。
 
 **全端测试成绩（2026-06-02）**：
 | 端 | 结果 | 命令 |
@@ -165,7 +167,7 @@ vocabmaster/
 | Web Chrome | **10/10** | `cd wordmate-web && npx playwright test` |
 | H5 仿真 | **40/40** | `cd wordmate-mini && npx playwright test` |
 | 微信结构 | **19/19** | `cd wordmate-mini && node e2e/wechat-test.js` |
-| 微信旅程 | **36/36** | `cd wordmate-mini && node e2e/wechat-user-journey.js` |
+| 微信旅程（真鉴权） | **39/0/1** | `cd wordmate-mini && WX_AUTO_PORT=60640 node e2e/wechat-user-journey.js` |
 5. **测试报告**：`docs/test-report-2026-06-02.md`。
 6. **测试依赖**：vitest@3.2.6、@vue/test-utils、happy-dom、playwright@1.60、jest、ts-jest、miniprogram-automator@0.12.1、ws@8.21。
 7. **uni-app H5 input DOM 结构**：uni-app H5 将 `<input>` 包裹在 `<uni-input>` 中，placeholder 在兄弟 `<div class="uni-input-placeholder">` 而非 `<input>` 上。Playwright 测试需通过 `uni-input` wrapper 定位。`fillUniInput()` 工具函数按 wrapper 内的 placeholder div 找到对应 `.uni-input-input` 后用 `nativeInputValueSetter` + `input`/`change` 事件触发 Vue 响应式。
@@ -253,7 +255,7 @@ word_story_question (story_id, question, options JSON, answer)
 ### 待办事项（当前未完成）
 
 **高优先级：**
-- [ ] 全栈 Docker Compose 集成测试未执行（`docker compose --profile full up`）
+- [x] 全栈 Docker Compose 集成测试已通（CI integration job，run 28215677126，2026-06-26）
 - [ ] `docs/11-roadmap.md` 进度未更新
 - [ ] commit `2d0eb21`（OOM 修复）未 push
 - [ ] WIP 未提交：`WordTopic.java`、`wordmate-web/src/api/word.ts`、`.env.development`、`V2__add_word_topic_image_type.sql`、`scripts/` 4 个 py 脚本、`backup/`
@@ -266,8 +268,8 @@ word_story_question (story_id, question, options JSON, answer)
 - [ ] 18 个残留旧字母分类词需重新分类
 - [ ] 后端构建验证（修 3 个编译错误后未重新 `mvn package`）
 - [ ] k6 压测脚本未实际运行（`scripts/k6-load-test.js`）
-- [ ] CI/CD 流水线未实际触发
-- [ ] SSL 证书（`deploy/certs/` 仅有 `.gitkeep`，nginx HTTPS 被注释）
+- [x] CI/CD 流水线已触发且全绿（backend/web/mini/integration 四 job，2026-06-26）
+- [x] SSL 证书已上线（阿里云 DV，vocab-master.cn，2026-07-23；到期 2026-10-19 续签跑 `deploy/install_ssl.py`）
 - [ ] API key 管理生产化（当前明文）
 - [ ] 服务器升 4G（OOM 根治：1.6G 超售，autoheal+调内存只是抠门）
 
@@ -282,7 +284,6 @@ word_story_question (story_id, question, options JSON, answer)
 - [ ] `docker-compose.yml` 的 `version: '3.8'` 已废弃需移除
 - [ ] 词汇爬取需求（剑桥官网 + 国内课标词汇）
 - [ ] 微信小程序真机交互测试（需手机扫码）
-- [ ] 后端联调后重跑微信小程序用户旅程测试（验证登录态生效、学习/测试真实数据）
 - [ ] `wordmate-mini/src/manifest.json` 未提交修改（appid + permission）
 
 ## FAQ

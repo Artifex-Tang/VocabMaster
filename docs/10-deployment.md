@@ -455,7 +455,7 @@ export default function () {
 
 ## 安全检查清单
 
-- [ ] HTTPS 全站 + HSTS
+- [x] HTTPS 全站 + HSTS（2026-07-23 上线，阿里云 DV 证书，vocab-master.cn + www，到期 2026-10-19，续签跑 `deploy/install_ssl.py`）
 - [ ] JWT secret 生产环境使用 32 字节以上强随机
 - [ ] AES 密钥生产环境独立生成，不与开发共用
 - [ ] 数据库密码、微信 AppSecret 等敏感信息走环境变量，不入 Git
