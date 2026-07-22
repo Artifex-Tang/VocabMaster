@@ -1,6 +1,9 @@
 """
 VocabMaster 远程部署脚本
 本地编译 → 上传 → 远程 Docker 启动
+
+凭据从 deploy/.deploy.env（gitignored）读，不在源码硬编码。
+首次使用：cp .deploy.env.example .deploy.env 并填值。
 """
 import paramiko
 import os
@@ -8,10 +11,29 @@ import sys
 import time
 from scp import SCPClient
 
-HOST = "60.205.145.132"
-USER = "root"
-PWD = "Tang@20023445"
-REMOTE_DIR = "/opt/vocabmaster"
+
+def _load_env(path: str) -> None:
+    """极简 .env 解析（无外部依赖）。已存在的环境变量优先（setdefault 语义）。"""
+    if not os.path.exists(path):
+        return
+    with open(path, encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            os.environ.setdefault(k.strip(), v.strip().strip('"').strip("'"))
+
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_load_env(os.path.join(_HERE, ".deploy.env"))
+
+HOST = os.environ.get("DEPLOY_HOST", "60.205.145.132")
+USER = os.environ.get("DEPLOY_USER", "root")
+REMOTE_DIR = os.environ.get("DEPLOY_REMOTE_DIR", "/opt/vocabmaster")
+PWD = os.environ.get("DEPLOY_PWD")
+if not PWD:
+    sys.exit("缺 DEPLOY_PWD：请在 deploy/.deploy.env 填写（参考 .deploy.env.example）")
 
 def ssh_exec(ssh, cmd, check=True):
     """执行远程命令，打印输出"""
@@ -101,16 +123,17 @@ def main():
 
     # ── 4. 配置 .env ──
     print("\n[4/7] 配置环境变量...")
-    env_content = """# VocabMaster 生产环境
-DB_ROOT_PASSWORD=vocab_root_2024
-DB_NAME=vocabmaster
-DB_USERNAME=vocab
-DB_PASSWORD=vocab_prod_2024
-REDIS_PASSWORD=redis_prod_2024
-JWT_SECRET=vocabmaster-jwt-secret-prod-2024-at-least-32-characters
-AES_KEY=ZGV2LWFlcy1rZXktMzJieXRlcy1sb25n
-WECHAT_APP_ID=
-WECHAT_APP_SECRET=
+    # 生产 .env 内容从部署凭据注入，避免在源码固化
+    env_content = f"""# VocabMaster 生产环境
+DB_ROOT_PASSWORD={os.environ.get("DB_ROOT_PASSWORD", "")}
+DB_NAME={os.environ.get("DB_NAME", "vocabmaster")}
+DB_USERNAME={os.environ.get("DB_USERNAME", "vocab")}
+DB_PASSWORD={os.environ.get("DB_PASSWORD", "")}
+REDIS_PASSWORD={os.environ.get("REDIS_PASSWORD", "")}
+JWT_SECRET={os.environ.get("JWT_SECRET", "")}
+AES_KEY={os.environ.get("AES_KEY", "")}
+WECHAT_APP_ID={os.environ.get("WECHAT_APP_ID", "")}
+WECHAT_APP_SECRET={os.environ.get("WECHAT_APP_SECRET", "")}
 """
     # 写入 .env
     ssh_exec(ssh, f"cat > {REMOTE_DIR}/.env << 'ENVEOF'\n{env_content}ENVEOF")
