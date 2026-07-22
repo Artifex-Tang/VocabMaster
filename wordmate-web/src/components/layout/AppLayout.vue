@@ -10,6 +10,9 @@
       <el-main class="main-content">
         <RouterView />
       </el-main>
+      <el-footer height="auto" class="footer-wrap">
+        <AppFooter />
+      </el-footer>
     </el-container>
   </el-container>
 </template>
@@ -18,6 +21,7 @@
 import { ref } from 'vue'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+import AppFooter from './AppFooter.vue'
 
 const collapsed = ref(false)
 </script>
@@ -32,4 +36,5 @@ const collapsed = ref(false)
 }
 .header { border-bottom: 1px solid var(--el-border-color); background: var(--el-bg-color); display: flex; align-items: center; }
 .main-content { overflow-y: auto; background: var(--el-bg-color-page); }
+.footer-wrap { padding: 0; }
 </style>
