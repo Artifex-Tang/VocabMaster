@@ -62,12 +62,14 @@
         <RouterLink to="/register">立即注册</RouterLink>
       </p>
     </div>
+    <AppFooter class="auth-footer" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import AppFooter from '@/components/layout/AppFooter.vue'
 import { Icon } from '@iconify/vue'
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus'
 import { useUserStore } from '@/stores/user'
@@ -121,7 +123,15 @@ function handleWechat() {
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   background: linear-gradient(135deg, #e0f2fe 0%, #e8e8ff 100%);
+}
+
+.auth-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .auth-card {
