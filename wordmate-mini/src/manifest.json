@@ -6,17 +6,13 @@
   "versionCode": 1,
   "transformPx": false,
   "mp-weixin": {
-    "appid": "wx5fb24a398538562a",
+    "appid": "wx9457ade8a6879821",
     "setting": {
       "urlCheck": false,
       "es6": true,
       "minified": true
     },
-    "usingComponents": true,
-    "permission": {
-      "scope.userLocation": { "desc": "用于学习统计中定位时区" }
-    },
-    "requiredBackgroundModes": ["audio"]
+    "usingComponents": true
   },
   "app-plus": {
     "usingComponents": true,

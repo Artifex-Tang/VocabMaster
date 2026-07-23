@@ -30,9 +30,10 @@
 
       <!-- #ifdef MP-WEIXIN -->
       <view class="divider"><text class="divider-text">或</text></view>
-      <button class="btn-wechat" open-type="getUserInfo" @getuserinfo="handleWechatLogin">
+      <button class="btn-wechat" :disabled="loading" @click="handleWechatLogin">
         微信一键登录
       </button>
+      <privacy-popup />
       <!-- #endif -->
 
       <view class="footer-row">
@@ -48,7 +49,8 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useUserStore } from '@/stores/user'
 import { useSettingsStore } from '@/stores/settings'
-import { loginByPassword, loginWechat } from '@/api/auth'
+import { loginByPassword, wechatLoginMiniProgram } from '@/api/auth'
+import PrivacyPopup from '@/components/privacy-popup.vue'
 
 const userStore = useUserStore()
 const settingsStore = useSettingsStore()
@@ -92,26 +94,18 @@ async function handleLogin() {
   }
 }
 
-async function handleWechatLogin(e: Record<string, unknown>) {
+async function handleWechatLogin() {
   loading.value = true
   try {
-    const detail = (e as { detail?: { userInfo?: { nickName?: string; avatarUrl?: string }; errMsg?: string } }).detail
-    if (!detail || detail.errMsg?.includes('fail')) return
-
-    // 获取微信 code
-    const loginRes = await new Promise<{ code: string }>((resolve, reject) => {
-      uni.login({ provider: 'weixin', success: resolve, fail: reject })
-    })
-
-    const userInfo = detail.userInfo
-      ? { nickname: detail.userInfo.nickName ?? '', avatar_url: detail.userInfo.avatarUrl ?? '' }
-      : undefined
-
-    const data = await loginWechat(loginRes.code, userInfo)
+    // uni.login 属隐私接口，首次调用会触发 privacy-popup 的授权弹窗
+    const data = await wechatLoginMiniProgram()
     userStore.setAuth(data)
     await settingsStore.fetch()
     settingsStore.sync()
     navigateAfterLogin()
+  } catch (err: unknown) {
+    const msg = (err as { message?: string })?.message ?? '微信登录失败，请重试'
+    uni.showToast({ title: msg, icon: 'none', duration: 3000 })
   } finally {
     loading.value = false
   }

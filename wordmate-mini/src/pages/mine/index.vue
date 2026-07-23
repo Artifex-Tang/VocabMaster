@@ -31,6 +31,9 @@
 
     <!-- 退出登录 -->
     <button class="btn-logout" @click="handleLogout">退出登录</button>
+
+    <!-- 注销账号（邮箱引导，符合隐私指引「注销后删除」承诺） -->
+    <button class="btn-delete" @click="handleDeleteAccount">注销账号</button>
   </view>
 </template>
 
@@ -72,6 +75,26 @@ async function handleLogout() {
       try { await apiLogout() } catch { /* 静默 */ }
       userStore.logout()
       uni.reLaunch({ url: '/pages/auth/login' })
+    },
+  })
+}
+
+const DELETE_EMAIL = 'support@vocab-master.cn'
+
+function handleDeleteAccount() {
+  uni.showModal({
+    title: '注销账号',
+    content:
+      '注销将删除你的账号及全部学习记录，且不可恢复。\n\n如需注销，请发送邮件至：\n' +
+      DELETE_EMAIL +
+      '\n注明你的注册邮箱或手机号，我们将在 15 个工作日内处理。\n\n点击「确认」可复制邮箱地址。',
+    confirmText: '复制邮箱',
+    success: (res) => {
+      if (!res.confirm) return
+      uni.setClipboardData({
+        data: DELETE_EMAIL,
+        success: () => uni.showToast({ title: '邮箱已复制', icon: 'success' }),
+      })
     },
   })
 }
@@ -121,5 +144,13 @@ async function handleLogout() {
   width: 100%; height: 88rpx; border-radius: 48rpx;
   background: #fef0f0; color: #f56c6c;
   font-size: 28rpx; font-weight: 600; border: none;
+}
+
+.btn-delete {
+  width: auto; margin-top: 16rpx;
+  background: transparent; color: #9ca3af;
+  font-size: 24rpx; border: none;
+  text-decoration: underline;
+  &::after { border: none; }
 }
 </style>
