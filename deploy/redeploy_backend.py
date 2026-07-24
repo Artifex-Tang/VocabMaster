@@ -1,16 +1,19 @@
-"""定向重建 prod backend-java 容器（仅 env 改动用）。
+"""重建 prod backend-java（代码或 env 改动）。
 
-不碰 MySQL/Redis/nginx/web，不 down 整栈，不 -v（保数据卷）。
-读 deploy/.deploy.env 凭据 + WECHAT_APP_ID/SECRET，patch prod .env 后
-`docker compose up -d --force-recreate backend-java`（restart 不重读 .env，必须 recreate）。
+scp 新 jar → docker compose build backend-java → up --force-recreate。
+不碰 MySQL/Redis/nginx/web，不 -v（保数据卷）。
+读 deploy/.deploy.env 凭据。
 
-用法：cd deploy && python redeploy_backend.py
+用法：
+  1. cd backend-java && mvn package -DskipTests   # 产出 target/*.jar
+  2. cd deploy && python redeploy_backend.py
 """
 import os
 import sys
 import time
 
 import paramiko
+from scp import SCPClient
 
 
 def _load_env(path: str) -> None:
@@ -27,6 +30,10 @@ def _load_env(path: str) -> None:
 
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _load_env(os.path.join(_HERE, ".deploy.env"))
+try:
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+except Exception:
+    pass
 
 HOST = os.environ.get("DEPLOY_HOST", "60.205.145.132")
 USER = os.environ.get("DEPLOY_USER", "root")
@@ -35,10 +42,9 @@ PWD = os.environ.get("DEPLOY_PWD")
 if not PWD:
     sys.exit("缺 DEPLOY_PWD：请在 deploy/.deploy.env 填写")
 
-APP_ID = os.environ.get("WECHAT_APP_ID")
-APP_SECRET = os.environ.get("WECHAT_APP_SECRET")
-if not APP_ID or not APP_SECRET:
-    sys.exit("缺 WECHAT_APP_ID/SECRET：请在 deploy/.deploy.env 填写")
+PROJECT_BASE = os.path.dirname(_HERE)
+JAR_LOCAL = os.path.join(PROJECT_BASE, "backend-java", "target", "vocabmaster-backend.jar")
+DOCKERFILE_LOCAL = os.path.join(PROJECT_BASE, "backend-java", "Dockerfile")
 
 
 def run(ssh, cmd, check=True):
@@ -57,8 +63,11 @@ def run(ssh, cmd, check=True):
 
 
 def main():
+    if not os.path.exists(JAR_LOCAL):
+        sys.exit(f"jar 不存在：{JAR_LOCAL}\n先 cd backend-java && mvn package -DskipTests")
+
     print("=" * 50)
-    print("  定向重建 backend-java（env-only）")
+    print("  重建 backend-java（代码+env）")
     print("=" * 50)
 
     ssh = paramiko.SSHClient()
@@ -66,19 +75,23 @@ def main():
     ssh.connect(HOST, username=USER, password=PWD, timeout=10)
     print(f"已连接 {HOST}")
 
-    # 1. patch prod .env 的 WECHAT 两行（幂等：覆盖已有值）
-    print("\n[1/3] 更新 prod .env WECHAT 配置...")
-    run(ssh, f"sed -i 's|^WECHAT_APP_ID=.*|WECHAT_APP_ID={APP_ID}|' {REMOTE_DIR}/.env")
-    run(ssh, f"sed -i 's|^WECHAT_APP_SECRET=.*|WECHAT_APP_SECRET={APP_SECRET}|' {REMOTE_DIR}/.env")
-    # 校验：只打印键名，值脱敏
-    run(ssh, f"grep -E '^WECHAT_APP' {REMOTE_DIR}/.env | sed 's/=.*/=***(已设)/'")
+    # 1. scp jar + Dockerfile
+    print("\n[1/4] 上传 jar + Dockerfile...")
+    with SCPClient(ssh.get_transport()) as scp:
+        scp.put(JAR_LOCAL, f"{REMOTE_DIR}/backend-java/target/vocabmaster-backend.jar")
+        scp.put(DOCKERFILE_LOCAL, f"{REMOTE_DIR}/backend-java/Dockerfile")
+    print(f"  {os.path.basename(JAR_LOCAL)} ({os.path.getsize(JAR_LOCAL) / 1024 / 1024:.1f}MB)")
 
-    # 2. 只重建 backend-java（recreate 才重读 .env；其它服务不动）
-    print("\n[2/3] 重建 backend-java 容器...")
+    # 2. build backend image（Dockerfile COPY jar）
+    print("\n[2/4] 构建后端镜像...")
+    run(ssh, f"cd {REMOTE_DIR} && docker compose build backend-java 2>&1", check=False)
+
+    # 3. recreate backend（recreate 才吃到新 jar；MySQL/Redis/nginx/web 不动）
+    print("\n[3/4] 重建 backend-java 容器...")
     run(ssh, f"cd {REMOTE_DIR} && docker compose up -d --force-recreate backend-java 2>&1")
 
-    # 3. 健康检查
-    print("\n[3/3] 等待后端就绪...")
+    # 4. health check
+    print("\n[4/4] 等待后端就绪...")
     for i in range(24):
         time.sleep(5)
         out = run(ssh, "curl -sf http://localhost:8080/api/v1/actuator/health 2>/dev/null || echo NOT_READY", check=False)
@@ -87,10 +100,10 @@ def main():
             break
         print(f"  等待... {(i + 1) * 5}s", end="\r")
     else:
-        print("\n警告：后端 120s 内未就绪，查日志：docker logs vocab-backend --tail 50")
+        print("\n警告：后端 120s 未就绪，查日志：docker logs vocab-backend --tail 50")
 
     ssh.close()
-    print("\n完成。体验版重试微信一键登录。")
+    print("\n完成。")
 
 
 if __name__ == "__main__":

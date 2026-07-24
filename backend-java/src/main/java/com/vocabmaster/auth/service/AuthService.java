@@ -148,8 +148,13 @@ public class AuthService {
                 nickname = req.getUserInfo().getNickname();
                 avatarUrl = req.getUserInfo().getAvatarUrl();
             }
+            String uuid = UUID.randomUUID().toString();
+            if (nickname == null || nickname.isBlank()) {
+                // 未授权昵称（如纯 uni.login）时给默认名，避免 mine 页显示空
+                nickname = "词友" + uuid.substring(0, 4);
+            }
             user = User.builder()
-                    .uuid(UUID.randomUUID().toString())
+                    .uuid(uuid)
                     .nickname(nickname)
                     .avatarUrl(avatarUrl)
                     .role(AppConstants.ROLE_USER)
