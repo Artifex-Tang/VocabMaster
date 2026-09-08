@@ -152,6 +152,8 @@ vocabmaster/
 29. **微信结构测试端口自动发现**：`wechat-test.js` 原硬编码端口 20288，实际 DevTools HTTP 端口不固定（如 12995）。改为调用 `CLI islogin` 自动发现端口，与 `wechat-user-journey.js` 一致。
 30. **mp-weixin 不支持 ES 动态 `import()`**：`request.ts` 曾用 `await import('@/stores/user')` 解循环引用，mp-weixin build 把它编成 `await "字符串"` → `useUserStore` 为 undefined → **所有 API 请求静默失败**（登录/学习/测试全挂，H5 不受影响故难发现）。改静态 `import` + 运行时调用 useUserStore（ES 活绑定照样解循环引用 request↔user↔auth）。**任何 mp-weixin 代码禁用动态 import()。**
 31. **storage.get 对非 JSON 字符串别 `catch{return null}`**：JWT `access_token` 按原始字符串存，`get` 对字符串走 `JSON.parse` 必失败，原 catch 返 null → token 读回 null → `isLoggedIn` 永远 false → **重启丢登录态**。catch 应返回原始值 `v`（把 `let v` 提到 try 外才够得着）。device_id 等字符串字段同理。
+32. **wx.request 不支持 PATCH，`X-HTTP-Method-Override` 头 Spring 默认不认**：mini 端 `request.ts` 把 PATCH 降级为 POST + override 头透传，但 Spring Boot 没有任何内置组件读这个头 → POST 打到只有 `@PatchMapping` 的端点 → 405 被全局兜底 handler 吞成 500「服务器繁忙」。后端已加 `config/MethodOverrideFilter`（仅允许 POST 基方法改写为 PATCH/PUT/DELETE，防绕过方法级安全规则）。H5/Web 发真 PATCH 不受影响。
+33. **DTO 字符串字段别让前端发数组**：`UpdateSettingsRequest.activeLevels` 是 `String`（全局 SNAKE_CASE 绑定），mini `UserSettings.active_levels` 是 `string[]`，全量保存发 `[]` → Jackson 反序列化 400「请求体格式错误」。Web 端碰巧没事（GET 回来的就是字符串原样回传）。整页保存必须白名单字段，别 `update(settings.value)` 全量怼。
 
 ### 自动化测试（2026-06-02 完成全量测试，全端 100% 通过）
 
@@ -259,7 +261,7 @@ word_story_question (story_id, question, options JSON, answer)
 - [ ] `docs/11-roadmap.md` 进度未更新
 - [ ] commit `2d0eb21`（OOM 修复）未 push
 - [ ] WIP 未提交：`WordTopic.java`、`wordmate-web/src/api/word.ts`、`.env.development`、`V2__add_word_topic_image_type.sql`、`scripts/` 4 个 py 脚本、`backup/`
-- [ ] V2 迁移 `V2__add_word_topic_image_type.sql` 未上云（云只 V1 baseline，云上无 `image_type` 列）——下次后端 redeploy 走 Flyway 自动应用，勿手动 ALTER
+- [x] V2 迁移 `V2__add_word_topic_image_type.sql` 已上云（2026-09-08 随后端 redeploy 由 Flyway 自动应用，schema_history 三条全 success）
 - [ ] 图片质量验收 + 同步 `image_url` 列到云 + sftp 13068 张图到云 `/images` 卷（本地 38213 已填，云 0，质量暂缓）
 - [ ] `example_zh` 中文例句未生成（本地+云都 0）
 
