@@ -157,7 +157,7 @@ vocabmaster/
 
 ### 自动化测试（2026-06-02 完成全量测试，全端 100% 通过）
 
-1. **单元测试**：Vitest 3.x，48 个测试覆盖 utils/stores/api/composables。命令 `pnpm test`。
+1. **单元测试**：Vitest 3.x，50 个测试覆盖 utils/stores/api/composables（含 settings-save 白名单 2 个）。命令 `pnpm test`。
 2. **H5 手机仿真**：Playwright + Chromium，iPhone 15（393×852）+ Pixel 7（412×915）双视口。`e2e/mobile.spec.ts`（22 个）+ `e2e/login-flow.spec.ts`（9 个）= **31 个**覆盖全部 16 页面 + 登录表单填充验证 + tab 切换 + 无 JS 错误。命令 `npx playwright test`。
 3. **Web E2E 测试**（2026-06-02 新增）：`wordmate-web/e2e/full-flow.spec.ts`，Playwright Desktop Chrome（1280×800），10 个用例覆盖登录页渲染、登录表单、首页、学习页、测试页、单词搜索、遗忘曲线、设置页、路由守卫（未登录跳转）、后端 API 连通。命令 `npx playwright test`（在 wordmate-web 目录）。Docker 全栈环境跑（localhost:3001）。
 4. **微信小程序结构测试**：Node.js 脚本，19 个测试验证构建产物完整性。端口自动发现（通过 `CLI islogin` 命令解析，不再硬编码 20288）。命令 `node e2e/wechat-test.js`。
@@ -259,8 +259,9 @@ word_story_question (story_id, question, options JSON, answer)
 **高优先级：**
 - [x] 全栈 Docker Compose 集成测试已通（CI integration job，run 28215677126，2026-06-26）
 - [ ] `docs/11-roadmap.md` 进度未更新
-- [ ] commit `2d0eb21`（OOM 修复）未 push
-- [ ] WIP 未提交：`WordTopic.java`、`wordmate-web/src/api/word.ts`、`.env.development`、`V2__add_word_topic_image_type.sql`、`scripts/` 4 个 py 脚本、`backup/`
+- [x] commit `2d0eb21`（OOM 修复）已 push（远端早已包含，2026-09-08 核实）
+- [ ] mp 体验版待重传（含 2026-09-08 设置页修复 + lazyCodeLoading）→ 真机复测设置页 + DevTools 代码质量面板重扫确认「组件」项通过
+- [ ] WIP 未提交：`wordmate-web/src/api/word.ts`、`.env.development`、`components.d.ts`、`scripts/` 4 个 py 脚本、`backup/`（`WordTopic.java`/`V2` 迁移早已入库）
 - [x] V2 迁移 `V2__add_word_topic_image_type.sql` 已上云（2026-09-08 随后端 redeploy 由 Flyway 自动应用，schema_history 三条全 success）
 - [ ] 图片质量验收 + 同步 `image_url` 列到云 + sftp 13068 张图到云 `/images` 卷（本地 38213 已填，云 0，质量暂缓）
 - [ ] `example_zh` 中文例句未生成（本地+云都 0）

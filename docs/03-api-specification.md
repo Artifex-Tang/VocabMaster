@@ -9,6 +9,7 @@
 - **编码**：UTF-8
 - **时间格式**：ISO 8601 带时区，如 `2026-04-17T10:30:00+08:00`；也接受 Unix 毫秒时间戳整数
 - **命名**：URL 用短横线（`user-settings`），JSON 字段用下划线（`user_id`）。这里要留意：保持和 Java/Python 后端的 DTO 字段名一致，前端接收后转 camelCase 由前端拦截器完成。
+- **PATCH 透传**：`wx.request` 不支持 PATCH，微信小程序端统一降级为 `POST` + 请求头 `X-HTTP-Method-Override: PATCH`。后端 `MethodOverrideFilter` 仅接受 POST 基方法改写为 PATCH/PUT/DELETE（其余忽略，保持原方法）。Web/H5 端发原生 PATCH，不受影响。
 
 ### 认证
 
