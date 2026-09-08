@@ -96,7 +96,7 @@ function themeLabel(t: string) {
 async function saveSettings() {
   saving.value = true
   try {
-    await settingsStore.update(settings.value)
+    await settingsStore.save()
     uni.showToast({ title: '已保存', icon: 'success' })
   } finally {
     saving.value = false

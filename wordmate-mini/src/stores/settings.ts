@@ -35,6 +35,22 @@ export const useSettingsStore = defineStore('settings', () => {
     storage.set('user_settings', settings.value)
   }
 
+  /**
+   * 整页保存：只提交设置页可编辑字段。
+   * 不发 active_levels（后端 DTO 是 String，前端是 string[]，数组会 400），
+   * 也不发 default_sort_mode / notification_time（本页无编辑入口）。
+   */
+  async function save() {
+    const s = settings.value
+    return update({
+      daily_new_words_goal: s.daily_new_words_goal,
+      daily_review_goal: s.daily_review_goal,
+      preferred_accent: s.preferred_accent,
+      auto_play_audio: s.auto_play_audio,
+      theme: s.theme,
+    })
+  }
+
   // 快捷 getter
   const preferredAccent = ref<'uk' | 'us'>('uk')
   const autoPlayAudio = ref(true)
@@ -44,5 +60,5 @@ export const useSettingsStore = defineStore('settings', () => {
     autoPlayAudio.value = settings.value.auto_play_audio
   }
 
-  return { settings, load, fetch, update, preferredAccent, autoPlayAudio, sync }
+  return { settings, load, fetch, update, save, preferredAccent, autoPlayAudio, sync }
 })
