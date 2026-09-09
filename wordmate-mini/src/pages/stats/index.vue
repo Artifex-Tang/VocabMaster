@@ -1,5 +1,12 @@
 <template>
   <view class="stats">
+    <!-- 游客：登录空态 -->
+    <view v-if="!userStore.isLoggedIn" class="guest-empty">
+      <text class="ge-icon">📊</text>
+      <text class="ge-text">登录后查看你的学习统计</text>
+      <button class="ge-btn" @click="goLogin">去登录</button>
+    </view>
+    <template v-else>
     <!-- 周期切换 -->
     <view class="period-tabs">
       <text
@@ -90,6 +97,7 @@
 
     <!-- 遗忘曲线入口 -->
     <button class="btn-ghost" @click="goForgettingCurve">查看遗忘曲线</button>
+    </template>
   </view>
 </template>
 
@@ -98,8 +106,10 @@ import { ref, computed, onMounted } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { getSummary, getTodayStats } from '@/api/stats'
 import { formatDate } from '@/utils/date'
+import { useUserStore } from '@/stores/user'
 import type { SummaryStats, TodayStats } from '@/api/types'
 
+const userStore = useUserStore()
 const period = ref<'week' | 'month'>('week')
 const summary = ref<SummaryStats | null>(null)
 const todayStats = ref<TodayStats | null>(null)
@@ -121,6 +131,7 @@ function barWidth(total: number): number {
 onShow(loadData)
 
 async function loadData() {
+  if (!userStore.isLoggedIn) return // 游客：空态即可
   try {
     const [s, t] = await Promise.all([
       getSummary(period.value, formatDate(new Date())),
@@ -134,6 +145,7 @@ async function loadData() {
 }
 
 async function setPeriod(p: 'week' | 'month') {
+  if (!userStore.isLoggedIn) return
   period.value = p
   try {
     summary.value = await getSummary(period.value, formatDate(new Date()))
@@ -144,6 +156,10 @@ async function setPeriod(p: 'week' | 'month') {
 
 function goForgettingCurve() {
   uni.navigateTo({ url: '/pages/stats/forgetting-curve' })
+}
+
+function goLogin() {
+  uni.reLaunch({ url: '/pages/auth/login' })
 }
 </script>
 
@@ -199,5 +215,22 @@ function goForgettingCurve() {
   width: 100%; height: 88rpx; background: transparent; color: #1890ff;
   font-size: 28rpx; border-radius: 48rpx; border: 2rpx solid #1890ff;
   margin-top: 16rpx;
+}
+
+/* 游客登录空态 */
+.guest-empty {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+
+  .ge-icon { font-size: 88rpx; }
+  .ge-text { font-size: 28rpx; color: #6b7280; }
+  .ge-btn {
+    width: 320rpx; height: 80rpx; background: #1890ff; color: #fff;
+    font-size: 28rpx; font-weight: 600; border-radius: 40rpx; border: none;
+  }
 }
 </style>

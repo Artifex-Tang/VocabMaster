@@ -1,5 +1,12 @@
 <template>
   <view class="mine">
+    <!-- 游客：登录空态 -->
+    <view v-if="!userStore.isLoggedIn" class="guest-empty">
+      <text class="ge-icon">👤</text>
+      <text class="ge-text">登录后管理你的学习</text>
+      <button class="ge-btn" @click="goLogin">去登录</button>
+    </view>
+    <template v-else>
     <!-- 用户信息 -->
     <view class="user-card">
       <image
@@ -34,6 +41,7 @@
 
     <!-- 注销账号（邮箱引导，符合隐私指引「注销后删除」承诺） -->
     <button class="btn-delete" @click="handleDeleteAccount">注销账号</button>
+    </template>
   </view>
 </template>
 
@@ -42,6 +50,7 @@ import { ref, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { useUserStore } from '@/stores/user'
 import { checkinToday, getAchievements } from '@/api/stats'
+
 import { logout as apiLogout } from '@/api/auth'
 import type { CheckinResult } from '@/api/types'
 
@@ -59,6 +68,7 @@ const menuItems = [
 onShow(loadData)
 
 async function loadData() {
+  if (!userStore.isLoggedIn) return // 游客：空态即可
   try {
     checkin.value = await checkinToday()
   } catch {
@@ -80,6 +90,10 @@ async function handleLogout() {
 }
 
 const DELETE_EMAIL = 'support@vocab-master.cn'
+
+function goLogin() {
+  uni.reLaunch({ url: '/pages/auth/login' })
+}
 
 function handleDeleteAccount() {
   uni.showModal({
@@ -152,5 +166,22 @@ function handleDeleteAccount() {
   font-size: 24rpx; border: none;
   text-decoration: underline;
   &::after { border: none; }
+}
+
+/* 游客登录空态 */
+.guest-empty {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+
+  .ge-icon { font-size: 88rpx; }
+  .ge-text { font-size: 28rpx; color: #6b7280; }
+  .ge-btn {
+    width: 320rpx; height: 80rpx; background: #1890ff; color: #fff;
+    font-size: 28rpx; font-weight: 600; border-radius: 40rpx; border: none;
+  }
 }
 </style>

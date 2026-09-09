@@ -1,5 +1,12 @@
 <template>
   <view class="test-home">
+    <!-- 游客：登录空态 -->
+    <view v-if="!userStore.isLoggedIn" class="guest-empty">
+      <text class="ge-icon">📝</text>
+      <text class="ge-text">登录后开始你的测试</text>
+      <button class="ge-btn" @click="goLogin">去登录</button>
+    </view>
+    <template v-else>
     <text class="page-title">测试练习</text>
     <text class="page-sub">检验你的掌握程度</text>
 
@@ -58,6 +65,7 @@
         </view>
       </view>
     </view>
+    </template>
   </view>
 </template>
 
@@ -65,11 +73,14 @@
 import { ref, computed } from 'vue'
 import { onShow } from '@dcloudio/uni-app'
 import { useSettingsStore } from '@/stores/settings'
+import { useUserStore } from '@/stores/user'
 import { generate, availability } from '@/api/test'
 import { LEVELS, THINK_NAMES } from '@/api/types'
+import { requireLogin } from '@/utils/require-login'
 import type { TestAvailability } from '@/api/types'
 
 const settingsStore = useSettingsStore()
+const userStore = useUserStore()
 const size = ref(20)
 const source = ref<'due' | 'all' | 'wrong_words'>('all')
 const avail = ref<TestAvailability | null>(null)
@@ -128,6 +139,7 @@ function consumeOverride() {
 }
 
 async function loadAvailability() {
+  if (!userStore.isLoggedIn) return // 游客：空态即可
   try {
     avail.value = await availability(selectedLevel.value)
     // 如果当前来源无数据，回退到"全部"
@@ -145,7 +157,12 @@ function onLevelChange(e: { detail: { value: number } }) {
   loadAvailability()
 }
 
+function goLogin() {
+  uni.reLaunch({ url: '/pages/auth/login' })
+}
+
 async function selectMode(mode: typeof modes[number]) {
+  if (!requireLogin()) return
   uni.showLoading({ title: '生成题目...' })
   try {
     const data = await generate(mode.key, selectedLevel.value, source.value, size.value)
@@ -204,5 +221,22 @@ async function selectMode(mode: typeof modes[number]) {
   border: 2rpx solid transparent;
   &.active { color: #1890ff; border-color: #1890ff; background: #fff; }
   &.disabled { opacity: 0.4; }
+}
+
+/* 游客登录空态 */
+.guest-empty {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20rpx;
+
+  .ge-icon { font-size: 88rpx; }
+  .ge-text { font-size: 28rpx; color: #6b7280; }
+  .ge-btn {
+    width: 320rpx; height: 80rpx; background: #1890ff; color: #fff;
+    font-size: 28rpx; font-weight: 600; border-radius: 40rpx; border: none;
+  }
 }
 </style>
