@@ -11,7 +11,7 @@ test.describe('Mobile Emulation Tests', () => {
 
   // ---- 登录/注册（无需认证）----
   test('login page renders with tabs', async ({ page }) => {
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/login.png`, fullPage: true })
 
@@ -22,7 +22,7 @@ test.describe('Mobile Emulation Tests', () => {
   })
 
   test('register page renders', async ({ page }) => {
-    await page.goto('/#/pages/auth/register')
+    await page.goto('/pages/auth/register')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/register.png`, fullPage: true })
     // 注册页有密码输入框即可证明渲染
@@ -36,10 +36,10 @@ test.describe('Mobile Emulation Tests', () => {
     page.on('pageerror', err => errors.push(err.message))
 
     const tabs = [
-      { name: 'index', url: '/#/pages/index/index' },
-      { name: 'test', url: '/#/pages/test/index' },
-      { name: 'stats', url: '/#/pages/stats/index' },
-      { name: 'mine', url: '/#/pages/mine/index' },
+      { name: 'index', url: '/pages/index/index' },
+      { name: 'test', url: '/pages/test/index' },
+      { name: 'stats', url: '/pages/stats/index' },
+      { name: 'mine', url: '/pages/mine/index' },
     ]
     for (const tab of tabs) {
       await page.goto(tab.url)
@@ -57,7 +57,7 @@ test.describe('Mobile Emulation Tests', () => {
 
   // ---- 子页面（无需认证）----
   test('word search page renders', async ({ page }) => {
-    await page.goto('/#/pages/word/search')
+    await page.goto('/pages/word/search')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/word-search.png`, fullPage: true })
 
@@ -65,7 +65,7 @@ test.describe('Mobile Emulation Tests', () => {
   })
 
   test('forgetting curve page renders', async ({ page }) => {
-    await page.goto('/#/pages/stats/forgetting-curve')
+    await page.goto('/pages/stats/forgetting-curve')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/forgetting-curve.png`, fullPage: true })
 
@@ -73,21 +73,21 @@ test.describe('Mobile Emulation Tests', () => {
   })
 
   test('wrong book page renders', async ({ page }) => {
-    await page.goto('/#/pages/wrong-book/list')
+    await page.goto('/pages/wrong-book/list')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/wrong-book.png`, fullPage: true })
     expect(true).toBe(true)
   })
 
   test('achievements page renders', async ({ page }) => {
-    await page.goto('/#/pages/mine/achievements')
+    await page.goto('/pages/mine/achievements')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/achievements.png`, fullPage: true })
     expect(true).toBe(true)
   })
 
   test('settings page loads', async ({ page }) => {
-    await page.goto('/#/pages/mine/settings')
+    await page.goto('/pages/mine/settings')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/settings.png`, fullPage: true })
     expect(true).toBe(true)
@@ -95,7 +95,7 @@ test.describe('Mobile Emulation Tests', () => {
 
   // ---- 交互测试 ----
   test('login tab switching works', async ({ page }) => {
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
 
     // 尝试点击手机号 tab（通过 JS 直接操作，兼容 uni-app）
@@ -119,7 +119,7 @@ test.describe('Mobile Emulation Tests', () => {
     const errors: string[] = []
     page.on('pageerror', err => errors.push(err.message))
 
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
 
     const realErrors = errors.filter(e =>

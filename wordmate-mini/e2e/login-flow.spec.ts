@@ -83,7 +83,7 @@ test.describe('Login Flow + Authenticated Pages', () => {
     const errors: string[] = []
     page.on('pageerror', err => errors.push(err.message))
 
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
     await page.screenshot({ path: `${screenshotDir}/01-login-initial.png`, fullPage: true })
 
@@ -147,7 +147,7 @@ test.describe('Login Flow + Authenticated Pages', () => {
 
   // ---- Step 2: Empty form validation ----
   test('empty form shows validation toast', async ({ page }) => {
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
 
     // Click login without filling
@@ -168,7 +168,7 @@ test.describe('Login Flow + Authenticated Pages', () => {
 
   // ---- Step 3: Short password validation ----
   test('short password shows validation toast', async ({ page }) => {
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
 
     await fillUniInput(page, '请输入邮箱', 'test@test.com')
@@ -190,7 +190,7 @@ test.describe('Login Flow + Authenticated Pages', () => {
 
   // ---- Step 4: Tab switching ----
   test('switch between email and phone login tabs', async ({ page }) => {
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
 
     // Switch to phone tab
@@ -221,7 +221,7 @@ test.describe('Login Flow + Authenticated Pages', () => {
 
   // ---- Step 5: Navigate to register ----
   test('navigate to register page', async ({ page }) => {
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
 
     await clickByText(page, '注册账号')
@@ -235,7 +235,7 @@ test.describe('Login Flow + Authenticated Pages', () => {
 
   // ---- Step 6: Forgot password toast ----
   test('forgot password shows feedback', async ({ page }) => {
-    await page.goto('/#/pages/auth/login')
+    await page.goto('/pages/auth/login')
     await page.waitForTimeout(PAGE_WAIT)
 
     await clickByText(page, '忘记密码')
@@ -255,10 +255,10 @@ test.describe('Login Flow + Authenticated Pages', () => {
     page.on('pageerror', err => errors.push(err.message))
 
     const tabs = [
-      { name: 'index', url: '/#/pages/index/index' },
-      { name: 'test', url: '/#/pages/test/index' },
-      { name: 'stats', url: '/#/pages/stats/index' },
-      { name: 'mine', url: '/#/pages/mine/index' },
+      { name: 'index', url: '/pages/index/index' },
+      { name: 'test', url: '/pages/test/index' },
+      { name: 'stats', url: '/pages/stats/index' },
+      { name: 'mine', url: '/pages/mine/index' },
     ]
 
     for (const tab of tabs) {
@@ -281,13 +281,13 @@ test.describe('Login Flow + Authenticated Pages', () => {
     page.on('pageerror', err => errors.push(err.message))
 
     const subPages = [
-      { name: 'word-search', url: '/#/pages/word/search' },
-      { name: 'forgetting-curve', url: '/#/pages/stats/forgetting-curve' },
-      { name: 'wrong-book', url: '/#/pages/wrong-book/list' },
-      { name: 'achievements', url: '/#/pages/mine/achievements' },
-      { name: 'settings', url: '/#/pages/mine/settings' },
-      { name: 'study-session', url: '/#/pages/study/session?level=CET4' },
-      { name: 'study-done', url: '/#/pages/study/done?correct=8&total=10' },
+      { name: 'word-search', url: '/pages/word/search' },
+      { name: 'forgetting-curve', url: '/pages/stats/forgetting-curve' },
+      { name: 'wrong-book', url: '/pages/wrong-book/list' },
+      { name: 'achievements', url: '/pages/mine/achievements' },
+      { name: 'settings', url: '/pages/mine/settings' },
+      { name: 'study-session', url: '/pages/study/session?level=CET4' },
+      { name: 'study-done', url: '/pages/study/done?correct=8&total=10' },
     ]
 
     for (const sp of subPages) {
