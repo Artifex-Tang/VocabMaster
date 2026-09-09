@@ -1,0 +1,14 @@
+# 游客模式仿真测试专用端口覆盖（本机 3306/8080 被其他项目容器占用）。
+# 用法：docker compose -f docker-compose.yml -f docker-compose.guest-test.yml up -d mysql redis backend-java
+# journey/build 侧对应改端口：E2E_API=http://localhost:18080/api/v1、VITE_API_BASE 同理。
+# 测试完可删（未入 git 也无妨，进 .gitignore 更稳）。
+services:
+  mysql:
+    ports: !override
+      - "3307:3306"
+  redis:
+    ports: !override
+      - "16379:6379"
+  backend-java:
+    ports: !override
+      - "18080:8080"
