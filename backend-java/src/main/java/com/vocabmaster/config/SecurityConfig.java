@@ -45,6 +45,11 @@ public class SecurityConfig {
                                 "/auth/**",
                                 "/words/levels",
                                 "/words/topics",
+                                // 游客可浏览的只读词库内容（审核要求：先体验后授权）。
+                                // {id:[0-9]+} 限数字，不吞 /words/download 等路径语义
+                                "/words/search",
+                                "/words/by-word",
+                                "/words/{id:[0-9]+}",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
