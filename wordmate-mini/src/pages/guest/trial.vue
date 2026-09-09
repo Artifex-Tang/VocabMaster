@@ -2,7 +2,7 @@
   <view class="trial">
     <!-- 顶部进度 -->
     <view class="header">
-      <text class="title">免费试学</text>
+      <text class="title">试学一下</text>
       <text v-if="!finished" class="counter">{{ idx + 1 }} / {{ words.length }}</text>
     </view>
     <view v-if="!finished" class="progress-bar">

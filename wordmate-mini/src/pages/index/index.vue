@@ -20,8 +20,8 @@
       <view class="wordlist-entry trial-entry" @click="goTrial">
         <text class="wl-emoji">🎓</text>
         <view class="wl-info">
-          <text class="wl-title">免费试学</text>
-          <text class="wl-desc">5 个词 · 翻卡体验 · 无需登录</text>
+          <text class="wl-title">试学一下</text>
+          <text class="wl-desc">无需登录 · 5 个词 · 翻卡体验</text>
         </view>
         <text class="wl-arrow">›</text>
       </view>
