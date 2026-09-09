@@ -24,7 +24,8 @@
     { "path": "pages/word/search",     "style": { "navigationBarTitleText": "词库搜索" } },
     { "path": "pages/wordlists/square", "style": { "navigationBarTitleText": "教材词库" } },
     { "path": "pages/wordlists/detail", "style": { "navigationBarTitleText": "词库详情" } },
-    { "path": "pages/wordlists/learn",  "style": { "navigationBarTitleText": "学新词", "disableScroll": true } }
+    { "path": "pages/wordlists/learn",  "style": { "navigationBarTitleText": "学新词", "disableScroll": true } },
+    { "path": "pages/guest/trial",     "style": { "navigationBarTitleText": "免费试学" } }
   ],
   "globalStyle": {
     "navigationBarTextStyle": "black",

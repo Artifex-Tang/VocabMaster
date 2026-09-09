@@ -17,7 +17,15 @@
         <text class="guest-desc">艾宾浩斯遗忘曲线 · 42,531 词覆盖 10 个等级</text>
         <button class="btn-start" @click="goLogin">登录，开始今天的学习</button>
       </view>
-      <view class="wordlist-entry" @click="goSearch">
+      <view class="wordlist-entry trial-entry" @click="goTrial">
+        <text class="wl-emoji">🎓</text>
+        <view class="wl-info">
+          <text class="wl-title">免费试学</text>
+          <text class="wl-desc">5 个词 · 翻卡体验 · 无需登录</text>
+        </view>
+        <text class="wl-arrow">›</text>
+      </view>
+      <view class="wordlist-entry search-entry" @click="goSearch">
         <text class="wl-emoji">🔍</text>
         <view class="wl-info">
           <text class="wl-title">搜词试试</text>
@@ -211,6 +219,10 @@ function goLogin() {
 
 function goSearch() {
   uni.navigateTo({ url: '/pages/word/search' })
+}
+
+function goTrial() {
+  uni.navigateTo({ url: '/pages/guest/trial' })
 }
 </script>
 

@@ -25,6 +25,17 @@ const log = (ok, id, name, extra = '') => {
 }
 
 async function main() {
+  // 自动化命令偶发 30s 超时（DevTools 热重载 busy），包一层重试
+  async function withRetry(fn, label) {
+    try {
+      return await fn()
+    } catch (e) {
+      console.log(`[retry] ${label}: ${String(e).slice(0, 60)}`)
+      await sleep(3000)
+      return fn()
+    }
+  }
+
   const mp = await launchMiniProgram()
 
   // ---- G0 复位游客态（evaluate 作用域无 uni 全局，用 wx/getApp；清 storage 用 callWxMethod）----
@@ -56,7 +67,7 @@ async function main() {
   page = await mp.currentPage()
   const hero = await page.$('.guest-hero')
   log(!!hero, 'G2', '游客 hero 卡存在')
-  const searchEntry = await page.$('.wordlist-entry')
+  const searchEntry = await page.$('.search-entry')
   log(!!searchEntry, 'G3', '搜词入口存在')
 
   // ---- G4 进搜索页 ----
@@ -78,18 +89,48 @@ async function main() {
   const items = await page.$$('.word-item')
   log(items.length > 0, 'G5', `游客搜词出结果 ${items.length} 条`)
 
+  // ---- G9/G10 免费试学：出卡 + 翻卡 + 下一个 ----
+  await withRetry(() => mp.reLaunch('/pages/index/index'), 'switchTab index') // index 是 tab 页
+  await sleep(2000)
+  page = await mp.currentPage()
+  const trialEntry = await page.$('.trial-entry')
+  if (trialEntry) await trialEntry.tap()
+  await sleep(2500) // 拉词 + 首卡渲染
+  page = await mp.currentPage()
+  log(page && page.path === 'pages/guest/trial', 'G9', '进入试学页', page && page.path)
+  let card = null
+  for (let i = 0; i < 10 && !card; i++) {
+    card = await page.$('.word-card')
+    if (!card) await sleep(1000)
+  }
+  log(!!card, 'G10', '试学首卡渲染')
+  if (card) {
+    await card.tap() // 翻面
+    await sleep(800)
+    const nextBtn = await page.$('.btn-next')
+    const disabled = nextBtn ? await nextBtn.attribute('disabled') : 'missing'
+    log(nextBtn && !disabled, 'G11', '翻面后「下一个」可用', `disabled=${disabled}`)
+    if (nextBtn && !disabled) {
+      await nextBtn.tap()
+      await sleep(600)
+      const counter = await page.$('.counter')
+      const txt = counter ? await counter.text() : ''
+      log(txt.trim().startsWith('2'), 'G12', '翻到第 2 张', `counter=${txt.trim()}`)
+    }
+  }
+
   // ---- G6/G7/G8 tab 空态 ----
-  await mp.switchTab('/pages/test/index')
+  await withRetry(() => mp.reLaunch('/pages/test/index'), 'switchTab test')
   await sleep(1200)
   page = await mp.currentPage()
   log(!!(await page.$('.guest-empty')), 'G6', '测试 tab 登录空态')
 
-  await mp.switchTab('/pages/stats/index')
+  await withRetry(() => mp.reLaunch('/pages/stats/index'), 'switchTab stats')
   await sleep(1200)
   page = await mp.currentPage()
   log(!!(await page.$('.guest-empty')), 'G7', '统计 tab 登录空态')
 
-  await mp.switchTab('/pages/mine/index')
+  await withRetry(() => mp.reLaunch('/pages/mine/index'), 'switchTab mine')
   await sleep(1200)
   page = await mp.currentPage()
   log(!!(await page.$('.guest-empty')), 'G8', '我的 tab 登录空态')
