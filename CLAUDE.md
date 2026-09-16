@@ -260,7 +260,7 @@ word_story_question (story_id, question, options JSON, answer)
 - [x] 全栈 Docker Compose 集成测试已通（CI integration job，run 28215677126，2026-06-26）
 - [ ] `docs/11-roadmap.md` 进度未更新
 - [x] commit `2d0eb21`（OOM 修复）已 push（远端早已包含，2026-09-08 核实）
-- [ ] mp 体验版待重传（含 2026-09-08 设置页修复 + lazyCodeLoading）→ 真机复测设置页 + DevTools 代码质量面板重扫确认「组件」项通过
+- [ ] mp 体验版待重传（含 2026-09-08 设置页修复 + lazyCodeLoading + 2026-09-09 游客模式/试学一下）→ 真机复测设置页 + 游客试学流程 + DevTools 代码质量面板重扫确认「组件」项通过 → 提审（测试账号填提审测试信息栏）
 - [ ] WIP 未提交：`wordmate-web/src/api/word.ts`、`.env.development`、`components.d.ts`、`scripts/` 4 个 py 脚本、`backup/`（`WordTopic.java`/`V2` 迁移早已入库）
 - [x] V2 迁移 `V2__add_word_topic_image_type.sql` 已上云（2026-09-08 随后端 redeploy 由 Flyway 自动应用，schema_history 三条全 success）
 - [ ] 图片质量验收 + 同步 `image_url` 列到云 + sftp 13068 张图到云 `/images` 卷（本地 38213 已填，云 0，质量暂缓）
