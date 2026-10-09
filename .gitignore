@@ -171,3 +171,8 @@ wordlist/_zh_cache.json
 **/e2e/screenshots/r*/
 **/e2e/wechat-screenshots/
 wordmate-web/test-results/
+
+# local
+backup/
+screenshots/
+wordmate-web/test-results/

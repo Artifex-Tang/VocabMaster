@@ -3,7 +3,8 @@ import type { WordBank, LevelInfo, PageResult } from './types'
 
 export const getLevels = () => http.get<LevelInfo[]>('/words/levels')
 
-export const getTopics = () => http.get<Array<{ code: string; name_zh: string }>>('/words/topics')
+export const getTopics = () =>
+  http.get<Array<{ code: string; name_zh: string; name_en: string; icon?: string; image_type: 'photo' | 'icon' | 'none' }>>('/words/topics')
 
 export const getWord = (id: number) => http.get<WordBank>(`/words/${id}`)
 
