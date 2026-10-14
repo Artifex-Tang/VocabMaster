@@ -10,32 +10,6 @@
       </picker>
     </view>
 
-    <!-- 游客：先体验后授权（微信审核要求） -->
-    <template v-if="!userStore.isLoggedIn">
-      <view class="guest-hero">
-        <text class="guest-title">VocabMaster 背单词</text>
-        <text class="guest-desc">艾宾浩斯遗忘曲线 · 42,531 词覆盖 10 个等级</text>
-        <button class="btn-start" @click="goLogin">登录，开始今天的学习</button>
-      </view>
-      <view class="wordlist-entry trial-entry" @click="goTrial">
-        <text class="wl-emoji">🎓</text>
-        <view class="wl-info">
-          <text class="wl-title">试学一下</text>
-          <text class="wl-desc">无需登录 · 5 个词 · 翻卡体验</text>
-        </view>
-        <text class="wl-arrow">›</text>
-      </view>
-      <view class="wordlist-entry search-entry" @click="goSearch">
-        <text class="wl-emoji">🔍</text>
-        <view class="wl-info">
-          <text class="wl-title">搜词试试</text>
-          <text class="wl-desc">无需登录，查释义、听发音</text>
-        </view>
-        <text class="wl-arrow">›</text>
-      </view>
-    </template>
-
-    <template v-else>
     <!-- 今日进度 -->
     <view class="progress-card">
       <view class="ring-wrap">
@@ -108,7 +82,6 @@
         </view>
       </view>
     </view>
-    </template>
   </view>
 </template>
 
@@ -121,7 +94,6 @@ import { useStudyStore } from '@/stores/study'
 import { getToday } from '@/api/study'
 import { getTodayStats, getCalendar, checkinToday } from '@/api/stats'
 import { formatDate } from '@/utils/date'
-import { requireLogin } from '@/utils/require-login'
 import { LEVELS } from '@/api/types'
 import type { TodayPlan, TodayStats, CalendarData } from '@/api/types'
 
@@ -167,7 +139,10 @@ const progressPct = computed(() => {
 onShow(loadData)
 
 async function loadData() {
-  if (!userStore.isLoggedIn) return // 游客：首页静态内容即可，不发用户接口
+  if (!userStore.isLoggedIn) {
+    uni.reLaunch({ url: '/pages/auth/login' })
+    return
+  }
   try {
     const [p, s, c] = await Promise.all([
       getToday(currentLevel.value),
@@ -209,20 +184,7 @@ function startStudy() {
 }
 
 function goWordlists() {
-  if (!requireLogin()) return
   uni.navigateTo({ url: '/pages/wordlists/square' })
-}
-
-function goLogin() {
-  uni.reLaunch({ url: '/pages/auth/login' })
-}
-
-function goSearch() {
-  uni.navigateTo({ url: '/pages/word/search' })
-}
-
-function goTrial() {
-  uni.navigateTo({ url: '/pages/guest/trial' })
 }
 </script>
 
@@ -351,21 +313,5 @@ function goTrial() {
   }
   .cal-num { font-size: 20rpx; color: #9ca3af; }
   .cal-day.checked .cal-num { color: #fff; }
-}
-
-/* 游客视图 */
-.guest-hero {
-  background: linear-gradient(135deg, #1890ff, #36cfc9);
-  border-radius: 24rpx;
-  padding: 48rpx 32rpx;
-  margin-bottom: 24rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12rpx;
-
-  .guest-title { font-size: 40rpx; font-weight: 700; color: #fff; }
-  .guest-desc { font-size: 24rpx; color: rgba(255, 255, 255, 0.85); margin-bottom: 16rpx; }
-  .btn-start { width: 100%; margin-top: 0; }
 }
 </style>
