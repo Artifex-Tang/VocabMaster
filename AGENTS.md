@@ -272,7 +272,7 @@ word_story_question (story_id, question, options JSON, answer)
 - [ ] 后端构建验证（修 3 个编译错误后未重新 `mvn package`）
 - [ ] k6 压测脚本未实际运行（`scripts/k6-load-test.js`）
 - [x] CI/CD 流水线已触发且全绿（backend/web/mini/integration 四 job，2026-06-26）
-- [x] SSL 证书已上线（阿里云 DV，vocab-master.cn，2026-07-23；到期 2026-10-19 续签跑 `deploy/install_ssl.py`）
+- [x] SSL 证书已上线并自动化（2026-11-17 起 acme.sh + Let's Encrypt 自动续签，cron 每日检查；阿里云手动 DV 已弃，`deploy/install_ssl.py` 退役留作 fallback）
 - [ ] API key 管理生产化（当前明文）
 - [ ] 服务器升 4G（OOM 根治：1.6G 超售，autoheal+调内存只是抠门）
 

@@ -272,7 +272,7 @@ word_story_question (story_id, question, options JSON, answer)
 - [ ] 后端构建验证（修 3 个编译错误后未重新 `mvn package`）
 - [ ] k6 压测脚本未实际运行（`scripts/k6-load-test.js`）
 - [x] CI/CD 流水线已触发且全绿（backend/web/mini/integration 四 job，2026-06-26）
-- [ ] SSL 证书续签（阿里云 DV，2026-07-23 上线，**2026-10-19 到期**，实测 notAfter=Oct 19 23:59 GMT 即北京时间 10-20 早 8 点）—— 续签跑 `deploy/install_ssl.py`，续完更新此行 + `project_ssl_installed_20260723` 记忆
+- [x] SSL 证书已自动化（2026-10-19 阿里云 DV 过期事故 → 2026-11-17 切 acme.sh + Let's Encrypt 自动续签，cron 每日检查 <30 天续，零停机 reload；`deploy/acme_setup.py` 幂等可重跑；`install_ssl.py` 退役）
 - [ ] API key 管理生产化（当前明文）
 - [ ] 服务器升 4G（OOM 根治：1.6G 超售，autoheal+调内存只是抠门）
 
